@@ -19,9 +19,11 @@ public class Post extends BaseTimeEntity {
     @GeneratedValue
     @Column(name = "post_id")
     private Integer id;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+    
     @Column(columnDefinition = "TEXT")
     private String content;
     
