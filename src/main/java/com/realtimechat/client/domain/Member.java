@@ -28,7 +28,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private UUID id;
     @Column(length = 100)
     private String email;
-    private String passwrod;
+    private String password;
     private String nickname;
     private String phone;
     @Enumerated(EnumType.STRING)
@@ -44,7 +44,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     }
     @Override
     public String getPassword() {
-        return passwrod;
+        return password;
     }
     @Override
     public String getUsername() {

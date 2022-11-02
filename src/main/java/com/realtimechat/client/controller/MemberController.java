@@ -28,7 +28,9 @@ public class MemberController {
     public UUID register(@RequestBody Map<String, String> user) {
         return memberRepository.save(Member.builder()
                 .email(user.get("email"))
-                .passwrod(passwordEncoder.encode(user.get("password")))
+                .password(passwordEncoder.encode(user.get("password")))
+                .nickname(user.get("nickname"))
+                .phone(user.get("phone"))
                 .role(Role.ROLE_MEMBER)
                 .build()).getId();
     } 
