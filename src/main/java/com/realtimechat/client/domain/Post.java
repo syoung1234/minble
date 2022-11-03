@@ -8,12 +8,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.realtimechat.client.dto.request.PostRequestDto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue
@@ -21,10 +29,15 @@ public class Post extends BaseTimeEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name="member_id", nullable = false, updatable = false)
     private Member member;
     
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    public void update(String content) {
+        this.content = content;
+    }
+
     
 }
