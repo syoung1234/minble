@@ -33,7 +33,7 @@ import lombok.Setter;
 @Builder
 public class Member extends BaseTimeEntity implements UserDetails {
     @Id
-    @Column(name = "member_id")
+    @Column(name = "member_id", columnDefinition = "BINARY(16)")
     @GeneratedValue
     private UUID id;
     @Column(length = 100, unique = true, nullable = false)
