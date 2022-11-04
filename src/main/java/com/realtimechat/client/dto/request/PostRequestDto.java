@@ -20,6 +20,10 @@ public class PostRequestDto {
         this.member = member;
     }
 
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
     public Post toEntity() {
         return Post.builder()
                 .content(content)
