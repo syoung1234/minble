@@ -24,9 +24,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -36,13 +38,20 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(name = "member_id", columnDefinition = "BINARY(16)")
     @GeneratedValue
     private UUID id;
+
     @Column(length = 100, unique = true, nullable = false)
     private String email;
     private String password;
+
+    @Column(unique = true, nullable = false)
     private String nickname;
+
     private String phone;
+    private String profile_path;
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
     @Column(columnDefinition="tinyint(1) default 1")
     private boolean notification;
 
