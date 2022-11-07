@@ -1,5 +1,7 @@
 package com.realtimechat.client.controller;
 
+import java.util.Map;
+
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.PostResponseDto;
@@ -23,6 +25,11 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 
     private final PostService postService;
+
+    @GetMapping
+    public Map<String, Object> list(@AuthenticationPrincipal SecurityUser principal) {
+        return postService.list(principal.getMember());
+    }
 
     @PostMapping("/create")
     public String create(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
