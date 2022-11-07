@@ -7,8 +7,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -17,14 +19,16 @@ import lombok.ToString;
 @Builder
 @ToString
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Follow extends BaseTimeEntity {
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "follower_member_id", nullable = false, updatable = false)
-    private Member follower;
+    @JoinColumn(name = "member_id", nullable = false, updatable = false)
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "following_member_id", nullable = false, updatable = false)
