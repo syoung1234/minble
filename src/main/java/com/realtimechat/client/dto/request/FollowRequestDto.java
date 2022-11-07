@@ -10,19 +10,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class FollowRequestDto {
-    private Member follower;
+    private Member member;
     private Member following;
     private String nickname;
 
     @Builder
-    public FollowRequestDto(Member follower, Member following, String nickname) {
-        this.nickname = nickname;
-        this.follower = follower;
+    public FollowRequestDto(Member member, Member following, String nickname) {
+        this.member = member;
         this.following = following;
+        this.nickname = nickname;
     }
 
-    public void setFollower(Member follower) {
-        this.follower = follower;
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     public void setFollowing(Member following) {
@@ -35,7 +35,7 @@ public class FollowRequestDto {
 
     public Follow toEntity() {
         return Follow.builder()
-                .follower(follower)
+                .member(member)
                 .following(following)
                 .build();
     }
