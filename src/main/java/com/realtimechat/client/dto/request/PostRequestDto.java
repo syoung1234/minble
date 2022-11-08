@@ -3,25 +3,27 @@ package com.realtimechat.client.dto.request;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
+@Setter
 public class PostRequestDto {
 
     private String content;
     private Member member;
+    private MultipartFile files;
 
     @Builder
-    public PostRequestDto(String content, Member member) {
+    public PostRequestDto(String content, Member member, MultipartFile files) {
         this.content = content;
         this.member = member;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
+        this.files = files;
     }
 
     public Post toEntity() {
