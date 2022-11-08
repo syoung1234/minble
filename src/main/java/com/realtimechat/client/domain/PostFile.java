@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,17 +24,29 @@ public class PostFile extends BaseTimeEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(length = 100)
-    private String name;
+    @Column(name = "file_name", length = 100)
+    private String filename;
 
-    @Column(name = "original_name", length = 100)
-    private String originalName;
+    @Column(name = "original_file_name", length = 100)
+    private String originalFileName;
 
-    private String path;
+    @Column(name = "file_path")
+    private String filePath;
 
-    private Integer size;
+    @Column(name = "file_size")
+    private Long fileSize;
 
     @Column(length = 10)
-    private String type;
+    private String fileType;
+
+    @Builder
+    public PostFile(Post post, String filename, String originalFileName, String filePath, Long fileSize, String fileType) {
+        this.post = post;
+        this.filename = filename;
+        this.originalFileName = originalFileName;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
+        this.fileType = fileType;
+    }
     
 }
