@@ -46,7 +46,7 @@ public class MemberController {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 맞지 않습니다.");
         }
 
-        return jwtTokenProvider.createToken(member.getUsername(), member.getRole());
+        return jwtTokenProvider.createToken(member.getEmail(), member.getRole());
     }
 
     
