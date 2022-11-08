@@ -62,8 +62,8 @@ public class PostService {
 
     // create
     @Transactional
-    public Integer save(PostRequestDto requestDto) {
-        return postRepository.save(requestDto.toEntity()).getId();
+    public Post save(PostRequestDto requestDto) {
+        return postRepository.save(requestDto.toEntity());
     }
     
     // update
