@@ -16,6 +16,7 @@ import lombok.Setter;
 public class PostFile extends BaseTimeEntity {
     @Id
     @GeneratedValue
+    @Column(name = "post_file_id")
     private Integer id;
 
     @ManyToOne
@@ -25,7 +26,12 @@ public class PostFile extends BaseTimeEntity {
     @Column(length = 100)
     private String name;
 
+    @Column(name = "original_name", length = 100)
+    private String originalName;
+
     private String path;
+
+    private Integer size;
 
     @Column(length = 10)
     private String type;

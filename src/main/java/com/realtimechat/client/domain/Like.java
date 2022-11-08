@@ -1,5 +1,6 @@
 package com.realtimechat.client.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,6 +16,7 @@ import lombok.Setter;
 public class Like extends BaseTimeEntity {
     @Id
     @GeneratedValue
+    @Column(name = "like_id")
     private Integer id;
 
     @ManyToOne

@@ -1,6 +1,7 @@
 package com.realtimechat.client.domain;
 
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -24,6 +25,7 @@ import lombok.ToString;
 public class Follow extends BaseTimeEntity {
     @Id
     @GeneratedValue
+    @Column(name = "follow_id")
     private Integer id;
 
     @ManyToOne

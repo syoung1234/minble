@@ -16,6 +16,7 @@ import lombok.Setter;
 public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue
+    @Column(name = "comment_id")
     private Integer id;
 
     @ManyToOne
