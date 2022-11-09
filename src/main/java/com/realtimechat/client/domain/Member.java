@@ -9,6 +9,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,17 +29,22 @@ public class Member extends BaseTimeEntity {
     @Id
     @Column(name = "member_id", columnDefinition = "BINARY(16)")
     @GeneratedValue
+    @JsonIgnore
     private UUID id;
 
     @Column(length = 100, unique = true, nullable = false)
     private String email;
+
+    @JsonIgnore
     private String password;
 
     @Column(unique = true, nullable = false)
     private String nickname;
 
     private String phone;
-    private String profile_path;
+
+    @Column(name = "profile_path")
+    private String profilePath;
 
     @Enumerated(EnumType.STRING)
     private Role role;

@@ -37,19 +37,34 @@ public class PostService {
 
     // list
     public Map<String, Object> list(Member member) {
+        /*************** 팔로잉 목록 ***************/
         List<FollowResponseDto> follow = followRepository.findByMember(member);
         List<Map<String,Object>> listmap = new ArrayList<Map<String, Object>>();
-        Map<String, Object> followingList = new HashMap<String, Object>();
+        List<Member> memberList = new ArrayList<>();
 
         // 팔로잉한 member 찾은 후 nickname, profile만 보여줌 
         for (FollowResponseDto following : follow) {
+            Map<String, Object> followingList = new HashMap<String, Object>();
+
             followingList.put("nickname", following.getFollowing().getNickname());
-            followingList.put("profile", following.getFollowing().getProfile_path());
+            followingList.put("profilePath", following.getFollowing().getProfilePath());
             listmap.add(followingList);
+            memberList.add(following.getFollowing());
         }
 
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("data", listmap);
+        result.put("following", listmap);
+
+        /*************** 팔로잉한 게시글 목록 ***************/
+        List<Post> posts = postRepository.findByMember(memberList);
+        List<PostResponseDto> postList = new ArrayList<>();
+
+        for (Post post : posts) {
+            PostResponseDto postResponseDto = new PostResponseDto(post);
+            postList.add(postResponseDto);
+        }
+
+        result.put("postList", postList);
 
         return result;
     }

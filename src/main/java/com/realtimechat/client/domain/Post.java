@@ -1,12 +1,16 @@
 package com.realtimechat.client.domain;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +25,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "postFileList")
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue
@@ -34,6 +38,14 @@ public class Post extends BaseTimeEntity {
     
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @OneToMany(mappedBy = "post")
+    @Builder.Default
+    private List<PostFile> postFileList = new ArrayList<>();
+
+    public void addPostFile(PostFile file){
+        this.postFileList.add(file);
+    }
 
     public void update(String content) {
         this.content = content;
