@@ -1,6 +1,7 @@
 package com.realtimechat.client.controller;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import com.realtimechat.client.config.security.SecurityUser;
@@ -43,35 +44,38 @@ public class PostController {
     public String create(@ModelAttribute PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
 
         try {
-            MultipartFile files = requestDto.getFiles();
+            List<MultipartFile> files = requestDto.getFiles();
             requestDto.setMember(principal.getMember());
             Post post = postService.save(requestDto);
 
             // 이미지 업로드 
-            String originalFileName = files.getOriginalFilename();
-            String filename = new CreateFileName(originalFileName).toString();
-            Long fileSize = files.getSize();
-            String fileType = files.getContentType();
-            String savePath = System.getProperty("user.dir") + "/files";
-            if (!new File(savePath).exists()) {
-                try {
-                    new File(savePath).mkdir();
-                } catch(Exception e) {
-                    e.getStackTrace();
+            for (MultipartFile file : files) {
+                String originalFileName = file.getOriginalFilename();
+                String filename = new CreateFileName(originalFileName).toString();
+                Long fileSize = file.getSize();
+                String fileType = file.getContentType();
+                String savePath = System.getProperty("user.dir") + "/files";
+                if (!new File(savePath).exists()) {
+                    try {
+                        new File(savePath).mkdir();
+                    } catch(Exception e) {
+                        e.getStackTrace();
+                    }
                 }
+                String filePath = savePath + "/" + filename;
+                file.transferTo(new File(filePath));
+    
+                PostFileRequestDto postFileRequestDto = new PostFileRequestDto();
+                postFileRequestDto.setOriginalFileName(originalFileName);
+                postFileRequestDto.setFilename(filename);
+                postFileRequestDto.setFilePath(filePath);
+                postFileRequestDto.setFileSize(fileSize);
+                postFileRequestDto.setFileType(fileType);
+                postFileRequestDto.setPost(post);
+                
+                postFileService.save(postFileRequestDto);
             }
-            String filePath = savePath + "/" + filename;
-            files.transferTo(new File(filePath));
-
-            PostFileRequestDto postFileRequestDto = new PostFileRequestDto();
-            postFileRequestDto.setOriginalFileName(originalFileName);
-            postFileRequestDto.setFilename(filename);
-            postFileRequestDto.setFilePath(filePath);
-            postFileRequestDto.setFileSize(fileSize);
-            postFileRequestDto.setFileType(fileType);
-            postFileRequestDto.setPost(post);
             
-            postFileService.save(postFileRequestDto);
 
 
         } catch(Exception e) {

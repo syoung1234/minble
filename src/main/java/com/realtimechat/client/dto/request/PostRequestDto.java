@@ -1,5 +1,7 @@
 package com.realtimechat.client.dto.request;
 
+import java.util.List;
+
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 
@@ -17,10 +19,10 @@ public class PostRequestDto {
 
     private String content;
     private Member member;
-    private MultipartFile files;
+    private List<MultipartFile> files;
 
     @Builder
-    public PostRequestDto(String content, Member member, MultipartFile files) {
+    public PostRequestDto(String content, Member member, List<MultipartFile> files) {
         this.content = content;
         this.member = member;
         this.files = files;
