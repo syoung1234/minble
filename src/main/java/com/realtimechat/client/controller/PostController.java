@@ -12,7 +12,6 @@ import com.realtimechat.client.service.PostFileService;
 import com.realtimechat.client.service.PostService;
 import com.realtimechat.client.util.CreateFileName;
 
-import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,7 +49,7 @@ public class PostController {
 
             // 이미지 업로드 
             String originalFileName = files.getOriginalFilename();
-            String filename = new CreateFileName().toString();
+            String filename = new CreateFileName(originalFileName).toString();
             Long fileSize = files.getSize();
             String fileType = files.getContentType();
             String savePath = System.getProperty("user.dir") + "/files";
@@ -64,7 +61,7 @@ public class PostController {
                 }
             }
             String filePath = savePath + "/" + filename;
-            files.transferTo(new File(savePath));
+            files.transferTo(new File(filePath));
 
             PostFileRequestDto postFileRequestDto = new PostFileRequestDto();
             postFileRequestDto.setOriginalFileName(originalFileName);

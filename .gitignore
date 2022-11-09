@@ -39,3 +39,6 @@ out/
 
 # Secret 정보
 /src/main/resources/application-secret.properties
+
+# 파일 업로드
+files/
