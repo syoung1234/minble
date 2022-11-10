@@ -27,14 +27,16 @@ public class MemberController {
 
     // 회원가입
     @PostMapping("/register")
-    public UUID register(@RequestBody Map<String, String> user) {
-        return memberRepository.save(Member.builder()
+    public String register(@RequestBody Map<String, String> user) {
+        String message = "success";
+        memberRepository.save(Member.builder()
                 .email(user.get("email"))
                 .password(passwordEncoder.encode(user.get("password")))
                 .nickname(user.get("nickname"))
                 .phone(user.get("phone"))
                 .role(Role.ROLE_MEMBER)
-                .build()).getId();
+                .build());
+        return message;
     } 
 
     // 로그인
