@@ -4,6 +4,7 @@ package com.realtimechat.client.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "postFileList")
+@ToString
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue
@@ -39,12 +40,22 @@ public class Post extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     @Builder.Default
+    @ToString.Exclude
     private List<PostFile> postFileList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @Builder.Default
+    @ToString.Exclude
+    private List<Comment> commentList = new ArrayList<>();
 
     public void addPostFile(PostFile file){
         this.postFileList.add(file);
+    }
+
+    public void addComment(Comment comment) {
+        this.commentList.add(comment);
     }
 
     public void update(String content) {
