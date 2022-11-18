@@ -9,14 +9,16 @@ import javax.persistence.ManyToOne;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @Entity
-public class Like extends BaseTimeEntity {
+public class Favorite {
     @Id
     @GeneratedValue
-    @Column(name = "like_id")
+    @Column(name = "favorite_id")
     private Integer id;
 
     @ManyToOne
@@ -26,4 +28,5 @@ public class Like extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+    
 }
