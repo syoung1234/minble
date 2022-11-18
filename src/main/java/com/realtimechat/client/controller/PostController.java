@@ -48,7 +48,7 @@ public class PostController {
 
     // 목록
     @GetMapping()
-    public Map<String, Object> list(@AuthenticationPrincipal SecurityUser principal ,@RequestParam("nickname") String nickname) {
+    public Map<String, Object> list(@AuthenticationPrincipal SecurityUser principal ,@RequestParam(value = "nickname", required=false) String nickname) {
         return postService.list(principal.getMember(), nickname);
     }
 
