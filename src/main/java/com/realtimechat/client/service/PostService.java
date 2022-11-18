@@ -12,6 +12,7 @@ import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.FollowResponseDto;
 import com.realtimechat.client.dto.response.PostResponseDto;
 import com.realtimechat.client.repository.FollowRepository;
+import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.repository.PostRepository;
 
 import org.springframework.stereotype.Service;
@@ -34,26 +35,34 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final FollowRepository followRepository;
+    private final MemberRepository memberRepository;
 
     // list
-    public Map<String, Object> list(Member member) {
-        /*************** 팔로잉 목록 ***************/
+    public Map<String, Object> list(Member member, String nickname) {
         List<FollowResponseDto> follow = followRepository.findByMember(member);
         List<Map<String,Object>> listmap = new ArrayList<Map<String, Object>>();
         List<Member> memberList = new ArrayList<>();
 
-        // 팔로잉한 member 찾은 후 nickname, profile만 보여줌 
-        for (FollowResponseDto following : follow) {
-            Map<String, Object> followingList = new HashMap<String, Object>();
+        if (nickname == null || nickname == "") {
+            /*************** 팔로잉 목록 ***************/
+            // 팔로잉한 member 찾은 후 nickname, profile만 보여줌 
+            for (FollowResponseDto following : follow) {
+                Map<String, Object> followingList = new HashMap<String, Object>();
 
-            followingList.put("nickname", following.getFollowing().getNickname());
-            followingList.put("profilePath", following.getFollowing().getProfilePath());
-            listmap.add(followingList);
-            memberList.add(following.getFollowing());
+                followingList.put("nickname", following.getFollowing().getNickname());
+                followingList.put("profilePath", following.getFollowing().getProfilePath());
+                listmap.add(followingList);
+                memberList.add(following.getFollowing());
+            }
+        } else {
+            /*************** 특정 회원 게시글 목록 ***************/
+            Member following = memberRepository.findByNickname(nickname);
+            memberList.add(following);            
+
         }
-
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("following", listmap);
+        
 
         /*************** 팔로잉한 게시글 목록 ***************/
         List<Post> posts = postRepository.findByMember(memberList);

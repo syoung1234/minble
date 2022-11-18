@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriUtils;
@@ -46,9 +47,9 @@ public class PostController {
     private final PostFileRepository postFileRepository;
 
     // 목록
-    @GetMapping
-    public Map<String, Object> list(@AuthenticationPrincipal SecurityUser principal) {
-        return postService.list(principal.getMember());
+    @GetMapping()
+    public Map<String, Object> list(@AuthenticationPrincipal SecurityUser principal ,@RequestParam("nickname") String nickname) {
+        return postService.list(principal.getMember(), nickname);
     }
 
     // 생성 
