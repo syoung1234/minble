@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     Favorite findByMemberAndPost(Member member, Post post);
+
+    Long countByPost(Post post); // 해당 게시글 좋아요 수
 }

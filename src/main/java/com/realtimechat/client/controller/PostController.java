@@ -11,7 +11,7 @@ import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.PostFile;
 import com.realtimechat.client.dto.request.PostFileRequestDto;
 import com.realtimechat.client.dto.request.PostRequestDto;
-import com.realtimechat.client.dto.response.PostResponseDto;
+import com.realtimechat.client.dto.response.PostDetailResponseDto;
 import com.realtimechat.client.repository.PostFileRepository;
 import com.realtimechat.client.service.PostFileService;
 import com.realtimechat.client.service.PostService;
@@ -108,7 +108,7 @@ public class PostController {
 
     // 조회
     @GetMapping("/{id}")
-    public PostResponseDto get(@PathVariable Integer id) {
+    public PostDetailResponseDto get(@PathVariable Integer id) {
         return postService.find(id);
     }
 

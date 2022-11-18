@@ -20,6 +20,9 @@ public class PostResponseDto {
     private String profilePath;
     private String createdAt;
     private List<PostAndFile> postFileList;
+    private Long favoriteCount;
+    private Long commentCount;
+    private Boolean favorite;
 
     public PostResponseDto(Post entity) {
         this.id = entity.getId();
@@ -28,6 +31,18 @@ public class PostResponseDto {
         this.content = entity.getContent();
         this.createdAt = entity.getCreated_at().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         this.postFileList = PostAndFile.postFileList(entity.getPostFileList());
+    }
+
+    public void setFavorite(Long favoriteCount) {
+        this.favoriteCount = favoriteCount;
+    }
+
+    public void setCommentCount(Long commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        this.favorite = favorite;
     }
 
     @Getter
@@ -51,6 +66,5 @@ public class PostResponseDto {
             this.filePath = postFile.getFilePath();
         }
     }
-    
-
+   
 }

@@ -10,7 +10,10 @@ import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.FollowResponseDto;
+import com.realtimechat.client.dto.response.PostDetailResponseDto;
 import com.realtimechat.client.dto.response.PostResponseDto;
+import com.realtimechat.client.repository.CommentRepository;
+import com.realtimechat.client.repository.FavoriteRepository;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.repository.PostRepository;
@@ -36,6 +39,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
+    private final FavoriteRepository favoriteRepository;
 
     // list
     public Map<String, Object> list(Member member, String nickname) {
@@ -58,7 +63,6 @@ public class PostService {
             /*************** 특정 회원 게시글 목록 ***************/
             Member following = memberRepository.findByNickname(nickname);
             memberList.add(following);            
-
         }
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("following", listmap);
@@ -70,6 +74,8 @@ public class PostService {
 
         for (Post post : posts) {
             PostResponseDto postResponseDto = new PostResponseDto(post);
+            postResponseDto.setFavorite(favoriteRepository.countByPost(post)); // 좋아요 수 
+            postResponseDto.setCommentCount(commentRepository.countByPost(post)); // 댓글 수
             postList.add(postResponseDto);
         }
 
@@ -79,9 +85,9 @@ public class PostService {
     }
 
     // get
-    public PostResponseDto find(Integer id) {
+    public PostDetailResponseDto find(Integer id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
-        return new PostResponseDto(post);
+        return new PostDetailResponseDto(post);
     }
 
     // create
