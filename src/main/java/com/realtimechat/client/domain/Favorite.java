@@ -7,13 +7,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 @Entity
 public class Favorite {
     @Id
@@ -28,5 +31,11 @@ public class Favorite {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @Builder
+    public Favorite(Member member, Post post) {
+        this.member = member;
+        this.post = post;
+    }
     
 }
