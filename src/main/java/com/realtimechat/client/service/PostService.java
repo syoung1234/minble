@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.realtimechat.client.domain.Favorite;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.dto.request.PostRequestDto;
@@ -76,6 +77,13 @@ public class PostService {
             PostResponseDto postResponseDto = new PostResponseDto(post);
             postResponseDto.setFavorite(favoriteRepository.countByPost(post)); // 좋아요 수 
             postResponseDto.setCommentCount(commentRepository.countByPost(post)); // 댓글 수
+            // 좋아요 여부
+            Favorite favorite = favoriteRepository.findByMemberAndPost(member, post);
+            if (favorite == null) {
+                postResponseDto.setFavorite(false);
+            } else {
+                postResponseDto.setFavorite(true);
+            }
             postList.add(postResponseDto);
         }
 
