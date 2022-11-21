@@ -33,7 +33,7 @@ public class PostResponseDto {
         this.postFileList = PostAndFile.postFileList(entity.getPostFileList());
     }
 
-    public void setFavorite(Long favoriteCount) {
+    public void setFavoriteCount(Long favoriteCount) {
         this.favoriteCount = favoriteCount;
     }
 

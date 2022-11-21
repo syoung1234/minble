@@ -21,6 +21,9 @@ public class PostDetailResponseDto {
     private String createdAt;
     private List<PostAndFile> postFileList;
     private List<PostAndComment> commentList;
+    private Long favoriteCount;
+    private Long commentCount;
+    private Boolean favorite;
 
     public PostDetailResponseDto(Post entity) {
         this.id = entity.getId();
@@ -30,6 +33,18 @@ public class PostDetailResponseDto {
         this.createdAt = entity.getCreated_at().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         this.postFileList = PostAndFile.postFileList(entity.getPostFileList());
         this.commentList = PostAndComment.commentList(entity.getCommentList());
+    }
+
+    public void setFavoriteCount(Long favoriteCount) {
+        this.favoriteCount = favoriteCount;
+    }
+
+    public void setCommentCount(Long commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        this.favorite = favorite;
     }
 
     @Getter

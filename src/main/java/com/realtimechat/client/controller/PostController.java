@@ -108,8 +108,8 @@ public class PostController {
 
     // 조회
     @GetMapping("/{id}")
-    public PostDetailResponseDto get(@PathVariable Integer id) {
-        return postService.find(id);
+    public PostDetailResponseDto get(@AuthenticationPrincipal SecurityUser principal, @PathVariable Integer id) {
+        return postService.find(principal.getMember(), id);
     }
 
     // 파일 다운로드

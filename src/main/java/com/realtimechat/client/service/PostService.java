@@ -75,7 +75,7 @@ public class PostService {
 
         for (Post post : posts) {
             PostResponseDto postResponseDto = new PostResponseDto(post);
-            postResponseDto.setFavorite(favoriteRepository.countByPost(post)); // 좋아요 수 
+            postResponseDto.setFavoriteCount(favoriteRepository.countByPost(post)); // 좋아요 수 
             postResponseDto.setCommentCount(commentRepository.countByPost(post)); // 댓글 수
             // 좋아요 여부
             Favorite favorite = favoriteRepository.findByMemberAndPost(member, post);
@@ -93,9 +93,21 @@ public class PostService {
     }
 
     // get
-    public PostDetailResponseDto find(Integer id) {
+    public PostDetailResponseDto find(Member member, Integer id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
-        return new PostDetailResponseDto(post);
+        PostDetailResponseDto postDetailResponseDto = new PostDetailResponseDto(post);
+
+        postDetailResponseDto.setFavoriteCount(favoriteRepository.countByPost(post)); // 좋아요 수
+        postDetailResponseDto.setCommentCount(favoriteRepository.countByPost(post)); // 댓글 수  
+         // 좋아요 여부
+         Favorite favorite = favoriteRepository.findByMemberAndPost(member, post);
+         if (favorite == null) {
+            postDetailResponseDto.setFavorite(false);
+         } else {
+            postDetailResponseDto.setFavorite(true);
+         }
+
+        return postDetailResponseDto;
     }
 
     // create
