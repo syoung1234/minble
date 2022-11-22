@@ -48,6 +48,13 @@ public class PostService {
         List<FollowResponseDto> follow = followRepository.findByMember(member);
         List<Map<String,Object>> listmap = new ArrayList<Map<String, Object>>();
         List<Member> memberList = new ArrayList<>();
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        // role이 star일 경우 자기 자신 게시글 보여주고 글 작성 권한이 있음
+        if (member.getRole().toString().equals("ROLE_STAR")) {
+            result.put("role", "star");
+            nickname = member.getNickname();
+        }
 
         if (nickname == null || nickname == "") {
             /*************** 팔로잉 목록 ***************/
@@ -65,7 +72,7 @@ public class PostService {
             Member following = memberRepository.findByNickname(nickname);
             memberList.add(following);            
         }
-        Map<String, Object> result = new HashMap<String, Object>();
+        
         result.put("following", listmap);
         
 
@@ -88,6 +95,7 @@ public class PostService {
         }
 
         result.put("postList", postList);
+
 
         return result;
     }
