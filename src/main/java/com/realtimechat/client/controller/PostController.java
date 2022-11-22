@@ -61,34 +61,35 @@ public class PostController {
             requestDto.setMember(principal.getMember());
             Post post = postService.save(requestDto);
 
-            // 이미지 업로드 
-            for (MultipartFile file : files) {
-                String originalFileName = file.getOriginalFilename();
-                String filename = new CreateFileName(originalFileName).toString();
-                Long fileSize = file.getSize();
-                String fileType = file.getContentType();
-                String savePath = System.getProperty("user.dir") + "/files/post";
-                if (!new File(savePath).exists()) {
-                    try {
-                        new File(savePath).mkdir();
-                    } catch(Exception e) {
-                        e.getStackTrace();
+            if (files != null) {
+                // 이미지 업로드 
+                for (MultipartFile file : files) {
+                    String originalFileName = file.getOriginalFilename();
+                    String filename = new CreateFileName(originalFileName).toString();
+                    Long fileSize = file.getSize();
+                    String fileType = file.getContentType();
+                    String savePath = System.getProperty("user.dir") + "/files/post";
+                    if (!new File(savePath).exists()) {
+                        try {
+                            new File(savePath).mkdir();
+                        } catch(Exception e) {
+                            e.getStackTrace();
+                        }
                     }
-                }
-                String filePath = savePath + "/" + filename;
-                file.transferTo(new File(filePath));
+                    String filePath = savePath + "/" + filename;
+                    file.transferTo(new File(filePath));
     
-                PostFileRequestDto postFileRequestDto = new PostFileRequestDto();
-                postFileRequestDto.setOriginalFileName(originalFileName);
-                postFileRequestDto.setFilename(filename);
-                postFileRequestDto.setFilePath(filePath);
-                postFileRequestDto.setFileSize(fileSize);
-                postFileRequestDto.setFileType(fileType);
-                postFileRequestDto.setPost(post);
-                
-                postFileService.save(postFileRequestDto);
+                    PostFileRequestDto postFileRequestDto = new PostFileRequestDto();
+                    postFileRequestDto.setOriginalFileName(originalFileName);
+                    postFileRequestDto.setFilename(filename);
+                    postFileRequestDto.setFilePath(filePath);
+                    postFileRequestDto.setFileSize(fileSize);
+                    postFileRequestDto.setFileType(fileType);
+                    postFileRequestDto.setPost(post);
+                    
+                    postFileService.save(postFileRequestDto);
+                }
             }
-            
 
 
         } catch(Exception e) {
