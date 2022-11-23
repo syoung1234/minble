@@ -1,5 +1,7 @@
 package com.realtimechat.client.controller;
 
+import java.util.Map;
+
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.dto.request.FavoriteRequestDto;
@@ -24,7 +26,7 @@ public class FavoriteController {
 
     // 좋아요 추가/취소
     @PostMapping
-    public String save(@AuthenticationPrincipal SecurityUser principal, @RequestBody FavoriteRequestDto favoriteRequestDto) {
+    public Map<String, String> save(@AuthenticationPrincipal SecurityUser principal, @RequestBody FavoriteRequestDto favoriteRequestDto) {
         Post post = postRepository.findById(favoriteRequestDto.getPostId()).get();
 
         favoriteRequestDto.setMember(principal.getMember());
