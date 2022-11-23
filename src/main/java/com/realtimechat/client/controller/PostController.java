@@ -19,6 +19,8 @@ import com.realtimechat.client.util.CreateFileName;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,8 +50,9 @@ public class PostController {
 
     // 목록
     @GetMapping()
-    public Map<String, Object> list(@AuthenticationPrincipal SecurityUser principal ,@RequestParam(value = "nickname", required=false) String nickname) {
-        return postService.list(principal.getMember(), nickname);
+    public Map<String, Object> list(@AuthenticationPrincipal SecurityUser principal, 
+    @RequestParam(value = "nickname", required=false) String nickname, @PageableDefault Pageable pageable) {
+        return postService.list(principal.getMember(), nickname, pageable);
     }
 
     // 생성 

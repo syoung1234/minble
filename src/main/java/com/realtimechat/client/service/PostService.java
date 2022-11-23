@@ -19,6 +19,8 @@ import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.repository.PostRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +46,7 @@ public class PostService {
     private final FavoriteRepository favoriteRepository;
 
     // list
-    public Map<String, Object> list(Member member, String nickname) {
+    public Map<String, Object> list(Member member, String nickname, Pageable pageable) {
         List<FollowResponseDto> follow = followRepository.findByMember(member);
         List<Map<String,Object>> listmap = new ArrayList<Map<String, Object>>();
         List<Member> memberList = new ArrayList<>();
@@ -77,7 +79,7 @@ public class PostService {
         
 
         /*************** 팔로잉한 게시글 목록 ***************/
-        List<Post> posts = postRepository.findByMember(memberList);
+        Page<Post> posts = postRepository.findByMemberOrderByCreatedAtDesc(memberList, pageable);
         List<PostResponseDto> postList = new ArrayList<>();
 
         for (Post post : posts) {
@@ -96,6 +98,12 @@ public class PostService {
 
         result.put("postList", postList);
 
+        // page
+        Map<String, Integer> pageList = new HashMap<>();
+        pageList.put("page", posts.getNumber());
+        pageList.put("totalPages", posts.getTotalPages());
+        pageList.put("nextPage", pageable.next().getPageNumber());
+        result.put("pageList", pageList);
 
         return result;
     }
