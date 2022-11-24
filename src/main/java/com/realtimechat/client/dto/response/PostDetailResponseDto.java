@@ -72,6 +72,8 @@ public class PostDetailResponseDto {
         private String nickname;
         private String content;
         private String createdAt;
+        private String profilePath;
+        private Integer commentId;
 
         static List<PostAndComment> commentList(List<Comment> comments) {
             List<PostAndComment> commentList = new ArrayList<>();
@@ -83,7 +85,9 @@ public class PostDetailResponseDto {
         }
 
         public PostAndComment(Comment comment) {
+            this.commentId = comment.getId();
             this.nickname = comment.getMember().getNickname();
+            this.profilePath = comment.getMember().getProfilePath();
             this.content = comment.getContent();
             this.createdAt = comment.getCreated_at().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         }
