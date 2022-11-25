@@ -1,28 +1,20 @@
 package com.realtimechat.client.controller;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.domain.Post;
-import com.realtimechat.client.domain.PostFile;
 import com.realtimechat.client.dto.request.PostFileRequestDto;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.PostDetailResponseDto;
-import com.realtimechat.client.repository.PostFileRepository;
 import com.realtimechat.client.service.PostFileService;
 import com.realtimechat.client.service.PostService;
 import com.realtimechat.client.util.CreateFileName;
 
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,7 +37,6 @@ public class PostController {
 
     private final PostService postService;
     private final PostFileService postFileService;
-    private final PostFileRepository postFileRepository;
 
     // 목록
     @GetMapping()
@@ -116,20 +106,6 @@ public class PostController {
         return postService.find(principal.getMember(), id);
     }
 
-    // 파일 다운로드
-    @GetMapping("/download/{filename}")
-    public ResponseEntity<Resource> download(@PathVariable String filename) throws MalformedURLException {
-        PostFile file = postFileRepository.findByFilename(filename);
-        UrlResource urlResource = new UrlResource("file:" + file.getFilePath());
-
-        // 업로드 한 파일명이 한글인 경우
-        String encodedFileName = UriUtils.encode(file.getFilename(), StandardCharsets.UTF_8);
-        // 파일 다운로드 상자가 뜨도록 헤더 설정
-        String contentDisposition = "attachment; filename=\"" + encodedFileName + "\"";
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition).body(urlResource);
-    }
-    
 
     // 삭제
     @DeleteMapping("/{id}/delete")
