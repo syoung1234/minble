@@ -35,28 +35,28 @@ public class PostController {
 
     // 목록
     @GetMapping()
-    public Map<String, Object> list(@AuthenticationPrincipal SecurityUser principal, 
+    public ResponseEntity<Map<String, Object>> list(@AuthenticationPrincipal SecurityUser principal, 
     @RequestParam(value = "nickname", required=false) String nickname, @PageableDefault Pageable pageable) {
-        return postService.list(principal.getMember(), nickname, pageable);
+        Map<String, Object> response = postService.list(principal.getMember(), nickname, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 생성 
     @PostMapping(value = "/create")
-    public String create(@ModelAttribute PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
+    public ResponseEntity<String> create(@ModelAttribute PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
         
         requestDto.setMember(principal.getMember());
         postService.save(requestDto);
 
-        return "success";
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("success");
     }
     
     // 수정 
     @PutMapping("{id}/update")
-    public String update(@PathVariable Integer id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
-
+    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
         requestDto.setMember(principal.getMember());
-        
-        return postService.update(id, requestDto);
+        String response = postService.update(id, requestDto);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
 
     // 조회
@@ -70,8 +70,9 @@ public class PostController {
 
     // 삭제
     @DeleteMapping("/{id}/delete")
-    public String delete(@PathVariable Integer id, @AuthenticationPrincipal SecurityUser principal) {
-        return postService.delete(id, principal.getMember());
+    public ResponseEntity<String> delete(@PathVariable Integer id, @AuthenticationPrincipal SecurityUser principal) {
+        String response = postService.delete(id, principal.getMember());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
     
 
