@@ -14,6 +14,7 @@ import com.realtimechat.client.service.PostService;
 import com.realtimechat.client.util.CreateFileName;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -102,8 +103,9 @@ public class PostController {
 
     // 조회
     @GetMapping("/{id}")
-    public PostDetailResponseDto get(@AuthenticationPrincipal SecurityUser principal, @PathVariable Integer id) {
-        return postService.find(principal.getMember(), id);
+    public PostDetailResponseDto get(@AuthenticationPrincipal SecurityUser principal, @PathVariable Integer id,
+                                    @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return postService.find(principal.getMember(), id, pageable);
     }
 
 

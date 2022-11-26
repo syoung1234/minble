@@ -1,11 +1,13 @@
 package com.realtimechat.client.service;
 
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.realtimechat.client.domain.Comment;
 import com.realtimechat.client.domain.Favorite;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
@@ -109,12 +111,39 @@ public class PostService {
     }
 
     // get
-    public PostDetailResponseDto find(Member member, Integer id) {
+    public PostDetailResponseDto find(Member member, Integer id, Pageable pageable) {
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
-        PostDetailResponseDto postDetailResponseDto = new PostDetailResponseDto(post);
 
+        Page<Comment> comments = commentRepository.findByPost(post, pageable);
+
+        PostDetailResponseDto postDetailResponseDto = new PostDetailResponseDto(post);
+        
+        // 댓글 목록
+        List<Map<String, Object>> commentList = new ArrayList<Map<String, Object>>();
+        for (Comment comment : comments) {
+            System.out.println(comment);
+            Map<String, Object> commentMap = new HashMap<String, Object>();
+
+            commentMap.put("id", comment.getId());
+            commentMap.put("nickname", comment.getMember().getNickname());
+            commentMap.put("profilePath", comment.getMember().getProfilePath());
+            commentMap.put("content", comment.getContent());
+            commentMap.put("createdAt", comment.getCreated_at().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")));
+
+            commentList.add(commentMap);
+        }
+
+        // 페이지 정보
+        Map<String, Integer> pageList = new HashMap<>();
+        pageList.put("page", comments.getNumber());
+        pageList.put("totalPages", comments.getTotalPages());
+        pageList.put("nextPage", pageable.next().getPageNumber());
+
+        postDetailResponseDto.setCommentList(commentList); // 댓글 목록 
         postDetailResponseDto.setFavoriteCount(favoriteRepository.countByPost(post)); // 좋아요 수
-        postDetailResponseDto.setCommentCount(favoriteRepository.countByPost(post)); // 댓글 수  
+        postDetailResponseDto.setCommentCount(favoriteRepository.countByPost(post)); // 댓글 수 
+        postDetailResponseDto.setPageList(pageList);
+
          // 좋아요 여부
          Favorite favorite = favoriteRepository.findByMemberAndPost(member, post);
          if (favorite == null) {
