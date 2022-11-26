@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,6 +47,7 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final FavoriteRepository favoriteRepository;
+    private final PostFileService postFileService;
 
     // list
     public Map<String, Object> list(Member member, String nickname, Pageable pageable) {
@@ -158,14 +160,27 @@ public class PostService {
     // create
     @Transactional
     public Post save(PostRequestDto requestDto) {
-        return postRepository.save(requestDto.toEntity());
+        Post post = postRepository.save(requestDto.toEntity());
+        List<MultipartFile> files = requestDto.getFiles();
+        
+        if (files != null) {
+            postFileService.uploadSave(files, post);
+        }
+
+        return post;
     }
     
     // update
     @Transactional
     public String update(Integer id, PostRequestDto requestDto) {
         String message = "fail";
+        List<MultipartFile> files = requestDto.getFiles();
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+
+        // 이미지 업로드
+        if (files != null) {
+            postFileService.uploadSave(files, post);
+        }
 
         // 작성자만 수정 가능 
         if (postRepository.findById(id).get().getMember().getId().equals(requestDto.getMember().getId())) {
@@ -191,5 +206,8 @@ public class PostService {
         return message;
         
     }
+
+
+    
 
 }
