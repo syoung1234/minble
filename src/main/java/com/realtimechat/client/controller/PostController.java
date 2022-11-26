@@ -3,6 +3,7 @@ package com.realtimechat.client.controller;
 import java.util.Map;
 
 import com.realtimechat.client.config.security.SecurityUser;
+import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.PostDetailResponseDto;
 import com.realtimechat.client.service.PostService;
@@ -46,9 +47,9 @@ public class PostController {
     public ResponseEntity<String> create(@ModelAttribute PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
         
         requestDto.setMember(principal.getMember());
-        postService.save(requestDto);
+        String response = postService.save(requestDto);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("success");
+        return ResponseEntity.ok(response);
     }
     
     // 수정 
@@ -56,7 +57,7 @@ public class PostController {
     public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
         requestDto.setMember(principal.getMember());
         String response = postService.update(id, requestDto);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 조회
@@ -72,7 +73,7 @@ public class PostController {
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> delete(@PathVariable Integer id, @AuthenticationPrincipal SecurityUser principal) {
         String response = postService.delete(id, principal.getMember());
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
     
 
