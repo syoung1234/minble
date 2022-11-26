@@ -123,7 +123,6 @@ public class PostService {
         // 댓글 목록
         List<Map<String, Object>> commentList = new ArrayList<Map<String, Object>>();
         for (Comment comment : comments) {
-            System.out.println(comment);
             Map<String, Object> commentMap = new HashMap<String, Object>();
 
             commentMap.put("id", comment.getId());
@@ -159,15 +158,15 @@ public class PostService {
 
     // create
     @Transactional
-    public Post save(PostRequestDto requestDto) {
+    public String save(PostRequestDto requestDto) {
         Post post = postRepository.save(requestDto.toEntity());
         List<MultipartFile> files = requestDto.getFiles();
-        
+
         if (files != null) {
             postFileService.uploadSave(files, post);
         }
 
-        return post;
+        return "success";
     }
     
     // update
@@ -175,15 +174,20 @@ public class PostService {
     public String update(Integer id, PostRequestDto requestDto) {
         String message = "fail";
         List<MultipartFile> files = requestDto.getFiles();
+        List<String> deleteList = requestDto.getDeleteList();
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
-        // 이미지 업로드
-        if (files != null) {
-            postFileService.uploadSave(files, post);
-        }
 
         // 작성자만 수정 가능 
         if (postRepository.findById(id).get().getMember().getId().equals(requestDto.getMember().getId())) {
+            // 이미지 업로드
+            if (files != null) {
+                postFileService.uploadSave(files, post);
+            }
+            // 이미지 삭제
+            if (deleteList != null) {
+                postFileService.delete(deleteList);
+            }
             post.update(requestDto.getContent());
             message = "success";
         } 
@@ -202,12 +206,9 @@ public class PostService {
             postRepository.delete(post);
             message = "success";
         }
-
         return message;
         
     }
-
-
     
 
 }

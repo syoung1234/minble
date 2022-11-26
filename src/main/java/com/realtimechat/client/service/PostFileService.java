@@ -6,6 +6,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import com.realtimechat.client.domain.Post;
+import com.realtimechat.client.domain.PostFile;
 import com.realtimechat.client.dto.request.PostFileRequestDto;
 import com.realtimechat.client.repository.PostFileRepository;
 import com.realtimechat.client.util.CreateFileName;
@@ -25,11 +26,15 @@ public class PostFileService {
     public void uploadSave(List<MultipartFile> files, Post post) {
         try {
             for (MultipartFile file : files) {
+                if (file == null) {
+                    continue;
+                }
                 String originalFileName = file.getOriginalFilename();
                 String filename = new CreateFileName(originalFileName).toString();
                 Long fileSize = file.getSize();
                 String fileType = file.getContentType();
-                String savePath = System.getProperty("user.dir") + "/files/post";
+                String folder = "/files/post";
+                String savePath = System.getProperty("user.dir") + folder;
                 if (!new File(savePath).exists()) {
                     try {
                         new File(savePath).mkdir();
@@ -37,8 +42,8 @@ public class PostFileService {
                         e.getStackTrace();
                     }
                 }
-                String filePath = savePath + "/" + filename;
-                file.transferTo(new File(filePath));
+                String filePath = folder + "/" + filename;
+                file.transferTo(new File(savePath + "/" + filename));
     
                 PostFileRequestDto postFileRequestDto = new PostFileRequestDto();
                 postFileRequestDto.setOriginalFileName(originalFileName);
@@ -55,5 +60,15 @@ public class PostFileService {
             e.printStackTrace();
         }
         
+    }
+
+    // 이미지 삭제
+    @Transactional
+    public String delete(List<String> deleteList) {
+        for (String filename : deleteList) {
+            PostFile postFile = postFileRepository.findByFilename(filename);
+            postFileRepository.delete(postFile);
+        }
+        return "success";
     }
 }

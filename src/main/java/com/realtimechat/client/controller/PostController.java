@@ -3,7 +3,6 @@ package com.realtimechat.client.controller;
 import java.util.Map;
 
 import com.realtimechat.client.config.security.SecurityUser;
-import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.PostDetailResponseDto;
 import com.realtimechat.client.service.PostService;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,7 +52,7 @@ public class PostController {
     
     // 수정 
     @PutMapping("{id}/update")
-    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
+    public ResponseEntity<String> update(@PathVariable Integer id, @ModelAttribute PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
         requestDto.setMember(principal.getMember());
         String response = postService.update(id, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -73,7 +71,7 @@ public class PostController {
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> delete(@PathVariable Integer id, @AuthenticationPrincipal SecurityUser principal) {
         String response = postService.delete(id, principal.getMember());
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
     
 

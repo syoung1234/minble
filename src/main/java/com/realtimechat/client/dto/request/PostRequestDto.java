@@ -22,12 +22,14 @@ public class PostRequestDto {
     private String content;
     private Member member;
     private List<MultipartFile> files;
+    private List<String> deleteList;
 
     @Builder
-    public PostRequestDto(String content, Member member, List<MultipartFile> files) {
+    public PostRequestDto(String content, Member member, List<MultipartFile> files, List<String> deleteList) {
         this.content = content;
         this.member = member;
         this.files = files;
+        this.deleteList = deleteList;
     }
 
     public Post toEntity() {
