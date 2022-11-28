@@ -142,7 +142,7 @@ public class PostService {
 
         postDetailResponseDto.setCommentList(commentList); // 댓글 목록 
         postDetailResponseDto.setFavoriteCount(favoriteRepository.countByPost(post)); // 좋아요 수
-        postDetailResponseDto.setCommentCount(favoriteRepository.countByPost(post)); // 댓글 수 
+        postDetailResponseDto.setCommentCount(commentRepository.countByPost(post)); // 댓글 수 
         postDetailResponseDto.setPageList(pageList);
 
          // 좋아요 여부
