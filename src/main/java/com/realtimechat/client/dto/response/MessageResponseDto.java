@@ -1,14 +1,14 @@
-package com.realtimechat.client.dto;
+package com.realtimechat.client.dto.response;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @ToString
-public class SocketDto {
+public class MessageResponseDto {
     private String nickname;
-    private String content;
     private String channel;
     private String profilePath;
-    
 }
