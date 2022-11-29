@@ -26,6 +26,7 @@ public class MessageController {
     @MessageMapping("/receive")
     @SendTo("/send")
     public void SocketHandler(MessageRequestDto messageRequestDto) {
+        messageService.save(messageRequestDto);
         simpMessagingTemplate.convertAndSend("/send/" + messageRequestDto.getChannel(), messageRequestDto);
         //return socketDto;
     }

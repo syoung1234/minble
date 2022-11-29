@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Subscriber;
+import com.realtimechat.client.dto.request.MessageRequestDto;
 import com.realtimechat.client.dto.response.MessageResponseDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.repository.MessageRepository;
 import com.realtimechat.client.repository.SubscriberRepository;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class MessageService {
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final SubscriberRepository subscriberRepository;
+    private final MessageRepository messageRepository;
 
     public MessageResponseDto get(Member member, String nickname) {
         MessageResponseDto messageResponseDto = new MessageResponseDto();
@@ -42,5 +45,16 @@ public class MessageService {
         messageResponseDto.setNickname(member.getNickname());
 
         return messageResponseDto;
+    }
+
+    public void save(MessageRequestDto messageRequestDto) {
+        Member member = memberRepository.findByNickname(messageRequestDto.getNickname());
+        ChatRoom chatRoom = chatRoomRepository.findByChannel(messageRequestDto.getChannel());
+        
+        messageRequestDto.setMember(member);
+        messageRequestDto.setChatRoom(chatRoom);
+
+        messageRepository.save(messageRequestDto.toEntity());
+        
     }
 }
