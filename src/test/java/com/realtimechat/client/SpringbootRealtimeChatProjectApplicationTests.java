@@ -1,14 +1,22 @@
 package com.realtimechat.client;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Follow;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.Role;
+import com.realtimechat.client.domain.Subscriber;
 import com.realtimechat.client.dto.request.FollowRequestDto;
 import com.realtimechat.client.dto.request.PostRequestDto;
+import com.realtimechat.client.repository.ChatRoomRepository;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.repository.PostRepository;
+import com.realtimechat.client.repository.SubscriberRepository;
 import com.realtimechat.client.service.FollowService;
 import com.realtimechat.client.service.PostService;
 
@@ -28,7 +36,11 @@ class SpringbootRealtimeChatProjectApplicationTests {
 	private FollowRepository followRepository;
 	@Autowired
 	private PostRepository postRepository;
-	
+	@Autowired
+	private ChatRoomRepository chatRoomRepository;
+	@Autowired
+	private SubscriberRepository subscriberRepository;
+
 	
 	// @Test
 	// void contextLoads() {
@@ -79,5 +91,41 @@ class SpringbootRealtimeChatProjectApplicationTests {
 	// 		}
 	// 	}
 	// }
+
+	// @Test
+	// void insertChatRomm() {
+	// 	// 채팅방 데이터 추가
+	// 	List<Member> memberList = memberRepository.findByRole(Role.ROLE_STAR);
+
+	// 	for (Member member : memberList) {
+	// 		ChatRoom chatRoom = new ChatRoom();
+	// 		chatRoom.setMember(member);
+	// 		chatRoom.setChannel(member.getNickname());
+	// 		chatRoomRepository.save(chatRoom);
+	// 	}
+	// }
+
+	// @Test
+	// void insertSubscriber() {
+	// 	// 구독자 데이터 생성
+	// 	List<Member> memberList = memberRepository.findByRole(Role.ROLE_MEMBER);
+	// 	Integer count = 0;
+	// 	Optional<ChatRoom> chatRoom = chatRoomRepository.findById(235);
+	// 	for (Member member : memberList) {
+	// 		count++;
+	// 		if(count > 5) {
+	// 			break;
+	// 		}
+
+	// 		Subscriber subscriber = new Subscriber();
+	// 		subscriber.setMember(member);
+	// 		subscriber.setChatRoom(chatRoom.orElse(null));
+	// 		subscriber.setExpiredAt(LocalDateTime.now().plusMonths(1));
+	// 		member.setRole(Role.ROLE_SUBSCRIBER);
+	// 		memberRepository.save(member);
+	// 		subscriberRepository.save(subscriber);
+	// 	}
+	// }
+
 
 }
