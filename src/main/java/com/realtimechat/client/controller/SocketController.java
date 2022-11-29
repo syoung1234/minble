@@ -4,18 +4,24 @@ import com.realtimechat.client.dto.SocketDto;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
 public class SocketController {
+
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @MessageMapping("/receive")
 
     @SendTo("/send")
 
-    public SocketDto SocketHandler(SocketDto socketDto) {
-
-        return socketDto;
+    public void SocketHandler(SocketDto socketDto) {
+        simpMessagingTemplate.convertAndSend("/send/" + socketDto.getChannel(), socketDto);
+        //return socketDto;
     }
     
 }
