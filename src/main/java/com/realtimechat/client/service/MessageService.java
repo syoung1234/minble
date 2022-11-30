@@ -1,11 +1,13 @@
 package com.realtimechat.client.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Subscriber;
 import com.realtimechat.client.dto.request.MessageRequestDto;
+import com.realtimechat.client.dto.response.MessageDetailResponse;
 import com.realtimechat.client.dto.response.MessageResponseDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
 import com.realtimechat.client.repository.MemberRepository;
@@ -40,9 +42,13 @@ public class MessageService {
             return null;
         }
 
+        List<MessageDetailResponse> messageDetailResponse = messageRepository.findByChatRoomOrderByIdAsc(chatRoom);
+
         messageResponseDto.setChannel(chatRoom.getChannel());
         messageResponseDto.setProfilePath(member.getProfilePath());
         messageResponseDto.setNickname(member.getNickname());
+        messageResponseDto.setMessageList(messageDetailResponse);
+
 
         return messageResponseDto;
     }
@@ -50,7 +56,7 @@ public class MessageService {
     public void save(MessageRequestDto messageRequestDto) {
         Member member = memberRepository.findByNickname(messageRequestDto.getNickname());
         ChatRoom chatRoom = chatRoomRepository.findByChannel(messageRequestDto.getChannel());
-        
+
         messageRequestDto.setMember(member);
         messageRequestDto.setChatRoom(chatRoom);
 
