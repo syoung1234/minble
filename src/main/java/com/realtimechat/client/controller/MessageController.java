@@ -1,7 +1,9 @@
 package com.realtimechat.client.controller;
 
 import com.realtimechat.client.config.security.SecurityUser;
+import com.realtimechat.client.domain.Message;
 import com.realtimechat.client.dto.request.MessageRequestDto;
+import com.realtimechat.client.dto.response.MessageDetailResponse;
 import com.realtimechat.client.dto.response.MessageResponseDto;
 import com.realtimechat.client.service.MessageService;
 
@@ -26,8 +28,9 @@ public class MessageController {
     @MessageMapping("/receive")
     @SendTo("/send")
     public void SocketHandler(MessageRequestDto messageRequestDto) {
-        messageService.save(messageRequestDto);
-        simpMessagingTemplate.convertAndSend("/send/" + messageRequestDto.getChannel(), messageRequestDto);
+        Message message =  messageService.save(messageRequestDto);
+        MessageDetailResponse messageDetailResponse = new MessageDetailResponse(message);
+        simpMessagingTemplate.convertAndSend("/send/" + messageRequestDto.getChannel(), messageDetailResponse);
         //return socketDto;
     }
 

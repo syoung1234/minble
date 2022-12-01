@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Member;
+import com.realtimechat.client.domain.Message;
 import com.realtimechat.client.domain.Subscriber;
 import com.realtimechat.client.dto.request.MessageRequestDto;
 import com.realtimechat.client.dto.response.MessageDetailResponse;
@@ -53,14 +54,15 @@ public class MessageService {
         return messageResponseDto;
     }
 
-    public void save(MessageRequestDto messageRequestDto) {
+    public Message save(MessageRequestDto messageRequestDto) {
         Member member = memberRepository.findByNickname(messageRequestDto.getNickname());
         ChatRoom chatRoom = chatRoomRepository.findByChannel(messageRequestDto.getChannel());
 
         messageRequestDto.setMember(member);
         messageRequestDto.setChatRoom(chatRoom);
 
-        messageRepository.save(messageRequestDto.toEntity());
+        Message message = messageRepository.save(messageRequestDto.toEntity());
         
+        return message;
     }
 }
