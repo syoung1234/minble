@@ -36,6 +36,7 @@ public class MessageController {
 
     @GetMapping("/api/message/{nickname}")
     public ResponseEntity<MessageResponseDto> get(@AuthenticationPrincipal SecurityUser principal, @PathVariable String nickname) {
+        // 권한 확인
         MessageResponseDto response = messageService.get(principal.getMember(), nickname);
 
         return ResponseEntity.ok(response);

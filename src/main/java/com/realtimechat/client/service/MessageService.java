@@ -40,7 +40,10 @@ public class MessageService {
 
         // 구독자가 아니거나 구독 기간이 끝났다면 접근 불가
         if (subscriber == null || subscriber.getExpiredAt().isBefore(LocalDateTime.now()) == true) {
-            return null;
+            // publisher 가 아닐 경우
+            if (!member.getNickname().equals(nickname)) {
+                return null;
+            }
         }
 
         List<MessageDetailResponse> messageDetailResponse = messageRepository.findByChatRoomOrderByIdAsc(chatRoom);
