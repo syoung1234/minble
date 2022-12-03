@@ -1,13 +1,20 @@
 package com.realtimechat.client.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import com.realtimechat.client.config.security.JwtTokenProvider;
+import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
+import com.realtimechat.client.dto.response.MemberResponseDto;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.service.MemberService;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +31,7 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     // 회원가입
     @PostMapping("/register")
@@ -71,5 +79,17 @@ public class MemberController {
     }
 
 
+    // 팔로우 리스트 
+    @GetMapping("/follow/list")
+    public ResponseEntity<List<MemberResponseDto>>followList(@AuthenticationPrincipal SecurityUser principal) {
+        Member member = null;
+        
+        if (principal != null) { // 로그인 한 유저 
+            member = principal.getMember();
+        } 
+
+        List<MemberResponseDto> response = memberService.followList(member);
+        return ResponseEntity.ok(response);
+    }
     
 }
