@@ -18,9 +18,14 @@ public class MyPageController {
     
     @GetMapping
     public ResponseEntity<MyPageResponseDto> get(@AuthenticationPrincipal SecurityUser principal) {
-        MyPageResponseDto myPageResponseDto = new MyPageResponseDto();
-        myPageResponseDto.setNickname(principal.getMember().getNickname());
+        if (principal != null) {
+            MyPageResponseDto myPageResponseDto = new MyPageResponseDto();
+            myPageResponseDto.setNickname(principal.getMember().getNickname());
 
-        return ResponseEntity.ok(myPageResponseDto);
+            return ResponseEntity.ok(myPageResponseDto);
+        } else {
+            return ResponseEntity.ok(null);
+        }
+        
     }
 }
