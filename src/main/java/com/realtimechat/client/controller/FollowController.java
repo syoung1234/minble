@@ -33,9 +33,9 @@ public class FollowController {
 
     }
 
-    @DeleteMapping("{id}/delete")
-    public String delete(@PathVariable Integer id, @AuthenticationPrincipal SecurityUser principal) {
-        return followService.delete(id, principal.getMember());
+    @DeleteMapping("{nickname}/delete")
+    public String delete(@PathVariable String nickname, @AuthenticationPrincipal SecurityUser principal) {
+        return followService.delete(nickname, principal.getMember());
     }
     
 }

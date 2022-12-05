@@ -4,6 +4,7 @@ import com.realtimechat.client.domain.Follow;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.dto.request.FollowRequestDto;
 import com.realtimechat.client.repository.FollowRepository;
+import com.realtimechat.client.repository.MemberRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class FollowService {
 
     private final FollowRepository followRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public String create(FollowRequestDto requestDto) {
@@ -23,10 +25,14 @@ public class FollowService {
     }
     
     @Transactional
-    public String delete(Integer id, Member member) {
+    public String delete(String nickname, Member member) {
         String message = "fail";
-        Follow follow = followRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
-        
+        Member followingMember = memberRepository.findByNickname(nickname);
+        // Follow follow = followRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
+        Follow follow = followRepository.findByFollowingAndMember(followingMember, member);
+
+        System.out.println(follow);
+
         if (follow.getMember().getId().equals(member.getId())) { // 작성자만 삭제 가능
             followRepository.delete(follow);
             message = "success";
