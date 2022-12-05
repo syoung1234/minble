@@ -31,7 +31,7 @@ public class PostDetailResponseDto {
         this.nickname = entity.getMember().getNickname();
         this.profilePath = entity.getMember().getProfilePath();
         this.content = entity.getContent();
-        this.createdAt = entity.getCreated_at().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+        this.createdAt = entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
         this.postFileList = PostAndFile.postFileList(entity.getPostFileList());
     }
 

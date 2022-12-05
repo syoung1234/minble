@@ -23,7 +23,7 @@ public class MessageDetailResponse {
     public MessageDetailResponse(Message entity) {
         this.content = entity.getContent();
         this.nickname = entity.getMember().getNickname();
-        this.createdAt = entity.getCreated_at().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+        this.createdAt = entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
         this.channel = entity.getChatRoom().getChannel();
         this.profilePath = entity.getMember().getProfilePath();
     }
