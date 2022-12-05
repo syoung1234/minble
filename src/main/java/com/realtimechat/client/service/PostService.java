@@ -55,6 +55,7 @@ public class PostService {
         List<Map<String,Object>> listmap = new ArrayList<Map<String, Object>>();
         List<Member> memberList = new ArrayList<>();
         Map<String, Object> result = new HashMap<String, Object>();
+        Page<Post> posts;
 
         // role이 star일 경우 자기 자신 게시글 보여주고 글 작성 권한이 있음
         if (member.getRole().toString().equals("ROLE_STAR")) {
@@ -73,17 +74,16 @@ public class PostService {
                 listmap.add(followingList);
                 memberList.add(following.getFollowing());
             }
+            /*************** 팔로잉한 게시글 목록 ***************/
+            posts = postRepository.findByMemberOrderByCreatedAtDesc(memberList, pageable);
         } else {
             /*************** 특정 회원 게시글 목록 ***************/
             Member following = memberRepository.findByNickname(nickname);
-            memberList.add(following);            
+            posts = postRepository.findByMemberOrderByCreatedAtDesc(following, pageable);
         }
         
         result.put("following", listmap);
         
-
-        /*************** 팔로잉한 게시글 목록 ***************/
-        Page<Post> posts = postRepository.findByMemberOrderByCreatedAtDesc(memberList, pageable);
         List<PostResponseDto> postList = new ArrayList<>();
 
         for (Post post : posts) {
@@ -129,7 +129,7 @@ public class PostService {
             commentMap.put("nickname", comment.getMember().getNickname());
             commentMap.put("profilePath", comment.getMember().getProfilePath());
             commentMap.put("content", comment.getContent());
-            commentMap.put("createdAt", comment.getCreated_at().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")));
+            commentMap.put("createdAt", comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")));
 
             commentList.add(commentMap);
         }

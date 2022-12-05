@@ -35,7 +35,7 @@ public class PostController {
     // 목록
     @GetMapping()
     public ResponseEntity<Map<String, Object>> list(@AuthenticationPrincipal SecurityUser principal, 
-    @RequestParam(value = "nickname", required=false) String nickname, @PageableDefault Pageable pageable) {
+    @RequestParam(value = "name", required=false) String nickname, @PageableDefault Pageable pageable) {
         Map<String, Object> response = postService.list(principal.getMember(), nickname, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
