@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MessageRepository extends JpaRepository<Message, Integer> {
 
-    List<MessageDetailResponse> findByChatRoomOrderByIdAsc(ChatRoom chatRoom);
+    List<MessageDetailResponse> findByChatRoomOrderByCreatedAtAsc(ChatRoom chatRoom);
     
 }

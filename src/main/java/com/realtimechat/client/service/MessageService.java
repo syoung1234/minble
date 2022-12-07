@@ -46,7 +46,7 @@ public class MessageService {
             }
         }
 
-        List<MessageDetailResponse> messageDetailResponse = messageRepository.findByChatRoomOrderByIdAsc(chatRoom);
+        List<MessageDetailResponse> messageDetailResponse = messageRepository.findByChatRoomOrderByCreatedAtAsc(chatRoom);
 
         messageResponseDto.setChannel(chatRoom.getChannel());
         messageResponseDto.setProfilePath(member.getProfilePath());
