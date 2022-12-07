@@ -40,6 +40,11 @@ public class Subscriber extends BaseTimeEntity {
 
     private LocalDateTime expiredAt;
     
+    // 수정 
+    public void update(LocalDateTime expiredAt) {
+        this.expiredAt = expiredAt;
+    }
+
     @Builder
     public Subscriber(Member member, ChatRoom chatRoom, LocalDateTime expiredAt) {
         this.member = member;
