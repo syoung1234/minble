@@ -45,6 +45,11 @@ public class Subscriber extends BaseTimeEntity {
         this.expiredAt = expiredAt;
     }
 
+    // 구독 취소
+    public void cancel(Boolean status) {
+        this.status = status;
+    }
+
     @Builder
     public Subscriber(Member member, ChatRoom chatRoom, LocalDateTime expiredAt) {
         this.member = member;

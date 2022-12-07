@@ -37,4 +37,15 @@ public class SubscriberService {
         
         return message;
     }
+
+    // 구독 취소
+    public String cancel(Member member, String nickname) {
+        String message = "success";
+        ChatRoom chatRoom = chatRoomRepository.findByChannel(nickname);
+        Subscriber subscriber = subscriberRepository.findByMemberAndChatRoom(member, chatRoom);
+
+        subscriber.cancel(false);
+
+        return message;
+    }
 }

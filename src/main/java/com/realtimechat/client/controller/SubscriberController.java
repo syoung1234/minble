@@ -23,5 +23,12 @@ public class SubscriberController {
 
         return ResponseEntity.ok(response);
     }
-    
+
+    // 구독 취소
+    public ResponseEntity<String> cancel(@AuthenticationPrincipal SecurityUser principal, String nickname) {
+        String response = subscriberService.cancel(principal.getMember(), nickname);
+
+        return ResponseEntity.ok(response);
+    }
+
 }
