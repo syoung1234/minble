@@ -16,12 +16,14 @@ public class SubscriberRequestDto {
     private Member member;
     private ChatRoom chatRoom;
     private LocalDateTime expiredAt;
+    private Boolean status;
 
     @Builder
     public SubscriberRequestDto(Member member, ChatRoom chatRoom, LocalDateTime expiredAt) {
         this.member = member;
         this.chatRoom = chatRoom;
         this.expiredAt = expiredAt;
+        this.status = true;
     }
 
     public Subscriber toEntity() {
@@ -29,6 +31,7 @@ public class SubscriberRequestDto {
             .member(member)
             .chatRoom(chatRoom)
             .expiredAt(expiredAt)
+            .status(true)
             .build();
     }
     

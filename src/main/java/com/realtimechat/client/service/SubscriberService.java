@@ -32,7 +32,12 @@ public class SubscriberService {
             SubscriberRequestDto subscriberRequestDto = new SubscriberRequestDto(member, chatRoom, expiredAt);
             subscriberRepository.save(subscriberRequestDto.toEntity());
         } else { // 업데이트 
-            subscriber.update(expiredAt);
+            if (subscriber.isStatus() == true) {
+                message = "already registered";
+            } else {
+                subscriber.update(expiredAt);
+            }
+            
         }
         
         return message;

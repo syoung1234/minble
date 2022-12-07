@@ -12,9 +12,11 @@ import javax.persistence.ManyToOne;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -51,9 +53,10 @@ public class Subscriber extends BaseTimeEntity {
     }
 
     @Builder
-    public Subscriber(Member member, ChatRoom chatRoom, LocalDateTime expiredAt) {
+    public Subscriber(Member member, ChatRoom chatRoom, LocalDateTime expiredAt, Boolean status) {
         this.member = member;
         this.chatRoom = chatRoom;
         this.expiredAt = expiredAt;
+        this.status = true;
     }
 }
