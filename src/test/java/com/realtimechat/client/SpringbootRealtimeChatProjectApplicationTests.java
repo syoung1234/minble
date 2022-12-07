@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Follow;
 import com.realtimechat.client.domain.Member;
+import com.realtimechat.client.domain.Message;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.domain.Subscriber;
@@ -15,6 +16,7 @@ import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.repository.MessageRepository;
 import com.realtimechat.client.repository.PostRepository;
 import com.realtimechat.client.repository.SubscriberRepository;
 import com.realtimechat.client.service.FollowService;
@@ -40,6 +42,8 @@ class SpringbootRealtimeChatProjectApplicationTests {
 	private ChatRoomRepository chatRoomRepository;
 	@Autowired
 	private SubscriberRepository subscriberRepository;
+	@Autowired
+	private MessageRepository messageRepository;
 
 	
 	// @Test
@@ -124,6 +128,19 @@ class SpringbootRealtimeChatProjectApplicationTests {
 	// 		member.setRole(Role.ROLE_SUBSCRIBER);
 	// 		memberRepository.save(member);
 	// 		subscriberRepository.save(subscriber);
+	// 	}
+	// }
+
+	// @Test
+	// void insertMessage() {
+	// 	List<ChatRoom> chatRoomList = chatRoomRepository.findAll();
+	// 	for (ChatRoom chatRoom : chatRoomList) {
+	// 		Message message = new Message();
+	// 		message.setChatRoom(chatRoom);
+	// 		message.setContent("안녕하세요. "+ chatRoom.getMember().getNickname() + " 구독자만 사용 가능한 공간입니다.");
+	// 		message.setMember(chatRoom.getMember());
+
+	// 		messageRepository.save(message);
 	// 	}
 	// }
 
