@@ -21,6 +21,7 @@ public class MyPageController {
         if (principal != null) {
             MyPageResponseDto myPageResponseDto = new MyPageResponseDto();
             myPageResponseDto.setNickname(principal.getMember().getNickname());
+            myPageResponseDto.setProfilePath(principal.getMember().getProfilePath());
 
             return ResponseEntity.ok(myPageResponseDto);
         } else {
