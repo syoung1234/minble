@@ -25,4 +25,7 @@ public class ChatRoom extends BaseTimeEntity {
 
     private String channel;
     
+    public void update(String channel) {
+        this.channel = channel;
+    }
 }
