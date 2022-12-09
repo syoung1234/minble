@@ -42,4 +42,12 @@ public class MyPageController {
         String response = myPageService.updateNickname(principal.getMember(), myPageRequestDto.getNickname());
         return ResponseEntity.ok(response);
     }
+
+    // 비밀번호 변경
+    @PostMapping("/password")
+    public ResponseEntity<String> updatePassword(@RequestBody MyPageRequestDto myPageRequestDto, @AuthenticationPrincipal SecurityUser principal) {
+        System.out.println(myPageRequestDto);
+        String response = myPageService.updatePassword(principal.getMember(), myPageRequestDto);
+        return ResponseEntity.ok(response);
+    }
 }
