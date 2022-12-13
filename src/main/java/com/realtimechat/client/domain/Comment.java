@@ -1,11 +1,16 @@
 package com.realtimechat.client.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +23,8 @@ import lombok.ToString;
 @Setter
 @Entity
 @ToString
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP where comment_id = ?")
 public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue
@@ -34,7 +41,9 @@ public class Comment extends BaseTimeEntity {
     
     @Column(columnDefinition = "TEXT")
     private String content;
-    
+
+    private LocalDateTime deletedAt;
+
     @Builder
     public Comment(Member member, Post post, String content) {
         this.member = member;
