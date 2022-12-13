@@ -15,12 +15,14 @@ import org.hibernate.annotations.Where;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 @Entity
 @Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE replay SET deleted_at = CURRENT_TIMESTAMP where id = ?")
@@ -29,6 +31,10 @@ public class Reply extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reply_id")
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
@@ -40,7 +46,8 @@ public class Reply extends BaseTimeEntity {
     private LocalDateTime deletedAt;
     
     @Builder
-    public Reply(Comment comment, String content) {
+    public Reply(Member member, Comment comment, String content) {
+        this.member = member;
         this.comment = comment;
         this.content = content;
     }
