@@ -10,12 +10,14 @@ import lombok.ToString;
 @Getter
 @ToString
 public class ReplyResponseDto {
+    private Integer id;
     private String nickname;
     private String profilePath;
     private String content;
     private String createdAt;
 
     public ReplyResponseDto(Reply entity) {
+        this.id = entity.getId();
         this.nickname = entity.getMember().getNickname();
         this.profilePath = entity.getMember().getProfilePath();
         this.content = entity.getContent();

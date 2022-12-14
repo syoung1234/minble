@@ -32,12 +32,13 @@ public class ReplyService {
         List<ReplyResponseDto> response = reply.stream().map(ReplyResponseDto::new).collect(Collectors.toList());
 
         Map<String, Object> result = new HashMap<>();
-        result.put("data", response);
+        result.put("replyList", response);
 
         Map<String, Integer> pageList = new HashMap<>();
         pageList.put("page", reply.getNumber());
         pageList.put("totalPages", reply.getTotalPages());
         pageList.put("nextPage", pageable.next().getPageNumber());
+        pageList.put("size", pageable.getPageSize());
 
         result.put("pageList", pageList);
 
@@ -54,5 +55,19 @@ public class ReplyService {
         replyRepository.save(replyRequestDto.toEntity());
 
         return message;
+    }
+
+    // 삭제
+    public String delete(Member member, Integer replyId) {
+        String message = "fail";
+        Reply reply = replyRepository.findById(replyId).orElseThrow(() -> new IllegalArgumentException("error"));
+
+        if (member.getId().equals(reply.getMember().getId())) {
+            replyRepository.delete(reply);
+            message = "success";
+        }
+
+        return message;
+
     }
 }

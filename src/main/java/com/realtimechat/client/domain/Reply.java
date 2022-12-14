@@ -25,7 +25,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Where(clause = "deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE replay SET deleted_at = CURRENT_TIMESTAMP where id = ?")
+@SQLDelete(sql = "UPDATE reply SET deleted_at = CURRENT_TIMESTAMP where reply_id = ?")
 public class Reply extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
