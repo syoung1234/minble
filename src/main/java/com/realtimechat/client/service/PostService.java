@@ -1,17 +1,18 @@
 package com.realtimechat.client.service;
 
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.realtimechat.client.domain.Comment;
 import com.realtimechat.client.domain.Favorite;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.dto.request.PostRequestDto;
+import com.realtimechat.client.dto.response.CommentResponseDto;
 import com.realtimechat.client.dto.response.FollowResponseDto;
 import com.realtimechat.client.dto.response.PostDetailResponseDto;
 import com.realtimechat.client.dto.response.PostResponseDto;
@@ -20,6 +21,7 @@ import com.realtimechat.client.repository.FavoriteRepository;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.repository.PostRepository;
+import com.realtimechat.client.repository.ReplyRepository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +50,7 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final FavoriteRepository favoriteRepository;
     private final PostFileService postFileService;
+    private final ReplyRepository replyRepository;
 
     // list
     public Map<String, Object> list(Member member, String nickname, Pageable pageable) {
@@ -119,20 +122,13 @@ public class PostService {
         Page<Comment> comments = commentRepository.findByPost(post, pageable);
 
         PostDetailResponseDto postDetailResponseDto = new PostDetailResponseDto(post);
-        
-        // 댓글 목록
-        List<Map<String, Object>> commentList = new ArrayList<Map<String, Object>>();
+
         for (Comment comment : comments) {
-            Map<String, Object> commentMap = new HashMap<String, Object>();
-
-            commentMap.put("id", comment.getId());
-            commentMap.put("nickname", comment.getMember().getNickname());
-            commentMap.put("profilePath", comment.getMember().getProfilePath());
-            commentMap.put("content", comment.getContent());
-            commentMap.put("createdAt", comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")));
-
-            commentList.add(commentMap);
+            System.out.println(comment);
         }
+        // 댓글 목록
+        List<CommentResponseDto> commentList = comments.stream().map(CommentResponseDto::new).collect(Collectors.toList());
+        
 
         // 페이지 정보
         Map<String, Integer> pageList = new HashMap<>();

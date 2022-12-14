@@ -23,7 +23,7 @@ public class PostDetailResponseDto {
     private Long favoriteCount;
     private Long commentCount;
     private Boolean favorite;
-    private List<Map<String, Object>> commentList;
+    private List<CommentResponseDto> commentList;
     private Map<String, Integer> pageList;
 
     public PostDetailResponseDto(Post entity) {
@@ -47,7 +47,7 @@ public class PostDetailResponseDto {
         this.favorite = favorite;
     }
 
-    public void setCommentList(List<Map<String, Object>> commentList) {
+    public void setCommentList(List<CommentResponseDto> commentList) {
         this.commentList = commentList;
     }
 
