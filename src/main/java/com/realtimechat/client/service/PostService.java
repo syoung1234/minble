@@ -21,7 +21,6 @@ import com.realtimechat.client.repository.FavoriteRepository;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.repository.PostRepository;
-import com.realtimechat.client.repository.ReplyRepository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +49,6 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final FavoriteRepository favoriteRepository;
     private final PostFileService postFileService;
-    private final ReplyRepository replyRepository;
 
     // list
     public Map<String, Object> list(Member member, String nickname, Pageable pageable) {
@@ -122,14 +120,9 @@ public class PostService {
         Page<Comment> comments = commentRepository.findByPost(post, pageable);
 
         PostDetailResponseDto postDetailResponseDto = new PostDetailResponseDto(post);
-
-        for (Comment comment : comments) {
-            System.out.println(comment);
-        }
         // 댓글 목록
         List<CommentResponseDto> commentList = comments.stream().map(CommentResponseDto::new).collect(Collectors.toList());
         
-
         // 페이지 정보
         Map<String, Integer> pageList = new HashMap<>();
         pageList.put("page", comments.getNumber());
