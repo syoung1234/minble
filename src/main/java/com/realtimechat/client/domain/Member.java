@@ -56,6 +56,10 @@ public class Member extends BaseTimeEntity {
         this.nickname = nickname;
     }
 
+    public void updateProfile(String profilePath) {
+        this.profilePath = profilePath;
+    }
+
     public void updatePassword(String password) {
         this.password = password;
     }

@@ -1,14 +1,20 @@
 package com.realtimechat.client.service;
 
+import java.io.File;
+
+import javax.transaction.Transactional;
+
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.MyPageRequestDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.util.CreateFileName;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +27,7 @@ public class MyPageService {
     private final PasswordEncoder passwordEncoder;
 
     // 닉네임 변경
+    @Transactional
     public String updateNickname(Member member, String nickname) {
         String message = "success";
         Member m = memberRepository.findByNickname(nickname);
@@ -39,11 +46,43 @@ public class MyPageService {
             memberRepository.save(updateMember);
         }
         
-        
         return message;
     }
 
+    // 프로필 변경
+    @Transactional
+    public String updateProfile(Member member, MultipartFile profile) {
+        String message;
+        try {
+            // MultipartFile profile = myPageRequestDto.getProfile();
+            String originalFileName = profile.getOriginalFilename();
+            String filename = new CreateFileName(originalFileName).toString();
+            String folder = "/files/profile";
+            String savePath = System.getProperty("user.dir") + folder;
+            if (!new File(savePath).exists()) {
+                try {
+                    new File(savePath).mkdir();
+                } catch(Exception e) {
+                    e.getStackTrace();
+                }
+            }
+            String profilePath = folder + "/" + filename;
+            profile.transferTo(new File(savePath + "/" + filename));
+    
+            member.updateProfile(profilePath);
+            memberRepository.save(member);
+            message = "success";
+        } catch (Exception e) {
+            message = "error";
+            e.printStackTrace();
+        }
+
+        return message;
+        
+    } 
+
     // 비밀번호 변경
+    @Transactional
     public String updatePassword(Member member, MyPageRequestDto myPageRequestDto) {
         String message = "success";
         // 비밀번호 맞는지 확인
@@ -56,5 +95,4 @@ public class MyPageService {
         }
         return message;
     }
-    
 }

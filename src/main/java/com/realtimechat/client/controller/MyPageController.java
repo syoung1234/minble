@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +42,14 @@ public class MyPageController {
     @PostMapping("/nickname")
     public ResponseEntity<String> updateNickname(@RequestBody MyPageRequestDto myPageRequestDto, @AuthenticationPrincipal SecurityUser principal) {
         String response = myPageService.updateNickname(principal.getMember(), myPageRequestDto.getNickname());
+        return ResponseEntity.ok(response);
+    }
+
+    // 프로필 변경
+    @PostMapping("/profile")
+    public ResponseEntity<String> updateProfile(@RequestParam("profile") MultipartFile profile, @AuthenticationPrincipal SecurityUser principal) {
+        System.out.println(profile);
+        String response = myPageService.updateProfile(principal.getMember(), profile);
         return ResponseEntity.ok(response);
     }
 
