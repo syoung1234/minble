@@ -1,7 +1,10 @@
 package com.realtimechat.client.controller;
 
+import java.util.List;
+
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.dto.request.MyPageRequestDto;
+import com.realtimechat.client.dto.response.MyPageCommentResponseDto;
 import com.realtimechat.client.dto.response.MyPageResponseDto;
 import com.realtimechat.client.service.MyPageService;
 
@@ -24,6 +27,7 @@ public class MyPageController {
 
     private final MyPageService myPageService;
     
+    // 닉네임, 프로필 조회 
     @GetMapping
     public ResponseEntity<MyPageResponseDto> get(@AuthenticationPrincipal SecurityUser principal) {
         if (principal != null) {
@@ -59,5 +63,11 @@ public class MyPageController {
         System.out.println(myPageRequestDto);
         String response = myPageService.updatePassword(principal.getMember(), myPageRequestDto);
         return ResponseEntity.ok(response);
+    }
+
+    // 작성한 댓글+답글
+    @GetMapping("/comment")
+    public List<MyPageCommentResponseDto> getCommentList(@AuthenticationPrincipal SecurityUser principal) {
+        return myPageService.getCommentList(principal.getMember());
     }
 }

@@ -1,14 +1,19 @@
 package com.realtimechat.client.service;
 
 import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import com.realtimechat.client.domain.ChatRoom;
+import com.realtimechat.client.domain.Comment;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.MyPageRequestDto;
+import com.realtimechat.client.dto.response.MyPageCommentResponseDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
+import com.realtimechat.client.repository.CommentRepository;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.util.CreateFileName;
 
@@ -24,6 +29,7 @@ public class MyPageService {
 
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
 
     // 닉네임 변경
@@ -94,5 +100,15 @@ public class MyPageService {
             memberRepository.save(member);
         }
         return message;
+    }
+
+    // 작성한 댓글+답글
+    @Transactional
+    public List<MyPageCommentResponseDto> getCommentList(Member member) {
+        // 댓글
+        List<Comment> comments = commentRepository.findByMember(member);
+
+        List<MyPageCommentResponseDto> commentList = comments.stream().map(MyPageCommentResponseDto::new).collect(Collectors.toList());
+        return commentList;
     }
 }
