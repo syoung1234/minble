@@ -1,0 +1,26 @@
+package com.realtimechat.client.dto.response;
+
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
+import com.realtimechat.client.domain.Comment;
+
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@ToString
+public class MyPageCommentResponseDto {
+    private String content;
+    private String createdAt;
+    private String nickname;
+    private UUID id;
+
+    public MyPageCommentResponseDto(Comment entity) {
+        this.content = entity.getContent();
+        this.createdAt = entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+        this.nickname = entity.getMember().getNickname();
+        this.id = entity.getMember().getId();
+    }
+    
+}
