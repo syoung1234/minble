@@ -1,14 +1,17 @@
 package com.realtimechat.client.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -40,8 +43,9 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(name = "parent_id")
-    private Integer parentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
 
     @Column(columnDefinition="tinyint")
     private Integer depth;
@@ -52,10 +56,16 @@ public class Comment extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
 
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @ToString.Exclude
+    private List<Comment> children = new ArrayList<>();
+
     @Builder
-    public Comment(Member member, Post post, String content) {
+    public Comment(Member member, Post post, String content, Comment parent, Integer depth) {
         this.member = member;
         this.post = post;
         this.content = content;
+        this.parent = parent;
+        this.depth = depth;
     }
 }
