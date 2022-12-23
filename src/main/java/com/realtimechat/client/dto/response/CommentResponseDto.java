@@ -23,12 +23,8 @@ public class CommentResponseDto {
         this.profilePath = entity.getMember().getProfilePath();
         this.content = entity.getContent();
         this.createdAt = entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+        this.replyCount = entity.getChildren().size();
     }
 
-    public void setReplyCount(int count) {
-        this.replyCount = count;
-    }
-
-   
 }
 

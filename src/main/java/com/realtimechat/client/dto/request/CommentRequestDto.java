@@ -17,13 +17,18 @@ public class CommentRequestDto {
     private Post post;
     private String content;
     private Integer postId;
+    private Comment parent;
+    private Integer parentId;
+    private Integer depth;
 
     @Builder
-    public CommentRequestDto(Member member, Post post, String content, Integer postId) {
+    public CommentRequestDto(Member member, Post post, String content, Integer postId, Integer parentId, Integer depth) {
         this.member = member;
         this.post = post;
         this.content = content;
         this.postId = postId;
+        this.parentId = parentId;
+        this.depth = depth;
     }
 
     public Comment toEntity() {
@@ -31,6 +36,8 @@ public class CommentRequestDto {
             .member(member)
             .post(post)
             .content(content)
+            .parent(parent)
+            .depth(depth)
             .build();
     }
     

@@ -117,7 +117,7 @@ public class PostService {
     public PostDetailResponseDto find(Member member, Integer id, Pageable pageable) {
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
-        Page<Comment> comments = commentRepository.findByPost(post, pageable);
+        Page<Comment> comments = commentRepository.findByPostAndDepth(post, 0, pageable);
 
         PostDetailResponseDto postDetailResponseDto = new PostDetailResponseDto(post);
         // 댓글 목록

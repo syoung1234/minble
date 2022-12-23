@@ -14,7 +14,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     Long countByPost(Post post); // 해당 게시글 댓글 수
 
-    Page<Comment> findByPost(Post post, Pageable pageable);
+    Page<Comment> findByPostAndDepth(Post post, Integer depth, Pageable pageable);
 
     List<Comment> findByMember(Member member);
+
+    Page<Comment> findByParentId(Integer parentId, Pageable pageable);
 }
