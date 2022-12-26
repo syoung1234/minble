@@ -1,7 +1,9 @@
 package com.realtimechat.client.service;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -17,6 +19,8 @@ import com.realtimechat.client.repository.CommentRepository;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.util.CreateFileName;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -104,11 +108,22 @@ public class MyPageService {
 
     // 작성한 댓글+답글
     @Transactional
-    public List<MyPageCommentResponseDto> getCommentList(Member member) {
-        // 댓글
-        List<Comment> comments = commentRepository.findByMember(member);
+    public Map<String, Object> getCommentList(Member member, Pageable pageable) {
+        Page<Comment> comments = commentRepository.findByMember(member, pageable);
 
         List<MyPageCommentResponseDto> commentList = comments.stream().map(MyPageCommentResponseDto::new).collect(Collectors.toList());
-        return commentList;
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("commentList", commentList);
+
+        Map<String, Integer> pageList = new HashMap<>();
+        pageList.put("page", comments.getNumber());
+        pageList.put("totalPages", comments.getTotalPages());
+        pageList.put("nextPage", pageable.next().getPageNumber());
+        pageList.put("size", pageable.getPageSize());
+
+        result.put("pageList", pageList);
+        
+        return result;
     }
 }

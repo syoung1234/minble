@@ -1,13 +1,15 @@
 package com.realtimechat.client.controller;
 
-import java.util.List;
+import java.util.Map;
 
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.dto.request.MyPageRequestDto;
-import com.realtimechat.client.dto.response.MyPageCommentResponseDto;
 import com.realtimechat.client.dto.response.MyPageResponseDto;
 import com.realtimechat.client.service.MyPageService;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,7 +69,8 @@ public class MyPageController {
 
     // 작성한 댓글+답글
     @GetMapping("/comment")
-    public List<MyPageCommentResponseDto> getCommentList(@AuthenticationPrincipal SecurityUser principal) {
-        return myPageService.getCommentList(principal.getMember());
+    public Map<String, Object> getCommentList(@AuthenticationPrincipal SecurityUser principal,
+    @PageableDefault(sort="createdAt", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+        return myPageService.getCommentList(principal.getMember(), pageable);
     }
 }
