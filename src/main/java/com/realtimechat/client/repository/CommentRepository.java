@@ -1,8 +1,6 @@
 package com.realtimechat.client.repository;
 
 
-import java.util.List;
-
 import com.realtimechat.client.domain.Comment;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
@@ -16,7 +14,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     Page<Comment> findByPostAndDepth(Post post, Integer depth, Pageable pageable);
 
-    List<Comment> findByMember(Member member);
+    Page<Comment> findByMember(Member member, Pageable pageable);
 
     Page<Comment> findByParentId(Integer parentId, Pageable pageable);
 }
