@@ -6,6 +6,7 @@ import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Subscriber;
 import com.realtimechat.client.dto.request.SubscriberRequestDto;
+import com.realtimechat.client.dto.response.SubscriberResponseDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
 import com.realtimechat.client.repository.SubscriberRepository;
 
@@ -19,7 +20,26 @@ public class SubscriberService {
 
     private final SubscriberRepository subscriberRepository;
     private final ChatRoomRepository chatRoomRepository;
-    
+
+    // 페이지 조회
+    public SubscriberResponseDto get(Member member, String name) {
+        ChatRoom chatRoom = chatRoomRepository.findByChannel(name);
+        Subscriber subscriber = subscriberRepository.findByMemberAndChatRoom(member, chatRoom);
+
+        SubscriberResponseDto subscriberResponseDto = new SubscriberResponseDto();
+        
+        if (subscriber == null) {
+            subscriberResponseDto.setEmail(member.getEmail());
+            subscriberResponseDto.setNickname(member.getNickname());
+            subscriberResponseDto.setStatus(null);
+        } else {
+            subscriberResponseDto = new SubscriberResponseDto(subscriber);
+        }
+
+        return subscriberResponseDto;
+    }
+
+
     // 구독
     public String save(Member member, String nickname) {
         String message = "success";
