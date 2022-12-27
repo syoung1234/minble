@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Subscriber;
+import com.realtimechat.client.dto.request.PaymentRequestDto;
 import com.realtimechat.client.dto.request.SubscriberRequestDto;
 import com.realtimechat.client.dto.response.SubscriberResponseDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
+import com.realtimechat.client.repository.PaymentRepository;
 import com.realtimechat.client.repository.SubscriberRepository;
 
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class SubscriberService {
 
     private final SubscriberRepository subscriberRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final PaymentRepository paymentRepository;
 
     // 페이지 조회
     public SubscriberResponseDto get(Member member, String name) {
@@ -27,7 +30,7 @@ public class SubscriberService {
         Subscriber subscriber = subscriberRepository.findByMemberAndChatRoom(member, chatRoom);
 
         SubscriberResponseDto subscriberResponseDto = new SubscriberResponseDto();
-        
+
         if (subscriber == null) {
             subscriberResponseDto.setEmail(member.getEmail());
             subscriberResponseDto.setNickname(member.getNickname());
@@ -41,12 +44,19 @@ public class SubscriberService {
 
 
     // 구독
-    public String save(Member member, String nickname) {
+    public String save(Member member, PaymentRequestDto paymentRequestDto) {
         String message = "success";
+        String nickname = paymentRequestDto.getNickname();
+        
+        // 결제 저장 
+        paymentRequestDto.setMember(member);
+        paymentRepository.save(paymentRequestDto.toEntity());
+
         ChatRoom chatRoom = chatRoomRepository.findByChannel(nickname);
         LocalDateTime expiredAt = LocalDateTime.now().plusMonths(1);
 
         Subscriber subscriber = subscriberRepository.findByMemberAndChatRoom(member, chatRoom);
+
 
         if (subscriber == null) { // 생성
             SubscriberRequestDto subscriberRequestDto = new SubscriberRequestDto(member, chatRoom, expiredAt);
