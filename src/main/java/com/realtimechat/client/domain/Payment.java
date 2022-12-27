@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -35,9 +36,23 @@ public class Payment extends BaseTimeEntity {
     private String method;
 
     @Column(length = 100)
-    private String imp_uid;
+    private String impUid;
 
     @Column(length = 100)
-    private String merchant_uid;
+    private String merchantUid;
+
+    @Column(length = 20)
+    private String status;
+ 
     
+    @Builder
+    public Payment(Member member, String name, Integer amount, String method, String impUid, String merchantUid, String status) {
+        this.member = member;
+        this.name = name;
+        this.amount = amount;
+        this.method = method;
+        this.impUid = impUid;
+        this.merchantUid = merchantUid;
+        this.status = status;
+    }
 }
