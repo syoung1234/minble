@@ -67,10 +67,19 @@ public class MyPageController {
         return ResponseEntity.ok(response);
     }
 
+    // 결제 내역
+    @GetMapping("/payment")
+    public ResponseEntity<Map<String, Object>> getPaymentList(@AuthenticationPrincipal SecurityUser principal,
+    @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Map<String, Object> response = myPageService.getPaymentList(principal.getMember(), pageable);
+        return ResponseEntity.ok(response);
+    }
+
     // 작성한 댓글+답글
     @GetMapping("/comment")
     public Map<String, Object> getCommentList(@AuthenticationPrincipal SecurityUser principal,
     @PageableDefault(sort="createdAt", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
         return myPageService.getCommentList(principal.getMember(), pageable);
     }
+
 }

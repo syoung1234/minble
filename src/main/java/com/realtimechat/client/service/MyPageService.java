@@ -11,12 +11,15 @@ import javax.transaction.Transactional;
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Comment;
 import com.realtimechat.client.domain.Member;
+import com.realtimechat.client.domain.Payment;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.MyPageRequestDto;
 import com.realtimechat.client.dto.response.MyPageCommentResponseDto;
+import com.realtimechat.client.dto.response.MyPagePaymentResponseDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
 import com.realtimechat.client.repository.CommentRepository;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.repository.PaymentRepository;
 import com.realtimechat.client.util.CreateFileName;
 
 import org.springframework.data.domain.Page;
@@ -33,6 +36,7 @@ public class MyPageService {
 
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final PaymentRepository paymentRepository;
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -104,6 +108,28 @@ public class MyPageService {
             memberRepository.save(member);
         }
         return message;
+    }
+
+    // 결제 내역
+    public Map<String, Object> getPaymentList(Member member, Pageable pageable) {
+        // resposne
+        Page<Payment> payments = paymentRepository.findByMember(member, pageable);
+
+        List<MyPagePaymentResponseDto> paymentList = payments.stream().map(MyPagePaymentResponseDto::new).collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("paymentList", paymentList);
+
+        Map<String, Object> pageList = new HashMap<>();
+        pageList.put("page", payments.getNumber());
+        pageList.put("totalPages", payments.getTotalPages());
+        pageList.put("nextPage", pageable.next().getPageNumber());
+        pageList.put("size", pageable.getPageSize());
+
+        result.put("pageList", pageList);
+
+        return result;
+
     }
 
     // 작성한 댓글+답글
