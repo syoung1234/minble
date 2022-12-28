@@ -10,12 +10,14 @@ import javax.persistence.ManyToOne;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 @Entity
 public class Payment extends BaseTimeEntity {
     @Id
@@ -43,10 +45,12 @@ public class Payment extends BaseTimeEntity {
 
     @Column(length = 20)
     private String status;
- 
+
+    private String description;
+
     
     @Builder
-    public Payment(Member member, String name, Integer amount, String method, String impUid, String merchantUid, String status) {
+    public Payment(Member member, String name, Integer amount, String method, String impUid, String merchantUid, String status, String description) {
         this.member = member;
         this.name = name;
         this.amount = amount;
@@ -54,5 +58,6 @@ public class Payment extends BaseTimeEntity {
         this.impUid = impUid;
         this.merchantUid = merchantUid;
         this.status = status;
+        this.description = description;
     }
 }

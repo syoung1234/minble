@@ -19,10 +19,11 @@ public class PaymentRequestDto {
     private String buyer_name;
     private String status;
     private String nickname;
+    private String description;
 
     @Builder
     public PaymentRequestDto(Member member, String name, Integer paid_amount, String pay_method, String imp_uid, 
-    String merchant_uid, String buyer_name, String status, String nickname) {
+    String merchant_uid, String buyer_name, String status, String nickname, String description) {
         this.member = member;
         this.name = name;
         this.paid_amount = paid_amount;
@@ -32,6 +33,7 @@ public class PaymentRequestDto {
         this.buyer_name = buyer_name;
         this.status = status;
         this.nickname = nickname;
+        this.description = description;
     }
 
     public void setMember(Member member) {
@@ -47,6 +49,7 @@ public class PaymentRequestDto {
                 .impUid(imp_uid)
                 .merchantUid(merchant_uid)
                 .status(status)
+                .description(description)
                 .build();
     }
     
