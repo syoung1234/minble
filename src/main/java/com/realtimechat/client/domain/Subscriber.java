@@ -41,6 +41,9 @@ public class Subscriber extends BaseTimeEntity {
     private boolean status;
 
     private LocalDateTime expiredAt;
+
+    @Column(length = 100, unique = true)
+    private String customer_uid;
     
     // 수정 
     public void update(LocalDateTime expiredAt) {
