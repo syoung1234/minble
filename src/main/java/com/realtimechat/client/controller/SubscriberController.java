@@ -4,11 +4,14 @@ package com.realtimechat.client.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.dto.request.PaymentRequestDto;
 import com.realtimechat.client.dto.response.SubscriberResponseDto;
 import com.realtimechat.client.service.SubscriberService;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -54,7 +57,7 @@ public class SubscriberController {
 
     // test
     @PostMapping("/test")
-    public ResponseEntity<String> iamport() {
+    public Object iamport() {
         // 인증 토큰 발급 받기
         Map<String, String> req = new HashMap<>();
         req.put("imp_key", imp_key);
@@ -68,13 +71,28 @@ public class SubscriberController {
                 .body(req);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
+        ResponseEntity<JSONObject> response = restTemplate.exchange(requestEntity, JSONObject.class);
 
         System.out.println(response);
         System.out.println(response.getBody());
 
+        JSONParser jsonParser = new JSONParser();
+        ObjectMapper mapper = new ObjectMapper();
 
-        return response;
+        // object -> json 변환 
+        try {
+            String jsonStr = mapper.writeValueAsString(response.getBody().get("response"));
+            System.out.println(jsonStr);
+
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonStr);
+            System.out.println(jsonObject.get("access_token"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+
+        return response.getBody();
+    
     }
 
     // 구독 취소
