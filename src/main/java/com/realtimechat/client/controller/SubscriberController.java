@@ -13,6 +13,7 @@ import com.realtimechat.client.service.SubscriberService;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,8 @@ public class SubscriberController {
     // test
     @PostMapping("/test")
     public Object iamport() {
+
+        /******************* 토큰 발급 *******************/
         // 인증 토큰 발급 받기
         Map<String, String> req = new HashMap<>();
         req.put("imp_key", imp_key);
@@ -79,6 +82,7 @@ public class SubscriberController {
         JSONParser jsonParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
 
+        String accessToken = null;
         // object -> json 변환 
         try {
             String jsonStr = mapper.writeValueAsString(response.getBody().get("response"));
@@ -86,10 +90,34 @@ public class SubscriberController {
 
             JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonStr);
             System.out.println(jsonObject.get("access_token"));
+            accessToken = jsonObject.get("access_token").toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
         
+
+        /******************* 결제 요청 *******************/
+        // header
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        headers.add("Authorization", accessToken);
+
+        // body
+        Map<String, String> payReq = new HashMap<>();
+        payReq.put("customer_uid", "");
+        payReq.put("merchant_uid", "");
+        payReq.put("amount", "3300");
+        payReq.put("name", "Message 구독");
+
+        String payUrl = "https://api.iamport.kr/users/getToken";
+
+        RequestEntity<Map<String, String>> payRequestEntity = RequestEntity
+                .post(payUrl)
+                .headers(headers)
+                .body(payReq);
+
+        RestTemplate payRestTemplate = new RestTemplate();
+        ResponseEntity<JSONObject> payResponse = payRestTemplate.exchange(payRequestEntity, JSONObject.class);
 
         return response.getBody();
     
