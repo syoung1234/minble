@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -16,13 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class Iamport {
 
-    @Value("${imp.key}")
-    private String imp_key;
-
-    @Value("${imp.secret}")
-    private String imp_secret;
-
-    public Object subscriber(String customer_uid, String merchant_uid) {
+    public Object subscriber(String imp_key, String imp_secret, String customer_uid, String merchant_uid) {
 
         /******************* 토큰 발급 *******************/
         // 인증 토큰 발급 받기
@@ -73,7 +66,7 @@ public class Iamport {
         payReq.put("amount", "3300");
         payReq.put("name", "Message 구독");
 
-        String payUrl = "https://api.iamport.kr/users/getToken";
+        String payUrl = "https://api.iamport.kr/subscribe/payments/again";
 
         RequestEntity<Map<String, String>> payRequestEntity = RequestEntity
                 .post(payUrl)
