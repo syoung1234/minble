@@ -3,41 +3,43 @@ package com.realtimechat.client.dto.request;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Payment;
 
+import org.json.simple.JSONObject;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
+@ToString
 @NoArgsConstructor
 public class PaymentRequestDto {
     private Member member;
     private String name;
     private Integer paid_amount;
     private String pay_method;
+    private String card_name;
     private String imp_uid;
+    private String customer_uid;
     private String merchant_uid;
-    private String buyer_name;
     private String status;
     private String nickname;
     private String description;
 
     @Builder
-    public PaymentRequestDto(Member member, String name, Integer paid_amount, String pay_method, String imp_uid, 
-    String merchant_uid, String buyer_name, String status, String nickname, String description) {
+    public PaymentRequestDto(Member member, JSONObject paymentData) {
         this.member = member;
-        this.name = name;
-        this.paid_amount = paid_amount;
-        this.pay_method = pay_method;
-        this.imp_uid = imp_uid;
-        this.merchant_uid = merchant_uid;
-        this.buyer_name = buyer_name;
-        this.status = status;
-        this.nickname = nickname;
-        this.description = description;
+        this.name = paymentData.get("name").toString();
+        this.paid_amount = (Integer) paymentData.get("paid_amount");
+        this.pay_method = paymentData.get("pay_method").toString();
+        this.imp_uid = paymentData.get("imp_uid").toString();
+        this.customer_uid = paymentData.get("customer_uid").toString();
+        this.merchant_uid = paymentData.get("merchant_uid").toString();
+        this.status = paymentData.get("status").toString();
     }
 
-    public void setMember(Member member) {
-        this.member= member;
+    public void setCardName(String card_name) {
+        this.card_name = card_name;
     }
 
     public Payment toEntity() {
@@ -46,6 +48,7 @@ public class PaymentRequestDto {
                 .name(name)
                 .amount(paid_amount)
                 .method(pay_method)
+                .cardName(card_name)
                 .impUid(imp_uid)
                 .merchantUid(merchant_uid)
                 .status(status)
