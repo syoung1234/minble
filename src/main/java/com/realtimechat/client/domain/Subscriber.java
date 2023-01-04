@@ -56,10 +56,11 @@ public class Subscriber extends BaseTimeEntity {
     }
 
     @Builder
-    public Subscriber(Member member, ChatRoom chatRoom, LocalDateTime expiredAt, Boolean status) {
+    public Subscriber(Member member, ChatRoom chatRoom, LocalDateTime expiredAt, Boolean status, String customerUid) {
         this.member = member;
         this.chatRoom = chatRoom;
         this.expiredAt = expiredAt;
         this.status = true;
+        this.customer_uid = customerUid;
     }
 }
