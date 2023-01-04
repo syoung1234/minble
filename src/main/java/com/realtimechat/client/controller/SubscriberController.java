@@ -1,7 +1,7 @@
 package com.realtimechat.client.controller;
 
 import com.realtimechat.client.config.security.SecurityUser;
-import com.realtimechat.client.dto.request.PaymentRequestDto;
+import com.realtimechat.client.dto.request.SubscriberRequestDto;
 import com.realtimechat.client.dto.response.SubscriberResponseDto;
 import com.realtimechat.client.service.SubscriberService;
 
@@ -32,7 +32,7 @@ public class SubscriberController {
 
     // 구독 
     @PostMapping
-    public ResponseEntity<String> save(@AuthenticationPrincipal SecurityUser principal, @RequestBody PaymentRequestDto body) {
+    public ResponseEntity<String> save(@AuthenticationPrincipal SecurityUser principal, @RequestBody SubscriberRequestDto body) {
         String response = subscriberService.save(principal.getMember(), body);
 
         return ResponseEntity.ok(response);
