@@ -41,6 +41,9 @@ public class Payment extends BaseTimeEntity {
     @Column(length = 30)
     private String method;
 
+    @Column(length = 30)
+    private String cardName;
+
     @Column(length = 100)
     private String impUid;
 
@@ -52,14 +55,19 @@ public class Payment extends BaseTimeEntity {
 
     private String description;
 
+    public void update(Subscriber subscriber) {
+        this.subscriber = subscriber;
+    }
     
     @Builder
-    public Payment(Member member, Subscriber subscriber, String name, Integer amount, String method, String impUid, String merchantUid, String status, String description) {
+    public Payment(Member member, Subscriber subscriber, String name, Integer amount, String method, String cardName,
+    String impUid, String merchantUid, String status, String description) {
         this.member = member;
         this.subscriber = subscriber;
         this.name = name;
         this.amount = amount;
         this.method = method;
+        this.cardName = cardName;
         this.impUid = impUid;
         this.merchantUid = merchantUid;
         this.status = status;
