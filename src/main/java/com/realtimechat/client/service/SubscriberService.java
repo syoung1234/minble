@@ -1,6 +1,7 @@
 package com.realtimechat.client.service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realtimechat.client.domain.ChatRoom;
@@ -17,7 +18,6 @@ import com.realtimechat.client.repository.SubscriberRepository;
 import com.realtimechat.client.util.Iamport;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +62,9 @@ public class SubscriberService {
     public String save(Member member, SubscriberRequestDto subscriberRequestDto) {
         String message = "success";
         String nickname = subscriberRequestDto.getNickname();
-        String merchant_uid = member.getNickname() + "_" + LocalDateTime.now();
+
+        Date date = new Date();
+        String merchant_uid = member.getNickname() + "_" + date.getTime();
 
         ChatRoom chatRoom = chatRoomRepository.findByChannel(nickname);
         Subscriber subscriber = subscriberRepository.findByMemberAndChatRoom(member, chatRoom);
@@ -70,7 +72,7 @@ public class SubscriberService {
         // 구독 여부
         if (subscriber != null) {
             // 구독 중이거나 구독 취소를 했지만 유효기간이 남았을 경우 
-            if (subscriber.isStatus() == true || subscriber.getExpiredAt().isBefore(LocalDateTime.now())) {
+            if (subscriber.isStatus() == true || subscriber.getExpiredAt().isAfter(LocalDateTime.now())) {
                 message = "already registered";
                 return message;
             }
@@ -80,24 +82,17 @@ public class SubscriberService {
         JSONObject body = (JSONObject) iamport.subscriber(imp_key, imp_secret, subscriberRequestDto.getCustomer_uid(), merchant_uid);
 
         if (body.get("code").equals(0)) {
-            System.out.println(body.get("response"));
             ObjectMapper mapper = new ObjectMapper();
-            JSONParser jsonParser = new JSONParser();
 
             try {
                 String jsonStr = mapper.writeValueAsString(body.get("response"));
-                JSONObject paymentData = (JSONObject) jsonParser.parse(jsonStr);
-                String status = paymentData.get("status").toString();
-                System.out.println(paymentData);
-                String cardName = null;
+                ObjectMapper objectMapper = new ObjectMapper();;
+                PaymentRequestDto paymentRequestDto = objectMapper.readValue(jsonStr, PaymentRequestDto.class);
+                String status = paymentRequestDto.getStatus();
+
                 if (status.equals("paid")) { // 결제 완료
                     // 결제 저장 
-                    PaymentRequestDto paymentRequestDto = new PaymentRequestDto(member, paymentData);
-
-                    if (paymentData.get("card_name") != null) {
-                        paymentRequestDto.setCardName(cardName);
-                    }
-    
+                    paymentRequestDto.setMember(member); // member
                     Payment payment = paymentRepository.save(paymentRequestDto.toEntity());
     
                     // 유효기간 
@@ -105,12 +100,16 @@ public class SubscriberService {
     
                     if (subscriber == null) { // 생성
                         SubscriberDto subscriberDto = new SubscriberDto(member, chatRoom, expiredAt, subscriberRequestDto.getCustomer_uid());
-                        subscriberRepository.save(subscriberDto.toEntity());
+                        Subscriber newSubscriber = subscriberRepository.save(subscriberDto.toEntity());
+                        payment.update(newSubscriber); // subscirber 저장
                     } else { // 업데이트 
+                        expiredAt = subscriber.getExpiredAt().plusMonths(1); // 유효기간 연장 
                         subscriber.update(expiredAt);
+                        subscriberRepository.save(subscriber);
+                        payment.update(subscriber); // subscirber 저장
                     }
     
-                    payment.update(subscriber);
+                    paymentRepository.save(payment);
                 }
 
             } catch (Exception e) {
