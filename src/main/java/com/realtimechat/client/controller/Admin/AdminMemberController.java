@@ -38,5 +38,11 @@ public class AdminMemberController {
         return ResponseEntity.ok(response);
     }
 
+    // admin - 회원 role 변경
+    @PostMapping()
+    public ResponseEntity<String> update(@RequestBody AdminMemberRequestDto adminMemberRequestDto) {
+        String response = adminMemberService.update(adminMemberRequestDto);
+        return ResponseEntity.ok(response);
+    }
     
 }

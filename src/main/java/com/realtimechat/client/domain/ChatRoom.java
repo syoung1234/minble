@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,4 +29,11 @@ public class ChatRoom extends BaseTimeEntity {
     public void update(String channel) {
         this.channel = channel;
     }
+
+    @Builder
+    public ChatRoom(Member member, String channel) {
+        this.member = member;
+        this.channel = channel;
+    }
+
 }

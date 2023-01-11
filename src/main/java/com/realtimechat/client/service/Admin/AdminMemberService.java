@@ -42,5 +42,41 @@ public class AdminMemberService {
         return adminMemberResponseDto;
     }
 
-   
+    // admin 회원 role 변경
+    public String update(AdminMemberRequestDto adminMemberRequestDto) {
+        String nickname = adminMemberRequestDto.getNickname();
+        String roleName = adminMemberRequestDto.getRole();
+        String message = "success";
+
+        Member member = memberRepository.findByNickname(nickname);
+
+        Role role;
+
+        if (roleName.equals("관리자")) {
+            role = Role.ROLE_ADMIN;
+        } else if (roleName.equals("스타")) {
+            role = Role.ROLE_STAR;
+        } else if (roleName.equals("구독자")) {
+            role = Role.ROLE_SUBSCRIBER;
+        } else {
+            role = Role.ROLE_MEMBER;
+        }
+
+        member.updateRole(role);
+        memberRepository.save(member);
+
+        if (roleName.equals("스타")) {
+            // chatRoom 생성 + 메시지 1개 생성
+            ChatRoom chatRoom = ChatRoom.builder().member(member).channel(nickname).build();
+            chatRoomRepository.save(chatRoom);
+
+            String content = "안녕하세요. " + nickname + " 구독자만 사용 가능한 공간입니다.";
+            MessageRequestDto messageRequestDto = new MessageRequestDto(member, chatRoom, content);
+            messageRepository.save(messageRequestDto.toEntity());
+
+        }
+
+        return message;
+    }
+    
 }
