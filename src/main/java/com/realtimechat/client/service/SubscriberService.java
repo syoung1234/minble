@@ -86,7 +86,7 @@ public class SubscriberService {
 
             try {
                 String jsonStr = mapper.writeValueAsString(body.get("response"));
-                ObjectMapper objectMapper = new ObjectMapper();;
+                ObjectMapper objectMapper = new ObjectMapper();
                 PaymentRequestDto paymentRequestDto = objectMapper.readValue(jsonStr, PaymentRequestDto.class);
                 String status = paymentRequestDto.getStatus();
 
