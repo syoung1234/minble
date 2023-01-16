@@ -6,6 +6,8 @@ import com.realtimechat.client.service.Admin.AdminMemberService;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +27,7 @@ public class AdminMemberController {
 
     // admin - 회원관리
     @GetMapping
-    public ResponseEntity<Page<AdminMemberResponseDto>> list(Pageable pageable) {
+    public ResponseEntity<Page<AdminMemberResponseDto>> list(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<AdminMemberResponseDto> response = adminMemberService.list(pageable);
         return ResponseEntity.ok(response);
     }
