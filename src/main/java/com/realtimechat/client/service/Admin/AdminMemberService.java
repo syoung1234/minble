@@ -25,8 +25,31 @@ public class AdminMemberService {
     private final MessageRepository messageRepository;
 
     // admin 회원관리
-    public Page<AdminMemberResponseDto> list(Pageable pageable) {
-        Page<Member> memberList = memberRepository.findAll(pageable);
+    public Page<AdminMemberResponseDto> list(String searchType, String keyword, Pageable pageable) {
+        Page<Member> memberList;
+        if (searchType == null) {
+            memberList = memberRepository.findAll(pageable);
+        } else {
+            if (searchType.equals("nickname")) { // 닉네임 검색
+                memberList = memberRepository.findByNicknameContaining(keyword, pageable);
+            } else if (searchType.equals("email")) { // 이메일 검색
+                memberList = memberRepository.findByEmailContaining(keyword, pageable);
+            } else if (searchType.equals("role")) { // 회원유형 검색
+                Role role;
+                if (keyword.equals("관리자")) {
+                    role = Role.ROLE_ADMIN;
+                } else if (keyword.equals("스타")) {
+                    role = Role.ROLE_STAR;
+                } else if (keyword.equals("구독자")) {
+                    role = Role.ROLE_SUBSCRIBER;
+                } else {
+                    role = Role.ROLE_MEMBER;
+                }
+                memberList = memberRepository.findByRole(role, pageable);
+            } else {
+                memberList = memberRepository.findAll(pageable);
+            }
+        }
 
         Page<AdminMemberResponseDto> adminMemberResponseDto = memberList.map(member -> new AdminMemberResponseDto(member));
 

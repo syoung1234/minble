@@ -7,6 +7,8 @@ import java.util.UUID;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +23,13 @@ public interface MemberRepository extends JpaRepository<Member, String> {
 
     @Query("SELECT m FROM Member m WHERE m.role= :role AND m.id NOT IN :followingList")
     List<Member> findByRoleAndMemberNotIn(@Param("role") Role role, @Param("followingList") List<UUID> followingList);
+
+    // 닉네임 검색
+    Page<Member> findByNicknameContaining(String keyword, Pageable pageable);
+
+    // 이메일 검색
+    Page<Member> findByEmailContaining(String keyword, Pageable pageable);
+
+    // 회원유형 검색
+    Page<Member> findByRole(Role role, Pageable pageable);
 }

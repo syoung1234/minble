@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,9 @@ public class AdminMemberController {
 
     // admin - 회원관리
     @GetMapping
-    public ResponseEntity<Page<AdminMemberResponseDto>> list(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<AdminMemberResponseDto> response = adminMemberService.list(pageable);
+    public ResponseEntity<Page<AdminMemberResponseDto>> list(@RequestParam(value = "searchType", required = false) String searchType,
+    @RequestParam(value = "keyword", required = false) String keyword, @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<AdminMemberResponseDto> response = adminMemberService.list(searchType, keyword, pageable);
         return ResponseEntity.ok(response);
     }
 
