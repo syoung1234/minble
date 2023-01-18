@@ -1,5 +1,9 @@
 package com.realtimechat.client.config.security;
 
+
+
+import com.realtimechat.client.config.oauth.CustomOAuth2UserService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     // 비밀번호 암호화
     @Bean
@@ -44,10 +49,12 @@ public class SecurityConfig {
             .antMatchers("/api/post/**").authenticated()
             .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
             .and()
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .oauth2Login()
+            .userInfoEndpoint()
+            .userService(customOAuth2UserService);
             // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음
 
-        
         return http.build();
     }
     
