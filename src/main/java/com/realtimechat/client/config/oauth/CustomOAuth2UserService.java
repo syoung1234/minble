@@ -2,8 +2,6 @@ package com.realtimechat.client.config.oauth;
 
 import java.util.Collections;
 
-import javax.servlet.http.HttpSession;
-
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.repository.MemberRepository;
 
@@ -35,18 +33,19 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
         // OAuth2UserService
-        OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-        Member member = saveOrUpdate(attributes);
+        OAuth2Attributes attributes = OAuth2Attributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
+        Member member = saveOrUpdate(attributes); 
 
         
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole().toString())), 
             attributes.getAttributes(), attributes.getNameAttributeKey());
     }
 
-    private Member saveOrUpdate(OAuthAttributes attributes) {
+    private Member saveOrUpdate(OAuth2Attributes attributes) {
         Member member = memberRepository.findByEmail(attributes.getEmail())
             .orElse(attributes.toEntity());
-        return memberRepository.save(member);
+        // return memberRepository.save(member); // 회원가입 완료를 닉네임 설정 후에 완료할 것이기 때문에 주석처리 
+        return member;
     }
     
 }
