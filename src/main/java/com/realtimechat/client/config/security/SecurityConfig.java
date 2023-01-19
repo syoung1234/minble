@@ -3,6 +3,7 @@ package com.realtimechat.client.config.security;
 
 
 import com.realtimechat.client.config.oauth.CustomOAuth2UserService;
+import com.realtimechat.client.config.oauth.OAuth2SuccessHandler;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +24,7 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler successHandler;
 
     // 비밀번호 암호화
     @Bean
@@ -51,6 +53,7 @@ public class SecurityConfig {
             .and()
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
             .oauth2Login()
+            .successHandler(successHandler)
             .userInfoEndpoint()
             .userService(customOAuth2UserService);
             // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음
