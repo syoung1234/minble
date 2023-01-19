@@ -9,11 +9,13 @@ import javax.persistence.ManyToOne;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class ChatRoom extends BaseTimeEntity {
     @Id
     @GeneratedValue
