@@ -52,6 +52,9 @@ public class Member extends BaseTimeEntity {
     @Column(columnDefinition="tinyint(1) default 1")
     private boolean notification;
 
+    @Column(length = 20)
+    private String social;
+
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
