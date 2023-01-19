@@ -7,6 +7,7 @@ import com.realtimechat.client.config.security.JwtTokenProvider;
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
+import com.realtimechat.client.dto.request.SocialRegisterRequestDto;
 import com.realtimechat.client.dto.response.MemberResponseDto;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.service.MemberService;
@@ -46,6 +47,12 @@ public class MemberController {
         
         return jwtTokenProvider.createToken(member.getEmail(), member.getRole());
     } 
+
+    // 소셜 회원가입
+    @PostMapping("/register/social")
+    public String social(@RequestBody SocialRegisterRequestDto socialRegisterRequestDto) {
+        return memberService.socialSave(socialRegisterRequestDto);
+    }
 
     // 로그인
     @PostMapping("/login")

@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.realtimechat.client.config.security.JwtTokenProvider;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
+import com.realtimechat.client.dto.request.SocialRegisterRequestDto;
 import com.realtimechat.client.dto.response.FollowResponseDto;
 import com.realtimechat.client.dto.response.MemberResponseDto;
 import com.realtimechat.client.repository.FollowRepository;
@@ -22,6 +24,21 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    // 소셜 회원가입
+    public String socialSave(SocialRegisterRequestDto socialRegisterRequestDto) {
+        Member member = memberRepository.findByEmail(socialRegisterRequestDto.getEmail()).orElse(null);
+
+        if (member == null) {
+            member = memberRepository.save(socialRegisterRequestDto.toEntity());
+        } else {
+            member.updateNickname(socialRegisterRequestDto.getNickname());
+            memberRepository.save(member);
+        }
+
+        return jwtTokenProvider.createToken(member.getEmail(), member.getRole());
+    }
 
     public List<MemberResponseDto> followList(Member member) {
         List<Member> memberList;
@@ -36,7 +53,11 @@ public class MemberService {
                 followingList.add(follow.getFollowing().getId());
             }
 
-            memberList = memberRepository.findByRoleAndMemberNotIn(Role.ROLE_STAR, followingList);
+            if (followList.size() == 0) {
+                memberList = memberRepository.findByRole(Role.ROLE_STAR);
+            } else {
+                memberList = memberRepository.findByRoleAndMemberNotIn(Role.ROLE_STAR, followingList);
+            }
         }
 
         List<MemberResponseDto> response = memberList.stream()
