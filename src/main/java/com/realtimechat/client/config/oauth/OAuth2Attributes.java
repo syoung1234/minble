@@ -28,6 +28,9 @@ public class OAuth2Attributes {
     public static OAuth2Attributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
         System.out.println(registrationId);
         if (registrationId.equals("kakao")) {
+            return ofKakao(userNameAttributeName, attributes);
+        } else if (registrationId.equals("naver")) {
+            return ofNaver(userNameAttributeName, attributes);
         }
         return ofKakao(userNameAttributeName, attributes);
     }
@@ -41,6 +44,16 @@ public class OAuth2Attributes {
             .nickname((String) kakaoProfile.get("nickname"))
             .email((String) kakaoAccount.get("email"))
             .social("kakao")
+            .nameAttributeKey(userNameAttributeName)
+            .attributes(attributes)
+            .build();
+    }
+
+    public static OAuth2Attributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
+        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+        return OAuth2Attributes.builder()
+            .email((String) response.get("email"))
+            .social("naver")
             .nameAttributeKey(userNameAttributeName)
             .attributes(attributes)
             .build();
