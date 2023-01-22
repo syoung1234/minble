@@ -25,6 +25,10 @@ public class OAuth2Attributes {
         this.social = social;
     }
 
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public static OAuth2Attributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
         System.out.println(registrationId);
         if (registrationId.equals("kakao")) {
@@ -32,6 +36,7 @@ public class OAuth2Attributes {
         } else if (registrationId.equals("naver")) {
             return ofNaver(userNameAttributeName, attributes);
         }
+
         return ofKakao(userNameAttributeName, attributes);
     }
     
@@ -50,6 +55,8 @@ public class OAuth2Attributes {
     }
 
     public static OAuth2Attributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
+        System.out.println(userNameAttributeName);
+        System.out.println(attributes);
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
         return OAuth2Attributes.builder()
             .email((String) response.get("email"))
