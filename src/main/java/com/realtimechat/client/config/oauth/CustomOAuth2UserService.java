@@ -4,6 +4,7 @@ import java.util.Collections;
 
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.util.CreateNickname;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -42,10 +43,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private Member saveOrUpdate(OAuth2Attributes attributes) {
+        CreateNickname createNickname = new CreateNickname();
+        String randomNickname = createNickname.randomNickname();
+
+        Member checkNickname = memberRepository.findByNickname(randomNickname);
+
+        while (checkNickname != null) {
+            randomNickname = createNickname.randomNickname();
+        }
+
+        attributes.setNickname(randomNickname);
+
         Member member = memberRepository.findByEmail(attributes.getEmail())
             .orElse(attributes.toEntity());
-        // return memberRepository.save(member); // 회원가입 완료를 닉네임 설정 후에 완료할 것이기 때문에 주석처리 
-        return member;
+        return memberRepository.save(member); // 회원가입 완료를 닉네임 설정 후에 완료할 것이기 때문에 주석처리 
     }
     
 }
