@@ -31,18 +31,31 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
         throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
-        
         String targetUrl;
         UriComponents uriComponents;
+        String social = null;
+        String email = null;
+        Map<String, Object> account = null;
 
-        Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
+        if (oAuth2User.getAttributes().get("kakao_account") != null) { // 카카오
+            social = "kakao";
+            account = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
+        } else if (oAuth2User.getAttributes().get("response") != null) { // 네이버
+            social = "naver";
+            account = (Map<String, Object>) oAuth2User.getAttributes().get("response");
+        } else {
+            social = "google";
+            account = (Map<String, Object>) oAuth2User.getAttributes();
+        }
 
-        Member member = memberRepository.findByEmail(kakaoAccount.get("email").toString()).orElse(null);
+        email = account.get("email").toString();
+
+        Member member = memberRepository.findByEmail(email).orElse(null);
 
         if (member == null) {
             // 신규 회원가입
             uriComponents = UriComponentsBuilder.newInstance().scheme("http").host("localhost:3000/create/nickname")
-            .queryParam("email", kakaoAccount.get("email")).queryParam("social", "kakao").build();
+            .queryParam("email", email).queryParam("social", social).build();
         } else {
             // 로그인
             String token = jwtTokenProvider.createToken(member.getEmail(), member.getRole());

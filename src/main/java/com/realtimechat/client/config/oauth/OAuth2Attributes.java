@@ -30,18 +30,18 @@ public class OAuth2Attributes {
     }
 
     public static OAuth2Attributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
-        System.out.println(registrationId);
         if (registrationId.equals("kakao")) {
             return ofKakao(userNameAttributeName, attributes);
         } else if (registrationId.equals("naver")) {
             return ofNaver(userNameAttributeName, attributes);
+        } else if (registrationId.equals("google")) {
+            return ofGoogle(userNameAttributeName, attributes);
         }
 
-        return ofKakao(userNameAttributeName, attributes);
+        return null;
     }
     
     public static OAuth2Attributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
-        System.out.println(attributes);
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
 
@@ -55,12 +55,19 @@ public class OAuth2Attributes {
     }
 
     public static OAuth2Attributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
-        System.out.println(userNameAttributeName);
-        System.out.println(attributes);
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
         return OAuth2Attributes.builder()
             .email((String) response.get("email"))
             .social("naver")
+            .nameAttributeKey(userNameAttributeName)
+            .attributes(attributes)
+            .build();
+    }
+
+    public static OAuth2Attributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
+        return OAuth2Attributes.builder()
+            .email((String) attributes.get("email"))
+            .social("google")
             .nameAttributeKey(userNameAttributeName)
             .attributes(attributes)
             .build();
