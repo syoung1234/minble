@@ -32,7 +32,7 @@ public class Member extends BaseTimeEntity {
     @JsonIgnore
     private UUID id;
 
-    @Column(length = 100, unique = true, nullable = false)
+    @Column(length = 100, nullable = false)
     private String email;
 
     @JsonIgnore
