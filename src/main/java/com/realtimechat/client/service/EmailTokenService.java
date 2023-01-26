@@ -6,9 +6,11 @@ import java.util.Optional;
 import com.realtimechat.client.domain.EmailToken;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.repository.EmailTokenRepository;
+import com.realtimechat.client.repository.MemberRepository;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class EmailTokenService {
 
     private final EmailSenderService emailSenderService;
     private final EmailTokenRepository emailTokenRepository;
+    private final MemberRepository memberRepository;
     
     // 이메일 인증 토큰 생성
     public String createEmailToken(Member member, String receiverEmail) {
@@ -45,5 +48,20 @@ public class EmailTokenService {
         return emailToken;
     }
 
-  
+    // 이메일 인증 완료
+    @Transactional
+    public String confirmEmail(String token) {
+        String message = "success";
+        EmailToken emailToken = this.findByIdAndExpirationDateAfterAndExpired(token).orElse(null);
+        if (emailToken == null) {
+            // 존재하지 않거나 유효 하지 않은 토큰
+            message = "fail";
+        } else {
+            Member member = memberRepository.findById(emailToken.getId()).orElse(null);
+            emailToken.useToken(); // 이메일 인증으로 인한 토큰 만료 
+            member.updateEmailConfirmation(true); // 이메일 인증된 유저 
+        }
+
+        return message;
+    }
 }
