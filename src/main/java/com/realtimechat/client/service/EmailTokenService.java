@@ -7,8 +7,9 @@ import com.realtimechat.client.domain.EmailToken;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.repository.EmailTokenRepository;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.util.MailHandler;
 
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -19,9 +20,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class EmailTokenService {
 
-    private final EmailSenderService emailSenderService;
     private final EmailTokenRepository emailTokenRepository;
     private final MemberRepository memberRepository;
+    private final JavaMailSender javaMailSender;
     
     // 이메일 인증 토큰 생성
     public String createEmailToken(Member member, String receiverEmail) {
@@ -33,11 +34,18 @@ public class EmailTokenService {
         emailTokenRepository.save(emailToken);
 
         // 이메일 전송
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(receiverEmail);
-        mailMessage.setSubject("회원가입 이메일 인증");
-        mailMessage.setText("http://localhost:3000/confirm-email/token="+emailToken.getId());
-        emailSenderService.sendEmail(mailMessage);
+        try {
+            MailHandler mailMessage = new MailHandler(javaMailSender);
+            mailMessage.setTo(receiverEmail);
+            mailMessage.setSubject("minble 회원가입 이메일 인증");
+            String content = "<p>아래의 링크를 클릭하면 가입이 완료됩니다.</p> <a href='http://localhost:3000/confirm-email?token="+emailToken.getId()+"'>http://localhost:3000/confirm-email</a>";
+            mailMessage.setText(content, true);
+            mailMessage.setFrom("mible@mible.com");
+            mailMessage.send();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
 
         return emailToken.getId();
     }
