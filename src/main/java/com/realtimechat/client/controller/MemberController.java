@@ -10,6 +10,7 @@ import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.SocialRegisterRequestDto;
 import com.realtimechat.client.dto.response.MemberResponseDto;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.service.EmailTokenService;
 import com.realtimechat.client.service.MemberService;
 
 import org.springframework.http.ResponseEntity;
@@ -33,10 +34,11 @@ public class MemberController {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final EmailTokenService emailTokenService;
 
     // 회원가입
     @PostMapping("/register")
-    public String register(@RequestBody Map<String, String> user) {
+    public ResponseEntity<String> register(@RequestBody Map<String, String> user) {
         Member member = memberRepository.save(Member.builder()
                 .email(user.get("email"))
                 .password(passwordEncoder.encode(user.get("password")))
@@ -45,7 +47,8 @@ public class MemberController {
                 .role(Role.ROLE_MEMBER)
                 .build());
         
-        return jwtTokenProvider.createToken(member.getEmail(), member.getRole());
+        emailTokenService.createEmailToken(member, user.get("email"));
+        return ResponseEntity.ok("success");
     } 
 
     // 소셜 회원가입
