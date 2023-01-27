@@ -75,7 +75,7 @@ public class MemberController {
         String message = "exist";
         Member member = null;
         if (type.equals("email")) {
-            member = memberRepository.findByEmail(user.get("email")).orElse(null);
+            member = memberRepository.findByEmailAndSocial(user.get("email"), null).orElse(null);
         
         } else if (type.equals("nickname")) {
             member = memberRepository.findByNickname(user.get("nickname"));
