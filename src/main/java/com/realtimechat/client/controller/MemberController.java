@@ -60,13 +60,17 @@ public class MemberController {
     // 로그인
     @PostMapping("/login")
     public String login(@RequestBody Map<String, String> user) {
-        Member member = memberRepository.findByEmail(user.get("email"))
+        Member member = memberRepository.findByEmailAndSocial(user.get("email"), null)
                         .orElseThrow(() -> new IllegalArgumentException("가입 되지 않은 이메일입니다."));
         if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 맞지 않습니다.");
         }
 
-        return jwtTokenProvider.createToken(member.getEmail(), member.getRole());
+        if (member.isEmailConfirmation() == false) { // 이메일 인증이 안 된 회원 
+            return "unconfirmed";
+        }
+
+        return jwtTokenProvider.createToken(member.getNickname(), member.getRole(), null);
     }
 
     // 이메일, 닉네임 중복 확인
@@ -78,7 +82,7 @@ public class MemberController {
             member = memberRepository.findByEmailAndSocial(user.get("email"), null).orElse(null);
         
         } else if (type.equals("nickname")) {
-            member = memberRepository.findByNickname(user.get("nickname"));
+            member = memberRepository.findByNickname(user.get("nickname")).orElse(null);
         }
 
         if (member == null) {
