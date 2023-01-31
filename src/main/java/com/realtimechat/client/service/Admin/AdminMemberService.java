@@ -58,7 +58,7 @@ public class AdminMemberService {
 
     // admin 회원관리 상세 
     public AdminMemberResponseDto get(String nickname) {
-        Member member = memberRepository.findByNickname(nickname);
+        Member member = memberRepository.findByNickname(nickname).orElse(null);
 
         AdminMemberResponseDto adminMemberResponseDto = new AdminMemberResponseDto(member);
 
@@ -71,7 +71,7 @@ public class AdminMemberService {
         String roleName = adminMemberRequestDto.getRole();
         String message = "success";
 
-        Member member = memberRepository.findByNickname(nickname);
+        Member member = memberRepository.findByNickname(nickname).orElse(null);
 
         Role role;
 
