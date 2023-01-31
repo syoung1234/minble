@@ -63,9 +63,14 @@ public class EmailTokenService {
         EmailToken emailToken = this.findByIdAndExpirationDateAfterAndExpired(token).orElse(null);
         if (emailToken == null) {
             // 존재하지 않거나 유효 하지 않은 토큰
-            message = "fail";
+            EmailToken existToken = emailTokenRepository.findById(token).orElse(null);
+            if (existToken == null) { // 회원가입을 하지 않은 유저
+                message = "fail";
+            } else { // 회원가입은 했지만 이메일 인증을 하지 않아 토큰이 만료된 유저
+                message = existToken.getMember().getEmail();
+            }
         } else {
-            Member member = memberRepository.findById(emailToken.getId()).orElse(null);
+            Member member = memberRepository.findById(emailToken.getMember().getId()).orElse(null);
             emailToken.useToken(); // 이메일 인증으로 인한 토큰 만료 
             member.updateEmailConfirmation(true); // 이메일 인증된 유저 
         }
