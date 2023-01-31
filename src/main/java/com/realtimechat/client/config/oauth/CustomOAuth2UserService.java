@@ -46,7 +46,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         CreateNickname createNickname = new CreateNickname();
         String randomNickname = createNickname.randomNickname();
 
-        Member checkNickname = memberRepository.findByNickname(randomNickname);
+        Member checkNickname = memberRepository.findByNickname(randomNickname).orElse(null);
 
         while (checkNickname != null) {
             randomNickname = createNickname.randomNickname();
@@ -54,7 +54,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         attributes.setNickname(randomNickname);
 
-        Member member = memberRepository.findByEmail(attributes.getEmail())
+        Member member = memberRepository.findByEmailAndSocial(attributes.getEmail(), attributes.getSocial())
             .orElse(attributes.toEntity());
         return memberRepository.save(member); // 회원가입 완료를 닉네임 설정 후에 완료할 것이기 때문에 주석처리 
     }
