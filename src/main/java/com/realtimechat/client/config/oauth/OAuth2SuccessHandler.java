@@ -50,7 +50,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         email = account.get("email").toString();
 
-        Member member = memberRepository.findByEmail(email).orElse(null);
+        Member member = memberRepository.findByEmailAndSocial(email, social).orElse(null);
 
         if (member == null) {
             // 신규 회원가입
@@ -58,7 +58,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             .queryParam("email", email).queryParam("social", social).build();
         } else {
             // 로그인
-            String token = jwtTokenProvider.createToken(member.getEmail(), member.getRole());
+            String token = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
 
             uriComponents = UriComponentsBuilder.newInstance().scheme("http").host("localhost:3000/start")
             .queryParam("accessToken", token).build();
