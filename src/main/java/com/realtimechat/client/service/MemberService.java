@@ -28,7 +28,7 @@ public class MemberService {
 
     // 소셜 회원가입
     public String socialSave(SocialRegisterRequestDto socialRegisterRequestDto) {
-        Member member = memberRepository.findByEmail(socialRegisterRequestDto.getEmail()).orElse(null);
+        Member member = memberRepository.findByEmailAndSocial(socialRegisterRequestDto.getEmail(), socialRegisterRequestDto.getSocial()).orElse(null);
 
         if (member == null) {
             member = memberRepository.save(socialRegisterRequestDto.toEntity());
@@ -37,7 +37,7 @@ public class MemberService {
             memberRepository.save(member);
         }
 
-        return jwtTokenProvider.createToken(member.getEmail(), member.getRole());
+        return jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
     }
 
     public List<MemberResponseDto> followList(Member member) {

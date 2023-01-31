@@ -32,7 +32,7 @@ public class MessageService {
         MessageResponseDto messageResponseDto = new MessageResponseDto();
 
         // 스타
-        Member publisher = memberRepository.findByNickname(nickname);
+        Member publisher = memberRepository.findByNickname(nickname).orElse(null);
         ChatRoom chatRoom = chatRoomRepository.findByMember(publisher);
 
         // 구독자
@@ -58,7 +58,7 @@ public class MessageService {
     }
 
     public Message save(MessageRequestDto messageRequestDto) {
-        Member member = memberRepository.findByNickname(messageRequestDto.getNickname());
+        Member member = memberRepository.findByNickname(messageRequestDto.getNickname()).orElse(null);
         ChatRoom chatRoom = chatRoomRepository.findByChannel(messageRequestDto.getChannel());
 
         messageRequestDto.setMember(member);

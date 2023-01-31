@@ -13,13 +13,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MemberRepository extends JpaRepository<Member, String> {
+public interface MemberRepository extends JpaRepository<Member, UUID> {
     
     Optional<Member> findByEmail(String email);
 
     Optional<Member> findByEmailAndSocial(String email, String social);
 
-    Member findByNickname(String nickname);
+    Optional<Member> findByNickname(String nickname);
 
     List<Member> findByRole(Role role);
 

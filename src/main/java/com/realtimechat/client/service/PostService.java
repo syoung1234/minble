@@ -79,7 +79,7 @@ public class PostService {
             posts = postRepository.findByMemberOrderByCreatedAtDesc(memberList, pageable);
         } else {
             /*************** 특정 회원 게시글 목록 ***************/
-            Member following = memberRepository.findByNickname(nickname);
+            Member following = memberRepository.findByNickname(nickname).orElse(null);
             posts = postRepository.findByMemberOrderByCreatedAtDesc(following, pageable);
         }
         

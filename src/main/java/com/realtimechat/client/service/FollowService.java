@@ -27,7 +27,7 @@ public class FollowService {
     @Transactional
     public String delete(String nickname, Member member) {
         String message = "fail";
-        Member followingMember = memberRepository.findByNickname(nickname);
+        Member followingMember = memberRepository.findByNickname(nickname).orElse(null);
         // Follow follow = followRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
         Follow follow = followRepository.findByFollowingAndMember(followingMember, member);
 

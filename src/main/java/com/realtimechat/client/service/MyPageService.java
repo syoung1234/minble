@@ -44,11 +44,11 @@ public class MyPageService {
     @Transactional
     public String updateNickname(Member member, String nickname) {
         String message = "success";
-        Member m = memberRepository.findByNickname(nickname);
+        Member m = memberRepository.findByNickname(nickname).orElse(null);
         if (m != null) {
             message = "fail";
         } else {
-            Member updateMember = memberRepository.findByNickname(member.getNickname());
+            Member updateMember = memberRepository.findByNickname(member.getNickname()).orElse(null);
 
             // role type - star 일 경우 channel명 변경
             if (updateMember.getRole().equals(Role.ROLE_STAR)) {

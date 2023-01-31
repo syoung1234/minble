@@ -26,7 +26,7 @@ public class FollowController {
 
     @PostMapping("/create")
     public void create(@RequestBody FollowRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
-        Member following = memberRepository.findByNickname(requestDto.getNickname());
+        Member following = memberRepository.findByNickname(requestDto.getNickname()).orElse(null);
         requestDto.setFollowing(following);
         requestDto.setMember(principal.getMember()); // 본인 
         followService.create(requestDto);
