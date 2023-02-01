@@ -15,6 +15,7 @@ public class OAuth2Attributes {
     private String nickname;
     private String email;
     private String social;
+    private Boolean emailConfirmation;
 
     @Builder
     public OAuth2Attributes(Map<String, Object> attributes, String nameAttributeKey, String nickname, String email, String social) {
@@ -23,6 +24,7 @@ public class OAuth2Attributes {
         this.nickname = nickname;
         this.email = email;
         this.social = social;
+        this.emailConfirmation = true;
     }
 
     public void setNickname(String nickname) {
@@ -79,6 +81,7 @@ public class OAuth2Attributes {
                 .email(email)
                 .social(social)
                 .role(Role.ROLE_MEMBER)
+                .emailConfirmation(emailConfirmation)
                 .build();
     }
 }
