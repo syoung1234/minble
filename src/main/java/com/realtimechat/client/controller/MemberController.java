@@ -47,7 +47,7 @@ public class MemberController {
                 .role(Role.ROLE_MEMBER)
                 .build());
         
-        emailTokenService.createEmailToken(member, user.get("email"));
+        emailTokenService.createEmailToken(member, user.get("email"), null);
         return ResponseEntity.ok("success");
     } 
 

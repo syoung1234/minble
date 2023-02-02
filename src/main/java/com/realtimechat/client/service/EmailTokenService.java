@@ -25,7 +25,10 @@ public class EmailTokenService {
     private final JavaMailSender javaMailSender;
     
     // 이메일 인증 토큰 생성
-    public String createEmailToken(Member member, String receiverEmail) {
+    public String createEmailToken(Member member, String receiverEmail, String type) {
+        String subject;
+        String content;
+
         Assert.notNull(member, "필수");
         Assert.hasText(receiverEmail, "필수");
 
@@ -33,12 +36,21 @@ public class EmailTokenService {
         EmailToken emailToken = EmailToken.createEmailToken(member);
         emailTokenRepository.save(emailToken);
 
+        if (type == "password") { // 비밀번호 찾기
+            subject = "minble 비밀번호 찾기";
+            content = "<p>아래의 링크를 클릭하면 비밀번호 재설정 페이지로 이동합니다.</p> <a href='http://localhost:3000/find-password?token="+emailToken.getId()+"'>http://localhost:3000/find-password</a>";
+            
+        } else { // 회원가입 이메일 인증
+            subject = "minble 회원가입 이메일 인증";
+            content = "<p>아래의 링크를 클릭하면 가입이 완료됩니다.</p> <a href='http://localhost:3000/confirm-email?token="+emailToken.getId()+"'>http://localhost:3000/confirm-email</a>";
+        }
+
         // 이메일 전송
         try {
             MailHandler mailMessage = new MailHandler(javaMailSender);
             mailMessage.setTo(receiverEmail);
-            mailMessage.setSubject("minble 회원가입 이메일 인증");
-            String content = "<p>아래의 링크를 클릭하면 가입이 완료됩니다.</p> <a href='http://localhost:3000/confirm-email?token="+emailToken.getId()+"'>http://localhost:3000/confirm-email</a>";
+            mailMessage.setSubject(subject);
+            
             mailMessage.setText(content, true);
             mailMessage.setFrom("mible@mible.com");
             mailMessage.send();
@@ -77,4 +89,5 @@ public class EmailTokenService {
 
         return message;
     }
+
 }
