@@ -54,4 +54,13 @@ public class EmailTokenController {
         }
     }
 
+    // 비밀번호 재설정
+    @PostMapping("/password")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> body) {
+        String token = body.get("token");
+        String password = body.get("password");
+
+        String response = emailTokenService.resetPassword(token, password);
+        return ResponseEntity.ok(response);
+    }
 }
