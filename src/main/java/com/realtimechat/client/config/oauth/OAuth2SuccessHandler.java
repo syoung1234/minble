@@ -11,6 +11,7 @@ import com.realtimechat.client.config.security.JwtTokenProvider;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.repository.MemberRepository;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -26,6 +27,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
+
+    @Value("${web.url}")
+    private String webUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -54,13 +58,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         if (member == null) {
             // 신규 회원가입
-            uriComponents = UriComponentsBuilder.newInstance().scheme("http").host("localhost:3000/create/nickname")
+            uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(webUrl+"/create/nickname")
             .queryParam("email", email).queryParam("social", social).build();
         } else {
             // 로그인
             String token = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
 
-            uriComponents = UriComponentsBuilder.newInstance().scheme("http").host("localhost:3000/start")
+            uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(webUrl+"/start")
             .queryParam("accessToken", token).build();
         }
 

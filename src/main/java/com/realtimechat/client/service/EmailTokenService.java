@@ -9,6 +9,7 @@ import com.realtimechat.client.repository.EmailTokenRepository;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.util.MailHandler;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,9 @@ public class EmailTokenService {
     private final MemberRepository memberRepository;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${web.url}")
+    private String webUrl;
     
     // 이메일 인증 토큰 생성
     public String createEmailToken(Member member, String receiverEmail, String type) {
@@ -40,10 +44,10 @@ public class EmailTokenService {
 
         if (type == "password") { // 비밀번호 찾기
             subject = "minble 비밀번호 찾기";
-            content = "<p>아래의 링크를 클릭하면 비밀번호 재설정 페이지로 이동합니다.</p> <a href='http://localhost:3000/find-password?token="+emailToken.getId()+"'>http://localhost:3000/find-password</a>";
+            content = "<p>아래의 링크를 클릭하면 비밀번호 재설정 페이지로 이동합니다.</p> <a href='" + webUrl + "/reset-password?token="+emailToken.getId()+"'>" + webUrl + "/reset-password</a>";
         } else { // 회원가입 이메일 인증
             subject = "minble 회원가입 이메일 인증";
-            content = "<p>아래의 링크를 클릭하면 가입이 완료됩니다.</p> <a href='http://localhost:3000/confirm-email?token="+emailToken.getId()+"'>http://localhost:3000/confirm-email</a>";
+            content = "<p>아래의 링크를 클릭하면 가입이 완료됩니다.</p> <a href='" + webUrl + "/confirm-email?token="+emailToken.getId()+"'>" + webUrl + "/confirm-email</a>";
         }
 
         // 이메일 전송
