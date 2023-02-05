@@ -30,6 +30,7 @@ public class MessageService {
 
     public MessageResponseDto get(Member member, String nickname) {
         MessageResponseDto messageResponseDto = new MessageResponseDto();
+        List<MessageDetailResponse> messageDetailResponse;
 
         // 스타
         Member publisher = memberRepository.findByNickname(nickname).orElse(null);
@@ -46,7 +47,12 @@ public class MessageService {
             }
         }
 
-        List<MessageDetailResponse> messageDetailResponse = messageRepository.findByChatRoomOrderByCreatedAtAsc(chatRoom);
+        // 스타가 접속했을 경우 
+        if (publisher.getNickname().equals(member.getNickname())) {
+            messageDetailResponse = messageRepository.findByChatRoomOrderByCreatedAtAsc(chatRoom);
+        } else { // 구독자가 접속했을 경우
+            messageDetailResponse = messageRepository.findAllByMemberOrMemberAndChatRoomOrderByCreatedAtAsc(publisher, member, chatRoom);
+        }
 
         messageResponseDto.setChannel(chatRoom.getChannel());
         messageResponseDto.setProfilePath(member.getProfilePath());
