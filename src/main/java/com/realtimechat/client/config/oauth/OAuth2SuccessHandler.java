@@ -56,16 +56,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         Member member = memberRepository.findByEmailAndSocial(email, social).orElse(null);
 
-        if (member == null) {
-            // 신규 회원가입
-            uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(webUrl+"/create/nickname")
+        if (member == null) { // 신규 회원가입
+            // uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(webUrl+"/create/nickname")
+            // .queryParam("email", email).queryParam("social", social).build();
+            
+            // 2022.02.05 webUrl 추가로 인한 코드 수정 
+            uriComponents = UriComponentsBuilder.fromUriString(webUrl+"/create/nickname")
             .queryParam("email", email).queryParam("social", social).build();
-        } else {
-            // 로그인
+        } else { // 로그인
             String token = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
 
-            uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(webUrl+"/start")
-            .queryParam("accessToken", token).build();
+            // uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(webUrl+"/start")
+            // .queryParam("accessToken", token).build();
+
+            // 2022.02.05 webUrl 추가로 인한 코드 수정 
+            uriComponents = UriComponentsBuilder.fromUriString(webUrl+"/start").queryParam("accessToken", token).build();
         }
 
         targetUrl = uriComponents.toUriString();
