@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +31,10 @@ public class Message extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
+
+    @OneToOne
+    @JoinColumn(name = "message_file_id")
+    private MessageFile messageFile;
 
     @Column(columnDefinition = "TEXT")
     private String content;
