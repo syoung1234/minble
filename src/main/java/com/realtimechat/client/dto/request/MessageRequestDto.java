@@ -3,6 +3,7 @@ package com.realtimechat.client.dto.request;
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Message;
+import com.realtimechat.client.domain.MessageFile;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,8 @@ public class MessageRequestDto {
     private String profilePath;
     private Member member;
     private ChatRoom chatRoom;
+    private String filePath;
+    private MessageFile messageFile;
 
     @Builder
     public MessageRequestDto(Member member, ChatRoom chatRoom, String content) {
@@ -33,6 +36,10 @@ public class MessageRequestDto {
 
     public void setChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
+    }
+
+    public void setMessageFile(MessageFile messageFile) {
+        this.messageFile = messageFile;
     }
 
 

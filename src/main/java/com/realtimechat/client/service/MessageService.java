@@ -6,12 +6,14 @@ import java.util.List;
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Message;
+import com.realtimechat.client.domain.MessageFile;
 import com.realtimechat.client.domain.Subscriber;
 import com.realtimechat.client.dto.request.MessageRequestDto;
 import com.realtimechat.client.dto.response.MessageDetailResponseDto;
 import com.realtimechat.client.dto.response.MessageResponseDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.repository.MessageFileRepository;
 import com.realtimechat.client.repository.MessageRepository;
 import com.realtimechat.client.repository.SubscriberRepository;
 
@@ -27,6 +29,7 @@ public class MessageService {
     private final ChatRoomRepository chatRoomRepository;
     private final SubscriberRepository subscriberRepository;
     private final MessageRepository messageRepository;
+    private final MessageFileRepository messageFileRepository;
 
     public MessageResponseDto get(Member member, String nickname) {
         MessageResponseDto messageResponseDto = new MessageResponseDto();
@@ -66,9 +69,11 @@ public class MessageService {
     public Message save(MessageRequestDto messageRequestDto) {
         Member member = memberRepository.findByNickname(messageRequestDto.getNickname()).orElse(null);
         ChatRoom chatRoom = chatRoomRepository.findByChannel(messageRequestDto.getChannel());
+        MessageFile messageFile = messageFileRepository.findByFilePath(messageRequestDto.getFilePath()).orElse(null);
 
         messageRequestDto.setMember(member);
         messageRequestDto.setChatRoom(chatRoom);
+        messageRequestDto.setMessageFile(messageFile);
 
         Message message = messageRepository.save(messageRequestDto.toEntity());
         
