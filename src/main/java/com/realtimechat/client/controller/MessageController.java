@@ -3,7 +3,7 @@ package com.realtimechat.client.controller;
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.domain.Message;
 import com.realtimechat.client.dto.request.MessageRequestDto;
-import com.realtimechat.client.dto.response.MessageDetailResponse;
+import com.realtimechat.client.dto.response.MessageDetailResponseDto;
 import com.realtimechat.client.dto.response.MessageResponseDto;
 import com.realtimechat.client.service.MessageService;
 
@@ -29,7 +29,7 @@ public class MessageController {
     @SendTo("/send")
     public void SocketHandler(MessageRequestDto messageRequestDto) {
         Message message =  messageService.save(messageRequestDto);
-        MessageDetailResponse messageDetailResponse = new MessageDetailResponse(message);
+        MessageDetailResponseDto messageDetailResponse = new MessageDetailResponseDto(message);
         simpMessagingTemplate.convertAndSend("/send/" + messageRequestDto.getChannel(), messageDetailResponse);
         //return socketDto;
     }

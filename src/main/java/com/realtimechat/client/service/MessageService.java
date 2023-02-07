@@ -8,7 +8,7 @@ import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Message;
 import com.realtimechat.client.domain.Subscriber;
 import com.realtimechat.client.dto.request.MessageRequestDto;
-import com.realtimechat.client.dto.response.MessageDetailResponse;
+import com.realtimechat.client.dto.response.MessageDetailResponseDto;
 import com.realtimechat.client.dto.response.MessageResponseDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
 import com.realtimechat.client.repository.MemberRepository;
@@ -30,7 +30,7 @@ public class MessageService {
 
     public MessageResponseDto get(Member member, String nickname) {
         MessageResponseDto messageResponseDto = new MessageResponseDto();
-        List<MessageDetailResponse> messageDetailResponse;
+        List<MessageDetailResponseDto> messageDetailResponse;
 
         // 스타
         Member publisher = memberRepository.findByNickname(nickname).orElse(null);

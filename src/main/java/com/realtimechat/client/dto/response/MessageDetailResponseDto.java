@@ -13,14 +13,14 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-public class MessageDetailResponse {
+public class MessageDetailResponseDto {
     private String content;
     private String nickname;
     private String createdAt;
     private String channel;
     private String profilePath;
     
-    public MessageDetailResponse(Message entity) {
+    public MessageDetailResponseDto(Message entity) {
         this.content = entity.getContent();
         this.nickname = entity.getMember().getNickname();
         this.createdAt = entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));

@@ -15,9 +15,9 @@ public class MessageResponseDto {
     private String nickname;
     private String channel;
     private String profilePath;
-    private List<MessageDetailResponse> messageList;
+    private List<MessageDetailResponseDto> messageList;
 
-    public MessageResponseDto(String nickname, String channel, String profilePath, List<MessageDetailResponse> messageList) {
+    public MessageResponseDto(String nickname, String channel, String profilePath, List<MessageDetailResponseDto> messageList) {
         this.nickname = nickname;
         this.channel = channel;
         this.profilePath = profilePath;
