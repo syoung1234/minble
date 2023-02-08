@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realtimechat.client.domain.ChatRoom;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Payment;
+import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.domain.Subscriber;
 import com.realtimechat.client.dto.SubscriberDto;
 import com.realtimechat.client.dto.request.PaymentRequestDto;
 import com.realtimechat.client.dto.request.SubscriberRequestDto;
 import com.realtimechat.client.dto.response.SubscriberResponseDto;
 import com.realtimechat.client.repository.ChatRoomRepository;
+import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.repository.PaymentRepository;
 import com.realtimechat.client.repository.SubscriberRepository;
 import com.realtimechat.client.util.Iamport;
@@ -31,6 +33,7 @@ public class SubscriberService {
     private final SubscriberRepository subscriberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final PaymentRepository paymentRepository;
+    private final MemberRepository memberRepository;
 
     @Value("${imp.key}")
     private String imp_key;
@@ -110,6 +113,10 @@ public class SubscriberService {
                     }
     
                     paymentRepository.save(payment);
+                    
+                    // role 변경
+                    member.updateRole(Role.ROLE_SUBSCRIBER);
+                    memberRepository.save(member);
                 }
 
             } catch (Exception e) {
