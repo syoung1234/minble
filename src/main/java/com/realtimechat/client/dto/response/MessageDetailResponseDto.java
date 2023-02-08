@@ -23,6 +23,7 @@ public class MessageDetailResponseDto {
     private String channel;
     private String profilePath;
     private String filePath;
+    private String filename;
     
     public MessageDetailResponseDto(Message entity) {
         this.content = entity.getContent();
@@ -31,11 +32,19 @@ public class MessageDetailResponseDto {
         this.channel = entity.getChatRoom().getChannel();
         this.profilePath = entity.getMember().getProfilePath();
         this.filePath = filePath(entity.getMessageFile());
+        this.filename = filename(entity.getMessageFile());
     }
 
     public String filePath(MessageFile messageFile) {
         if (messageFile != null) {
             return messageFile.getFilePath(); 
+        }
+        return null;
+    }
+
+    public String filename(MessageFile messageFile) {
+        if (messageFile != null) {
+            return messageFile.getFilename(); 
         }
         return null;
     }
