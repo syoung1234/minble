@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import com.realtimechat.client.domain.PostFile;
 import com.realtimechat.client.repository.PostFileRepository;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -25,11 +26,14 @@ public class PostFileController {
 
     private final PostFileRepository postFileRepository;
 
+    @Value("${file.path}")
+    private String filePath;
+
     // 파일 다운로드
     @GetMapping("/download/{filename}")
     public ResponseEntity<Resource> download(@PathVariable String filename) throws MalformedURLException {
         PostFile file = postFileRepository.findByFilename(filename);
-        UrlResource urlResource = new UrlResource("file:" + "/Users/seonyoung/Dev/springboot-realtime-chat-project"+file.getFilePath());
+        UrlResource urlResource = new UrlResource("file:" + filePath + file.getFilePath());
 
         // 업로드 한 파일명이 한글인 경우
         String encodedFileName = UriUtils.encode(file.getFilename(), StandardCharsets.UTF_8);
