@@ -3,11 +3,11 @@ package com.realtimechat.client.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.realtimechat.client.config.security.JwtTokenProvider;
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.SocialRegisterRequestDto;
+import com.realtimechat.client.dto.response.LoginResponseDto;
 import com.realtimechat.client.dto.response.MemberResponseDto;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.service.EmailTokenService;
@@ -31,10 +31,18 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final EmailTokenService emailTokenService;
+
+
+    // 로그인
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody Map<String, String> user) {
+        LoginResponseDto response = memberService.login(user);
+        
+        return ResponseEntity.ok(response);
+    }
 
     // 회원가입
     @PostMapping("/register")
@@ -51,28 +59,14 @@ public class MemberController {
         return ResponseEntity.ok("success");
     } 
 
+
     // 소셜 회원가입
     @PostMapping("/register/social")
     public String social(@RequestBody SocialRegisterRequestDto socialRegisterRequestDto) {
         return memberService.socialSave(socialRegisterRequestDto);
     }
 
-    // 로그인
-    @PostMapping("/login")
-    public String login(@RequestBody Map<String, String> user) {
-        Member member = memberRepository.findByEmailAndSocial(user.get("email"), null)
-                        .orElseThrow(() -> new IllegalArgumentException("가입 되지 않은 이메일입니다."));
-        if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
-            throw new IllegalArgumentException("이메일 또는 비밀번호가 맞지 않습니다.");
-        }
-
-        if (member.isEmailConfirmation() == false) { // 이메일 인증이 안 된 회원 
-            return "unconfirmed";
-        }
-
-        return jwtTokenProvider.createToken(member.getNickname(), member.getRole(), null);
-    }
-
+    
     // 이메일, 닉네임 중복 확인
     @PostMapping("duplicate/{type}")
     public String duplicate(@PathVariable String type, @RequestBody Map<String, String> user) {
