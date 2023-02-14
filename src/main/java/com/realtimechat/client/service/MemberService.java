@@ -40,10 +40,10 @@ public class MemberService {
 
         LoginResponseDto loginResponseDto;
         if (member.isEmailConfirmation() == false) { // 이메일 인증이 안 된 회원 
-            loginResponseDto = new LoginResponseDto(null, "unconfirmed");
+            loginResponseDto = new LoginResponseDto(null, "unconfirmed", null, null);
         } else {
             String accessToken = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), null);
-            loginResponseDto = new LoginResponseDto(accessToken, "success");
+            loginResponseDto = new LoginResponseDto(accessToken, "success", member.getRole().toString(), member.getNickname());
         }
 
         return loginResponseDto;

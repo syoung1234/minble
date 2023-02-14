@@ -8,10 +8,14 @@ import lombok.NoArgsConstructor;
 public class LoginResponseDto {
     private String accessToken;
     private String status;
+    private String roleType;
+    private String nickname;
 
-    public LoginResponseDto(String accessToken, String status) {
+    public LoginResponseDto(String accessToken, String status, String roleType, String nickname) {
         this.accessToken = accessToken;
         this.status = status;
+        this.roleType = roleType;
+        this. nickname = nickname;
     }
     
 }
