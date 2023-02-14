@@ -11,5 +11,6 @@ public class MyPageResponseDto {
 
     private String nickname;
     private String profilePath;
+    private String roleType;
     
 }

@@ -36,6 +36,7 @@ public class MyPageController {
             MyPageResponseDto myPageResponseDto = new MyPageResponseDto();
             myPageResponseDto.setNickname(principal.getMember().getNickname());
             myPageResponseDto.setProfilePath(principal.getMember().getProfilePath());
+            myPageResponseDto.setRoleType(principal.getMember().getRole().toString());
 
             return ResponseEntity.ok(myPageResponseDto);
         } else {
