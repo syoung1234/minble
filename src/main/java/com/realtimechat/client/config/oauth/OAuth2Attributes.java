@@ -24,7 +24,7 @@ public class OAuth2Attributes {
         this.nickname = nickname;
         this.email = email;
         this.social = social;
-        this.emailConfirmation = true;
+        this.emailConfirmation = false;
     }
 
     public void setNickname(String nickname) {
