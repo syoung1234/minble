@@ -13,6 +13,7 @@ import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.service.EmailTokenService;
 import com.realtimechat.client.service.MemberService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +35,9 @@ public class MemberController {
     private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final EmailTokenService emailTokenService;
+    
+    @Value("${default.profile.path}")
+    private String defaultProfilePath;
 
 
     // 로그인
@@ -52,6 +56,7 @@ public class MemberController {
                 .password(passwordEncoder.encode(user.get("password")))
                 .nickname(user.get("nickname"))
                 .phone(user.get("phone"))
+                .profilePath(defaultProfilePath)
                 .role(Role.ROLE_MEMBER)
                 .build());
         
@@ -62,13 +67,14 @@ public class MemberController {
 
     // 소셜 회원가입
     @PostMapping("/register/social")
-    public String social(@RequestBody SocialRegisterRequestDto socialRegisterRequestDto) {
-        return memberService.socialSave(socialRegisterRequestDto);
+    public ResponseEntity<LoginResponseDto> social(@RequestBody SocialRegisterRequestDto socialRegisterRequestDto) {
+        LoginResponseDto response = memberService.socialSave(socialRegisterRequestDto);
+        return ResponseEntity.ok(response);
     }
 
-    
+
     // 이메일, 닉네임 중복 확인
-    @PostMapping("duplicate/{type}")
+    @PostMapping("/duplicate/{type}")
     public String duplicate(@PathVariable String type, @RequestBody Map<String, String> user) {
         String message = "exist";
         Member member = null;
@@ -99,5 +105,6 @@ public class MemberController {
         List<MemberResponseDto> response = memberService.followList(member);
         return ResponseEntity.ok(response);
     }
-    
+
+
 }

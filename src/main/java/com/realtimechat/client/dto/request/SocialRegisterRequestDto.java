@@ -11,6 +11,7 @@ public class SocialRegisterRequestDto {
     private String email;
     private String nickname;
     private String social;
+    private String profilePath;
 
     public SocialRegisterRequestDto(String email, String nickname, String social) {
         this.email = email;
@@ -18,10 +19,15 @@ public class SocialRegisterRequestDto {
         this.social = social;
     }
 
+    public void setProfilePath(String profilePath) {
+        this.profilePath = profilePath;
+    }
+
     public Member toEntity() {
         return Member.builder()
             .email(email)
             .nickname(nickname)
+            .profilePath(profilePath)
             .social(social)
             .build();
     }
