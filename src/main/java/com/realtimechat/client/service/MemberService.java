@@ -50,17 +50,13 @@ public class MemberService {
     }
 
     // 소셜 회원가입
-    public String socialSave(SocialRegisterRequestDto socialRegisterRequestDto) {
+    public LoginResponseDto socialSave(SocialRegisterRequestDto socialRegisterRequestDto) {
         Member member = memberRepository.findByEmailAndSocial(socialRegisterRequestDto.getEmail(), socialRegisterRequestDto.getSocial()).orElse(null);
 
-        if (member == null) {
-            member = memberRepository.save(socialRegisterRequestDto.toEntity());
-        } else {
-            member.updateNickname(socialRegisterRequestDto.getNickname());
-            memberRepository.save(member);
-        }
+        String accessToken = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
+        LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, "success", member.getRole().toString(), member.getNickname());
 
-        return jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
+        return loginResponseDto;
     }
 
     public List<MemberResponseDto> followList(Member member) {
