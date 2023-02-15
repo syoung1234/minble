@@ -1,6 +1,7 @@
 package com.realtimechat.client.domain;
 
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,11 +29,11 @@ public class Follow extends BaseTimeEntity {
     @Column(name = "follow_id")
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id", nullable = false, updatable = false)
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "following_member_id", nullable = false, updatable = false)
     private Member following;
     
