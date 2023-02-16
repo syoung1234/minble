@@ -33,8 +33,10 @@ public class CommentService {
         Post post = postRepository.findById(commentRequestDto.getPostId()).orElseThrow(() -> new IllegalArgumentException("error"));
         commentRequestDto.setPost(post);
 
-        Comment comment = commentRepository.findById(commentRequestDto.getParentId()).orElse(null);
-        commentRequestDto.setParent(comment);
+        if (commentRequestDto.getParentId() != null) { // 답글일 경우
+            Comment comment = commentRepository.findById(commentRequestDto.getParentId()).orElse(null);
+            commentRequestDto.setParent(comment);
+        }
 
         // 저장
         commentRepository.save(commentRequestDto.toEntity());
