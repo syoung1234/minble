@@ -14,6 +14,8 @@ import com.realtimechat.client.service.EmailTokenService;
 import com.realtimechat.client.service.MemberService;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,7 +47,14 @@ public class MemberController {
     public ResponseEntity<LoginResponseDto> login(@RequestBody Map<String, String> user) {
         LoginResponseDto response = memberService.login(user);
         
-        return ResponseEntity.ok(response);
+        ResponseCookie cookie = ResponseCookie.from("accessToken", response.getAccessToken())
+            .maxAge(1 * 24 * 60 * 60) // 1일 
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
     }
 
     // 회원가입
