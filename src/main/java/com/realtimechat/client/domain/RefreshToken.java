@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class RefreshToken extends BaseTimeEntity {
     @Id
-    @Column(name = "refresh_id")
+    @Column(name = "refresh_token_id")
     private String id;
     
     @ManyToOne(cascade = CascadeType.ALL)
