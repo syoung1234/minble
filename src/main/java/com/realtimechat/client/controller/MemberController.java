@@ -47,7 +47,7 @@ public class MemberController {
     public ResponseEntity<LoginResponseDto> login(@RequestBody Map<String, String> user) {
         LoginResponseDto response = memberService.login(user);
         
-        ResponseCookie cookie = ResponseCookie.from("accessToken", response.getAccessToken())
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", response.getRefreshToken())
             .maxAge(1 * 24 * 60 * 60) // 1일 
             .httpOnly(true)
             .secure(true)
