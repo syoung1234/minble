@@ -1,11 +1,17 @@
 package com.realtimechat.client.config.security;
 
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.realtimechat.client.domain.Member;
+import com.realtimechat.client.domain.RefreshToken;
 import com.realtimechat.client.domain.Role;
+import com.realtimechat.client.repository.RefreshTokenRepository;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,10 +32,11 @@ public class JwtTokenProvider {
 
     private String secretKey = "star";
 
-    // 토큰 유효시간 30분  -> 300분
-    private long tokenValidTime = 30 * 60 * 10000L;
+    // 토큰 유효시간 30분
+    private long tokenValidTime = 3 * 60 * 10000L;
 
     private final UserDetailsService userDetailsService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 객체 초기화, secretKey를 Base64로 인코딩
     protected void init() {
@@ -49,6 +56,17 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 사용할 암호화 알고리즘과 signature에 들어갈 secret 값 세팅
                 .compact();
     } 
+
+    // Refresh Token 생성
+    public String createRefreshToken(Member member) {
+        String refreshTokenId = UUID.randomUUID().toString();
+        LocalDateTime expirationDate = LocalDateTime.now().plusMonths(1);
+
+        RefreshToken refreshToken = new RefreshToken(refreshTokenId, member, expirationDate);
+        refreshTokenRepository.save(refreshToken);
+
+        return refreshTokenId;
+    }
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
@@ -79,6 +97,22 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    // Refresh token 만료일자 확인
+    public String validateRefreshToken(String refreshToken) {
+        String result = null;
+        Optional<RefreshToken> token = refreshTokenRepository.findById(refreshToken);
+
+        if (token.isPresent()) {
+            if (token.get().getExpirationDate().isAfter(LocalDateTime.now())) {// 유효기간이 지나지 않았을 때
+                // 재발급
+                Member member = token.get().getMember();
+                result = this.createToken(member.getNickname(), member.getRole(), member.getSocial());
+            }
+        }
+        
+        return result;
     }
 
 }
