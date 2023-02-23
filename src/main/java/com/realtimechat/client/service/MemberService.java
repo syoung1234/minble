@@ -40,10 +40,11 @@ public class MemberService {
 
         LoginResponseDto loginResponseDto;
         if (member.isEmailConfirmation() == false) { // 이메일 인증이 안 된 회원 
-            loginResponseDto = new LoginResponseDto(null, "unconfirmed", null, null);
+            loginResponseDto = new LoginResponseDto(null, null, "unconfirmed", null, null);
         } else {
             String accessToken = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), null);
-            loginResponseDto = new LoginResponseDto(accessToken, "success", member.getRole().toString(), member.getNickname());
+            String refreshToken = jwtTokenProvider.createRefreshToken(member);
+            loginResponseDto = new LoginResponseDto(accessToken, refreshToken, "success", member.getRole().toString(), member.getNickname());
         }
 
         return loginResponseDto;
@@ -54,7 +55,8 @@ public class MemberService {
         Member member = memberRepository.findByEmailAndSocial(socialRegisterRequestDto.getEmail(), socialRegisterRequestDto.getSocial()).orElse(null);
 
         String accessToken = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
-        LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, "success", member.getRole().toString(), member.getNickname());
+        String refreshToken = jwtTokenProvider.createRefreshToken(member);
+        LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken, "success", member.getRole().toString(), member.getNickname());
 
         return loginResponseDto;
     }
