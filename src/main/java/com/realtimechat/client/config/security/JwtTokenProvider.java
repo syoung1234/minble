@@ -3,7 +3,6 @@ package com.realtimechat.client.config.security;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -97,22 +96,6 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    // Refresh token 만료일자 확인
-    public String validateRefreshToken(String refreshToken) {
-        String result = null;
-        Optional<RefreshToken> token = refreshTokenRepository.findById(refreshToken);
-
-        if (token.isPresent()) {
-            if (token.get().getExpirationDate().isAfter(LocalDateTime.now())) {// 유효기간이 지나지 않았을 때
-                // 재발급
-                Member member = token.get().getMember();
-                result = this.createToken(member.getNickname(), member.getRole(), member.getSocial());
-            }
-        }
-        
-        return result;
     }
 
 }
