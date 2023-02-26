@@ -13,7 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // connection 할 때  CORS 허용
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/")
+        registry.addEndpoint("/echo")
             .setAllowedOriginPatterns("*")
             .withSockJS();
     }
