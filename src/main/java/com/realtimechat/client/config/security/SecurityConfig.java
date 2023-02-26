@@ -49,11 +49,13 @@ public class SecurityConfig {
             .authorizeRequests() // 요청에 대한 사용 권한 체크
             .antMatchers("/api/admin/**").hasRole("ADMIN")
             .antMatchers("/api/post/**").authenticated()
+            .antMatchers("/api/mypage/**").authenticated()
             .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
             .and()
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
             .oauth2Login()
             .successHandler(successHandler)
+            .loginPage("/api/refresh-token")
             .userInfoEndpoint()
             .userService(customOAuth2UserService);
             // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음
