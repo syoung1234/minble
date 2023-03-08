@@ -1,6 +1,6 @@
 package com.realtimechat.client.service;
 
-import java.io.File;
+// import java.io.File;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -11,6 +11,7 @@ import com.realtimechat.client.dto.request.PostFileRequestDto;
 import com.realtimechat.client.repository.PostFileRepository;
 import com.realtimechat.client.util.CreateFileName;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class PostFileService {
     private final PostFileRepository postFileRepository;
+    private final S3Upload s3upload;
+
+    @Value("${app.url}")
+    private String appUrl;
 
     // 이미지 업로드 저장
     @Transactional
@@ -33,17 +38,25 @@ public class PostFileService {
                 String filename = new CreateFileName(originalFileName).toString();
                 Long fileSize = file.getSize();
                 String fileType = file.getContentType();
-                String folder = "/files/post";
-                String savePath = System.getProperty("user.dir") + folder;
-                if (!new File(savePath).exists()) {
-                    try {
-                        new File(savePath).mkdir();
-                    } catch(Exception e) {
-                        e.getStackTrace();
-                    }
-                }
-                String filePath = folder + "/" + filename;
-                file.transferTo(new File(savePath + "/" + filename));
+
+                /* 서버 저장 -> s3 저장으로 변경 */
+                
+                // s3 저장
+                String saveFile = "post/" + filename;
+                String filePath = s3upload.upload(file, saveFile);
+
+                // 서버 저장
+                // String folder = "/files/post";
+                // String savePath = System.getProperty("user.dir") + folder;
+                // if (!new File(savePath).exists()) {
+                //     try {
+                //         new File(savePath).mkdir();
+                //     } catch(Exception e) {
+                //         e.getStackTrace();
+                //     }
+                // }
+                // String filePath = appUrl + folder + "/" + filename;
+                // file.transferTo(new File(savePath + "/" + filename));
     
                 PostFileRequestDto postFileRequestDto = new PostFileRequestDto();
                 postFileRequestDto.setOriginalFileName(originalFileName);

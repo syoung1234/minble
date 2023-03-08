@@ -1,6 +1,6 @@
 package com.realtimechat.client.service;
 
-import java.io.File;
+// import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +22,7 @@ import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.repository.PaymentRepository;
 import com.realtimechat.client.util.CreateFileName;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,6 +40,10 @@ public class MyPageService {
     private final PaymentRepository paymentRepository;
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Upload s3Upload;
+
+    @Value("app.url")
+    private String appUrl;
 
     // 닉네임 변경
     @Transactional
@@ -71,17 +76,22 @@ public class MyPageService {
             // MultipartFile profile = myPageRequestDto.getProfile();
             String originalFileName = profile.getOriginalFilename();
             String filename = new CreateFileName(originalFileName).toString();
-            String folder = "/files/profile";
-            String savePath = System.getProperty("user.dir") + folder;
-            if (!new File(savePath).exists()) {
-                try {
-                    new File(savePath).mkdir();
-                } catch(Exception e) {
-                    e.getStackTrace();
-                }
-            }
-            String profilePath = folder + "/" + filename;
-            profile.transferTo(new File(savePath + "/" + filename));
+
+            // 서버 저장 -> s3 저장
+            String saveFile = "profile/" + filename;
+            String profilePath = s3Upload.upload(profile, saveFile); 
+
+            // String folder = "/files/profile";
+            // String savePath = System.getProperty("user.dir") + folder;
+            // if (!new File(savePath).exists()) {
+            //     try {
+            //         new File(savePath).mkdir();
+            //     } catch(Exception e) {
+            //         e.getStackTrace();
+            //     }
+            // }
+            // String profilePath = appUrl + folder + "/" + filename;
+            // profile.transferTo(new File(savePath + "/" + filename));
     
             member.updateProfile(profilePath);
             memberRepository.save(member);
