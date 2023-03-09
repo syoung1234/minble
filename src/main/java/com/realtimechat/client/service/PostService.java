@@ -11,6 +11,7 @@ import com.realtimechat.client.domain.Comment;
 import com.realtimechat.client.domain.Favorite;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
+import com.realtimechat.client.domain.PostFile;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.CommentResponseDto;
 import com.realtimechat.client.dto.response.FollowResponseDto;
@@ -20,6 +21,7 @@ import com.realtimechat.client.repository.CommentRepository;
 import com.realtimechat.client.repository.FavoriteRepository;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.repository.PostFileRepository;
 import com.realtimechat.client.repository.PostRepository;
 
 import org.springframework.data.domain.Page;
@@ -48,7 +50,9 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final FavoriteRepository favoriteRepository;
+    private final PostFileRepository postFileRepository;
     private final PostFileService postFileService;
+    private final S3Upload s3Upload;
 
     // list
     public Map<String, Object> list(Member member, String nickname, Pageable pageable) {
@@ -192,6 +196,14 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
         
         if (post.getMember().getId().equals(member.getId())) { // 작성자만 삭제 가능
+            List<PostFile> postFileList = postFileRepository.findByPost(post);
+            // 이미지 삭제
+            if (postFileList != null) {
+                for (PostFile postFile : postFileList) {
+                    s3Upload.delete(postFile.getFilePath());
+                }
+            }
+            // 게시글 삭제 
             postRepository.delete(post);
             message = "success";
         }

@@ -80,6 +80,7 @@ public class PostFileService {
     public String delete(List<String> deleteList) {
         for (String filename : deleteList) {
             PostFile postFile = postFileRepository.findByFilename(filename);
+            s3upload.delete(postFile.getFilePath());
             postFileRepository.delete(postFile);
         }
         return "success";

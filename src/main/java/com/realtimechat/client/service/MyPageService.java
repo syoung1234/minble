@@ -93,6 +93,10 @@ public class MyPageService {
             // String profilePath = appUrl + folder + "/" + filename;
             // profile.transferTo(new File(savePath + "/" + filename));
     
+            // 기존 프로필 이미지 삭제
+            s3Upload.delete(member.getProfilePath());
+
+            // 새로운 프로필 등록
             member.updateProfile(profilePath);
             memberRepository.save(member);
             message = "success";
