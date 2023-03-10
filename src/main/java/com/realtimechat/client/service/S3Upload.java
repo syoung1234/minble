@@ -40,9 +40,12 @@ public class S3Upload {
     public void delete(String filePath) {
         try {
             String key = filePath.substring(filePath.lastIndexOf("com/") + 4);
-            System.out.println(key);
-            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
-            amazonS3Client.deleteObject(deleteObjectRequest);
+            Boolean exist = amazonS3Client.doesObjectExist(bucket, key); // 존재 여부 
+            if (exist == true) { // 존재한다면 삭제
+                DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
+                amazonS3Client.deleteObject(deleteObjectRequest);
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
