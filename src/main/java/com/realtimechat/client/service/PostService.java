@@ -56,7 +56,7 @@ public class PostService {
 
     // list
     public Map<String, Object> list(Member member, String nickname, Pageable pageable) {
-        List<FollowResponseDto> follow = followRepository.findByMember(member);
+        List<FollowResponseDto> follow = followRepository.findByMemberOrderByCreatedAtDesc(member);
         List<Map<String,Object>> listmap = new ArrayList<Map<String, Object>>();
         List<Member> memberList = new ArrayList<>();
         Map<String, Object> result = new HashMap<String, Object>();
