@@ -23,7 +23,7 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
 
     Optional<Member> findByNickname(String nickname);
 
-    List<Member> findByRole(Role role);
+    List<Member> findByRoleOrderByCreatedAtDesc(Role role);
 
     @Query("SELECT m FROM Member m WHERE m.role= :role AND m.id NOT IN :followingList")
     List<Member> findByRoleAndMemberNotIn(@Param("role") Role role, @Param("followingList") List<UUID> followingList);

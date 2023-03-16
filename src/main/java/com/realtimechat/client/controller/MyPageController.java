@@ -55,7 +55,6 @@ public class MyPageController {
     // 프로필 변경
     @PostMapping("/profile")
     public ResponseEntity<String> updateProfile(@RequestParam("profile") MultipartFile profile, @AuthenticationPrincipal SecurityUser principal) {
-        System.out.println(profile);
         String response = myPageService.updateProfile(principal.getMember(), profile);
         return ResponseEntity.ok(response);
     }
@@ -63,7 +62,6 @@ public class MyPageController {
     // 비밀번호 변경
     @PostMapping("/password")
     public ResponseEntity<String> updatePassword(@RequestBody MyPageRequestDto myPageRequestDto, @AuthenticationPrincipal SecurityUser principal) {
-        System.out.println(myPageRequestDto);
         String response = myPageService.updatePassword(principal.getMember(), myPageRequestDto);
         return ResponseEntity.ok(response);
     }

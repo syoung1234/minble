@@ -65,17 +65,17 @@ public class MemberService {
         List<Member> memberList;
         if (member == null) {
             // 로그인 하지 않은 유저
-            memberList = memberRepository.findByRole(Role.ROLE_STAR);
+            memberList = memberRepository.findByRoleOrderByCreatedAtDesc(Role.ROLE_STAR);
         } else {
             // 로그인 한 유저
-            List<FollowResponseDto> followList = followRepository.findByMember(member);
+            List<FollowResponseDto> followList = followRepository.findByMemberOrderByCreatedAtDesc(member);
             List<UUID> followingList = new ArrayList<>();
             for (FollowResponseDto follow : followList) {
                 followingList.add(follow.getFollowing().getId());
             }
 
             if (followList.size() == 0) {
-                memberList = memberRepository.findByRole(Role.ROLE_STAR);
+                memberList = memberRepository.findByRoleOrderByCreatedAtDesc(Role.ROLE_STAR);
             } else {
                 memberList = memberRepository.findByRoleAndMemberNotIn(Role.ROLE_STAR, followingList);
             }
