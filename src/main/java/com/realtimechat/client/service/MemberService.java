@@ -42,7 +42,7 @@ public class MemberService {
         if (member.isEmailConfirmation() == false) { // 이메일 인증이 안 된 회원 
             loginResponseDto = new LoginResponseDto(null, null, "unconfirmed", null, null);
         } else {
-            String accessToken = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), null);
+            String accessToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole(), null);
             String refreshToken = jwtTokenProvider.createRefreshToken(member);
             loginResponseDto = new LoginResponseDto(accessToken, refreshToken, "success", member.getRole().toString(), member.getNickname());
         }

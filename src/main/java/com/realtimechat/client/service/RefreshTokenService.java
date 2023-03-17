@@ -27,7 +27,7 @@ public class RefreshTokenService {
             if (token.get().getExpirationDate().isAfter(LocalDateTime.now())) {// 유효기간이 지나지 않았을 때
                 // 재발급
                 Member member = token.get().getMember();
-                result = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
+                result = jwtTokenProvider.createToken(member.getEmail(), member.getRole(), member.getSocial());
             }
         }
         
