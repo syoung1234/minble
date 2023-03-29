@@ -12,6 +12,7 @@ import com.realtimechat.client.domain.RefreshToken;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.repository.RefreshTokenRepository;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,8 +29,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
-
-    private String secretKey = "star";
+    
+    @Value("${secretKey}")
+    private String secretKey;
 
     // 토큰 유효시간 30분
     private long tokenValidTime = 3 * 60 * 10000L;
