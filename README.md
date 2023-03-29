@@ -37,3 +37,12 @@ https://sy-minble.com
 [OAuth2Attributes.java](src/main/java/com/realtimechat/client/config/oauth/OAuth2Attributes.java)
 <br>
 [OAuth2SuccessHandler.java](src/main/java/com/realtimechat/client/config/oauth/OAuth2SuccessHandler.java)
+<br><br>
+
+# Version
+java: 17.0.2
+<br>
+spring boot: 2.7.5
+<br>
+mysql: 8.0.31
+<br>
