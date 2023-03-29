@@ -41,9 +41,10 @@ public class Message extends BaseTimeEntity {
     
 
     @Builder
-    public Message(Member member, ChatRoom chatRoom, String content) {
+    public Message(Member member, ChatRoom chatRoom, String content, MessageFile messageFile) {
         this.member = member;
         this.chatRoom = chatRoom;
         this.content = content;
+        this.messageFile = messageFile;
     }
 }

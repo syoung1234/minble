@@ -48,6 +48,7 @@ public class MessageRequestDto {
                 .member(member)
                 .chatRoom(chatRoom)
                 .content(content)
+                .messageFile(messageFile)
                 .build();
     }
 }
