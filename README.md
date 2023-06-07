@@ -14,9 +14,8 @@ Web Site: https://sy-minble.com
 <img src="https://github.com/syoung1234/minble/assets/71418436/ba07f826-b4c6-4295-9f45-afc768c625ca" style="width: 300px; height: 600px">
 
 ## 주요 기능
-
----
 ### JWT
+
 [JwtAuthenticationFilter.java](src/main/java/com/realtimechat/client/config/security/JwtAuthenticationFilter.java)
 <br>
 [JwtTokenProvider.java](src/main/java/com/realtimechat/client/config/security/JwtTokenProvider.java)
@@ -30,6 +29,7 @@ Web Site: https://sy-minble.com
 ---
 
 ### WebSocket
+
 [WebSocketConfig.java](src/main/java/com/realtimechat/client/config/WebSocketConfig.java)
 <br>
 [MessageController.java](src/main/java/com/realtimechat/client/controller/MessageController.java)
@@ -37,10 +37,12 @@ Web Site: https://sy-minble.com
 ---
 
 ### AWS S3
+
 [S3Config.java](src/main/java/com/realtimechat/client/config/S3Config.java)
 <br>
 ---
 ### Social Login
+
 [CustomOAuth2UserService.java](src/main/java/com/realtimechat/client/config/oauth/CustomOAuth2UserService.java)
 <br>
 [OAuth2Attributes.java](src/main/java/com/realtimechat/client/config/oauth/OAuth2Attributes.java)
