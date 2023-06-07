@@ -26,7 +26,7 @@ Web Site: https://sy-minble.com
 <br>
 [SecurityUserDetailService.java](src/main/java/com/realtimechat/client/config/security/SecurityUserDetailService.java)
 <br>
----
+
 
 ### WebSocket
 
@@ -34,13 +34,13 @@ Web Site: https://sy-minble.com
 <br>
 [MessageController.java](src/main/java/com/realtimechat/client/controller/MessageController.java)
 <br>
----
+
 
 ### AWS S3
 
 [S3Config.java](src/main/java/com/realtimechat/client/config/S3Config.java)
 <br>
----
+
 ### Social Login
 
 [CustomOAuth2UserService.java](src/main/java/com/realtimechat/client/config/oauth/CustomOAuth2UserService.java)
@@ -49,7 +49,7 @@ Web Site: https://sy-minble.com
 <br>
 [OAuth2SuccessHandler.java](src/main/java/com/realtimechat/client/config/oauth/OAuth2SuccessHandler.java)
 <br>
----
+
 
 ## Version
 Java: 17.0.2
