@@ -25,8 +25,14 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
 
     List<Member> findByRoleOrderByCreatedAtDesc(Role role);
 
+    // STAR or STAR_TEST
+    List<Member> findByRoleOrRoleOrderByCreatedAtDesc(Role star, Role starTest);
+
     @Query("SELECT m FROM Member m WHERE m.role= :role AND m.id NOT IN :followingList")
     List<Member> findByRoleAndMemberNotIn(@Param("role") Role role, @Param("followingList") List<UUID> followingList);
+
+    @Query("SELECT m FROM Member m WHERE (m.role= :role OR m.role= :roleTest) AND m.id NOT IN :followingList")
+    List<Member> findByRoleOrRoleAndMemberNotIn(@Param("role") Role role, @Param("roleTest") Role roleTest, @Param("followingList") List<UUID> followingList);
 
     // 닉네임 검색
     Page<Member> findByNicknameContaining(String keyword, Pageable pageable);

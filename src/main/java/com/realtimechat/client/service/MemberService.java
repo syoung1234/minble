@@ -65,7 +65,7 @@ public class MemberService {
         List<Member> memberList;
         if (member == null) {
             // 로그인 하지 않은 유저
-            memberList = memberRepository.findByRoleOrderByCreatedAtDesc(Role.ROLE_STAR);
+            memberList = memberRepository.findByRoleOrRoleOrderByCreatedAtDesc(Role.ROLE_STAR, Role.ROLE_STAR_TEST);
         } else {
             // 로그인 한 유저
             List<FollowResponseDto> followList = followRepository.findByMemberOrderByCreatedAtDesc(member);
@@ -75,9 +75,9 @@ public class MemberService {
             }
 
             if (followList.size() == 0) {
-                memberList = memberRepository.findByRoleOrderByCreatedAtDesc(Role.ROLE_STAR);
+                memberList = memberRepository.findByRoleOrRoleOrderByCreatedAtDesc(Role.ROLE_STAR, Role.ROLE_STAR_TEST);
             } else {
-                memberList = memberRepository.findByRoleAndMemberNotIn(Role.ROLE_STAR, followingList);
+                memberList = memberRepository.findByRoleOrRoleAndMemberNotIn(Role.ROLE_STAR, Role.ROLE_STAR_TEST, followingList);
             }
         }
 
