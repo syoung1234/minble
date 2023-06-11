@@ -6,6 +6,7 @@ import com.realtimechat.client.dto.request.FollowRequestDto;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.service.FollowService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,11 +26,14 @@ public class FollowController {
     private final MemberRepository memberRepository;
 
     @PostMapping("/create")
-    public void create(@RequestBody FollowRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
-        Member following = memberRepository.findByNickname(requestDto.getNickname()).orElse(null);
+    public ResponseEntity<String> create(@RequestBody FollowRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
+        Member following = memberRepository.findByNickname(requestDto.getNickname()).orElse(null); // star
+        
         requestDto.setFollowing(following);
         requestDto.setMember(principal.getMember()); // 본인 
-        followService.create(requestDto);
+        String result = followService.create(requestDto);
+
+        return ResponseEntity.ok(result);
 
     }
 
