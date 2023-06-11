@@ -14,7 +14,7 @@ Web Site: https://sy-minble.com
 <img src="https://github.com/syoung1234/minble/assets/71418436/ba07f826-b4c6-4295-9f45-afc768c625ca" style="width: 300px; height: 600px">
 
 ## 주요 기능
-### JWT
+### 로그인 기능 JWT
 
 [JwtAuthenticationFilter.java](src/main/java/com/realtimechat/client/config/security/JwtAuthenticationFilter.java)
 <br>
@@ -27,8 +27,35 @@ Web Site: https://sy-minble.com
 [SecurityUserDetailService.java](src/main/java/com/realtimechat/client/config/security/SecurityUserDetailService.java)
 <br>
 
+``` java
+// Access Token 유효시간 30분
+private long tokenValidTime = 3 * 60 * 10000L;
 
-### WebSocket
+// Refresh Token 생성, 유효기간 1개월
+public String createRefreshToken(Member member) {
+    String refreshTokenId = UUID.randomUUID().toString();
+    LocalDateTime expirationDate = LocalDateTime.now().plusMonths(1);
+
+    RefreshToken refreshToken = new RefreshToken(refreshTokenId, member, expirationDate);
+    refreshTokenRepository.save(refreshToken);
+
+    return refreshTokenId;
+}
+
+// cookie 저장, httpOnly, secure 사용
+ResponseCookie cookie = ResponseCookie.from("refreshToken", response.getRefreshToken())
+            .maxAge(30 * 24 * 60 * 60) // 30일
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .build();
+
+```
+Refresh Token 만들고 httpOnly, secure를 사용하여 cookie에 저장하였습니다. Refresh Token은 1개월 저장, Access Token은 30분 저장하였습니다. Access Token이 만료되었을 때는 Refresh Token을 요청하여 새로 Access Token을 받아서 로그인이 풀리지 않도록 하였습니다.
+
+<br>
+
+### 실시간 채팅 WebSocket
 
 [WebSocketConfig.java](src/main/java/com/realtimechat/client/config/WebSocketConfig.java)
 <br>
@@ -36,7 +63,7 @@ Web Site: https://sy-minble.com
 <br>
 
 
-### AWS S3
+### AWS S3 파일 저장
 
 [S3Config.java](src/main/java/com/realtimechat/client/config/S3Config.java)
 <br>
