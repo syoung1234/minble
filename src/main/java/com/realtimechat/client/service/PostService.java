@@ -63,7 +63,7 @@ public class PostService {
         Page<Post> posts;
 
         // role이 star일 경우 자기 자신 게시글 보여주고 글 작성 권한이 있음
-        if (member.getRole().toString().equals("ROLE_STAR")) {
+        if (member.getRole().toString().equals("ROLE_STAR") || member.getRole().toString().equals("ROLE_STAR_TEST")) {
             result.put("role", "star");
             nickname = member.getNickname();
         }

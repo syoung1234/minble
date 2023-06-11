@@ -2,6 +2,7 @@ package com.realtimechat.client.service;
 
 import com.realtimechat.client.domain.Follow;
 import com.realtimechat.client.domain.Member;
+import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.FollowRequestDto;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
@@ -20,6 +21,13 @@ public class FollowService {
 
     @Transactional
     public String create(FollowRequestDto requestDto) {
+        // TEST 끼리만 가능
+        if (requestDto.getMember().getRole().equals(Role.ROLE_SUBSCRIBER_TEST)) {
+            if (!requestDto.getFollowing().getRole().equals(Role.ROLE_STAR_TEST)) {
+                return null;
+            }
+        }
+        
         followRepository.save(requestDto.toEntity());
         return "success";
     }
