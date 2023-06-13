@@ -48,7 +48,7 @@ public class MemberController {
         LoginResponseDto response = memberService.login(user);
         
         ResponseCookie cookie = ResponseCookie.from("refreshToken", response.getRefreshToken())
-            .maxAge(1 * 24 * 60 * 60) // 1일 
+            .maxAge(30 * 24 * 60 * 60) // 30일
             .httpOnly(true)
             .secure(true)
             .path("/")
