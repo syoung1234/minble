@@ -42,3 +42,11 @@ out/
 
 # 파일 업로드
 files/
+
+# Front
+minble-vuejs
+
+# DS_Store
+.DS_Store
+src/.DS_Store
+src/main/.DS_Store
