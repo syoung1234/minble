@@ -4,7 +4,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class MemberException extends RuntimeException {
     private final MemberErrorCode memberErrorCode;
+
+    public MemberException(MemberErrorCode memberErrorCode) {
+        super(memberErrorCode.getMessage());
+        this.memberErrorCode = memberErrorCode;
+    }
 }
