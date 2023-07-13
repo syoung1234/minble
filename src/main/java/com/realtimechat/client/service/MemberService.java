@@ -1,21 +1,23 @@
 package com.realtimechat.client.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.realtimechat.client.config.security.JwtTokenProvider;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.SocialRegisterRequestDto;
+import com.realtimechat.client.dto.request.member.DuplicateRequestDto;
+import com.realtimechat.client.dto.request.member.RegisterRequestDto;
 import com.realtimechat.client.dto.response.FollowResponseDto;
 import com.realtimechat.client.dto.response.LoginResponseDto;
 import com.realtimechat.client.dto.response.MemberResponseDto;
+import com.realtimechat.client.exception.MemberErrorCode;
+import com.realtimechat.client.exception.MemberException;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,9 @@ public class MemberService {
     private final FollowRepository followRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${default.profile.path}")
+    private String defaultProfilePath;
 
     // 로그인
     public LoginResponseDto login(Map<String, String> user) {
@@ -50,6 +55,19 @@ public class MemberService {
         return loginResponseDto;
     }
 
+    // 회원가입
+    public Member register(RegisterRequestDto registerRequestDto) {
+        Member member = Member.builder()
+                .email(registerRequestDto.getEmail())
+                .password(passwordEncoder.encode(registerRequestDto.getPassword()))
+                .nickname(registerRequestDto.getNickname())
+                .profilePath(defaultProfilePath)
+                .role(Role.ROLE_MEMBER)
+                .build();
+
+        return memberRepository.save(member);
+    }
+
     // 소셜 회원가입
     public LoginResponseDto socialSave(SocialRegisterRequestDto socialRegisterRequestDto) {
         Member member = memberRepository.findByEmailAndSocial(socialRegisterRequestDto.getEmail(), socialRegisterRequestDto.getSocial()).orElse(null);
@@ -59,6 +77,24 @@ public class MemberService {
         LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken, "success", member.getRole().toString(), member.getNickname());
 
         return loginResponseDto;
+    }
+
+    // 이메일, 닉네임 중복 검사
+    public String duplicate(DuplicateRequestDto duplicateRequestDto, String type) {
+        String message = "available";
+        Optional<Member> member = Optional.of(new Member());
+
+        if (type.equals("email")) {
+            member = memberRepository.findByEmail(duplicateRequestDto.getEmail());
+
+        } else if (type.equals("nickname")) {
+            member = memberRepository.findByNickname(duplicateRequestDto.getNickname());
+        }
+
+        if (!member.isEmpty()) {
+            throw new MemberException(MemberErrorCode.DUPLICATED_MEMBER);
+        }
+        return message;
     }
 
     public List<MemberResponseDto> followList(Member member) {

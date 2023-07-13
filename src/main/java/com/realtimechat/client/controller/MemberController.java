@@ -7,6 +7,8 @@ import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.SocialRegisterRequestDto;
+import com.realtimechat.client.dto.request.member.DuplicateRequestDto;
+import com.realtimechat.client.dto.request.member.RegisterRequestDto;
 import com.realtimechat.client.dto.response.LoginResponseDto;
 import com.realtimechat.client.dto.response.MemberResponseDto;
 import com.realtimechat.client.repository.MemberRepository;
@@ -33,14 +35,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api")
 public class MemberController {
 
-    private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final EmailTokenService emailTokenService;
-    
-    @Value("${default.profile.path}")
-    private String defaultProfilePath;
-
 
     // 로그인
     @PostMapping("/login")
@@ -59,20 +56,11 @@ public class MemberController {
 
     // 회원가입
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody Map<String, String> user) {
-        Member member = memberRepository.save(Member.builder()
-                .email(user.get("email"))
-                .password(passwordEncoder.encode(user.get("password")))
-                .nickname(user.get("nickname"))
-                .phone(user.get("phone"))
-                .profilePath(defaultProfilePath)
-                .role(Role.ROLE_MEMBER)
-                .build());
-        
-        emailTokenService.createEmailToken(member, user.get("email"), null);
+    public ResponseEntity<String> register(@RequestBody RegisterRequestDto registerRequestDto) {
+        Member member = memberService.register(registerRequestDto);
+        emailTokenService.createEmailToken(member, member.getEmail(), null);
         return ResponseEntity.ok("success");
     } 
-
 
     // 소셜 회원가입
     @PostMapping("/register/social")
@@ -84,21 +72,10 @@ public class MemberController {
 
     // 이메일, 닉네임 중복 확인
     @PostMapping("/duplicate/{type}")
-    public String duplicate(@PathVariable String type, @RequestBody Map<String, String> user) {
-        String message = "exist";
-        Member member = null;
-        if (type.equals("email")) {
-            member = memberRepository.findByEmailAndSocial(user.get("email"), null).orElse(null);
-        
-        } else if (type.equals("nickname")) {
-            member = memberRepository.findByNickname(user.get("nickname")).orElse(null);
-        }
+    public ResponseEntity<String> duplicate(@PathVariable String type, @RequestBody DuplicateRequestDto duplicateRequestDto) {
+        String message = memberService.duplicate(duplicateRequestDto, type);
 
-        if (member == null) {
-            message = "available";
-        }
-        
-        return message;
+        return ResponseEntity.ok(message);
     }
 
 
