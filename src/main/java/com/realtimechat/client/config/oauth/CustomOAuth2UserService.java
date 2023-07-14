@@ -3,6 +3,8 @@ package com.realtimechat.client.config.oauth;
 import java.util.Collections;
 
 import com.realtimechat.client.domain.Member;
+import com.realtimechat.client.exception.MemberErrorCode;
+import com.realtimechat.client.exception.MemberException;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.util.CreateNickname;
 
@@ -42,6 +44,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             attributes.getAttributes(), attributes.getNameAttributeKey());
     }
 
+    /**
+     * 소셜 로그인 및 회원가입
+     * @param attributes (social member)
+     * @return member
+     */
     private Member saveOrUpdate(OAuth2Attributes attributes) {
         CreateNickname createNickname = new CreateNickname();
         String randomNickname = createNickname.randomNickname();
@@ -50,13 +57,18 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         while (checkNickname != null) {
             randomNickname = createNickname.randomNickname();
+            checkNickname = memberRepository.findByNickname(randomNickname).orElse(null);
         }
 
         attributes.setNickname(randomNickname);
 
+        // 같은 이메일로 가입된 이력이 있으면 exception
+        memberRepository.findByEmailAndSocialNot(attributes.getEmail(), attributes.getSocial())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.DUPLICATED_MEMBER));
+
         Member member = memberRepository.findByEmailAndSocial(attributes.getEmail(), attributes.getSocial())
             .orElse(attributes.toEntity());
-        return memberRepository.save(member); // 회원가입 완료를 닉네임 설정 후에 완료할 것이기 때문에 주석처리 
+        return memberRepository.save(member);
     }
     
 }
