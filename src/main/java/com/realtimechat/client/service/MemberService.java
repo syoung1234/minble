@@ -43,7 +43,7 @@ public class MemberService {
      * @return loginResponseDto, MemberException
      */
     public LoginResponseDto login(LoginRequestDto requestDto) {
-        Member member = memberRepository.findByEmail(requestDto.getEmail())
+        Member member = memberRepository.findByEmailAndSocial(requestDto.getEmail(), null)
                         .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)); // 가입X
 
         if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) { // 비밀번호 틀림
@@ -81,13 +81,14 @@ public class MemberService {
     }
 
     /**
-     * 소셜 회원가입 (네이버, 카카오, 구글)
+     * 소셜 회원가입 및 로그인 (네이버, 카카오, 구글)
      * @param socialRegisterRequestDto (email, password, social)
      * @return LoginResponseDto
      */
     @Transactional
     public LoginResponseDto socialSave(SocialRegisterRequestDto socialRegisterRequestDto) {
-        Member member = memberRepository.findByEmailAndSocial(socialRegisterRequestDto.getEmail(), socialRegisterRequestDto.getSocial()).orElse(null);
+        Member member = memberRepository.findByEmailAndSocial(socialRegisterRequestDto.getEmail(), socialRegisterRequestDto.getSocial())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         String accessToken = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
         String refreshToken = jwtTokenProvider.createRefreshToken(member);
