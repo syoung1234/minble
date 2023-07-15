@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum MemberErrorCode {
+public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Member Not found"),
     DUPLICATED_MEMBER(HttpStatus.BAD_REQUEST, "Duplicated Member"),
     UNAUTHORIZED_MEMBER(HttpStatus.UNAUTHORIZED, "Unauthorized");

@@ -3,7 +3,7 @@ package com.realtimechat.client.config.oauth;
 import java.util.Collections;
 
 import com.realtimechat.client.domain.Member;
-import com.realtimechat.client.exception.MemberErrorCode;
+import com.realtimechat.client.exception.ErrorCode;
 import com.realtimechat.client.exception.MemberException;
 import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.util.CreateNickname;
@@ -64,7 +64,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // 같은 이메일로 가입된 이력이 있으면 exception
         memberRepository.findByEmailAndSocialNot(attributes.getEmail(), attributes.getSocial())
-                .orElseThrow(() -> new MemberException(MemberErrorCode.DUPLICATED_MEMBER));
+                .orElseThrow(() -> new MemberException(ErrorCode.DUPLICATED_MEMBER));
 
         Member member = memberRepository.findByEmailAndSocial(attributes.getEmail(), attributes.getSocial())
             .orElse(attributes.toEntity());

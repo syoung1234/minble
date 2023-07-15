@@ -8,16 +8,14 @@ import com.realtimechat.client.dto.request.member.DuplicateRequestDto;
 import com.realtimechat.client.dto.request.member.LoginRequestDto;
 import com.realtimechat.client.dto.request.member.RegisterRequestDto;
 import com.realtimechat.client.dto.response.LoginResponseDto;
-import com.realtimechat.client.exception.MemberErrorCode;
+import com.realtimechat.client.exception.ErrorCode;
 import com.realtimechat.client.exception.MemberException;
 import com.realtimechat.client.repository.MemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -56,7 +54,7 @@ class MemberServiceTest {
         MemberException memberException = assertThrows(MemberException.class, () -> memberService.duplicate(duplicateRequestDto, "email"));
 
         // then
-        assertThat(memberException.getMemberErrorCode()).isEqualTo(MemberErrorCode.DUPLICATED_MEMBER);
+        assertThat(memberException.getErrorCode()).isEqualTo(ErrorCode.DUPLICATED_MEMBER);
     }
 
     @DisplayName("이메일 중복 검사-존재X")
@@ -85,7 +83,7 @@ class MemberServiceTest {
         MemberException memberException = assertThrows(MemberException.class, () -> memberService.duplicate(duplicateRequestDto, "nickname"));
 
         // then
-        assertThat(memberException.getMemberErrorCode()).isEqualTo(MemberErrorCode.DUPLICATED_MEMBER);
+        assertThat(memberException.getErrorCode()).isEqualTo(ErrorCode.DUPLICATED_MEMBER);
     }
 
     @DisplayName("닉네임 중복 검사-존재X")
@@ -147,7 +145,7 @@ class MemberServiceTest {
         MemberException memberException = assertThrows(MemberException.class, () -> memberService.login(loginRequestDto));
 
         // then
-        assertThat(memberException.getMemberErrorCode()).isEqualTo(MemberErrorCode.MEMBER_NOT_FOUND);
+        assertThat(memberException.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
     }
 
     @DisplayName("비밀번호 틀렸을 때")
@@ -163,7 +161,7 @@ class MemberServiceTest {
         MemberException memberException = assertThrows(MemberException.class, () -> memberService.login(loginRequestDto));
 
         // then
-        assertThat(memberException.getMemberErrorCode()).isEqualTo(MemberErrorCode.MEMBER_NOT_FOUND);
+        assertThat(memberException.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
     }
 
     @DisplayName("이메일 인증이 완료 되지 않음")
@@ -180,7 +178,7 @@ class MemberServiceTest {
         MemberException memberException = assertThrows(MemberException.class, () -> memberService.login(loginRequestDto));
 
         // then
-        assertThat(memberException.getMemberErrorCode()).isEqualTo(MemberErrorCode.UNAUTHORIZED_MEMBER);
+        assertThat(memberException.getErrorCode()).isEqualTo(ErrorCode.UNAUTHORIZED_MEMBER);
     }
 
     @DisplayName("로그인 성공")

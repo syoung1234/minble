@@ -13,7 +13,7 @@ import com.realtimechat.client.dto.request.member.RegisterRequestDto;
 import com.realtimechat.client.dto.response.FollowResponseDto;
 import com.realtimechat.client.dto.response.LoginResponseDto;
 import com.realtimechat.client.dto.response.MemberResponseDto;
-import com.realtimechat.client.exception.MemberErrorCode;
+import com.realtimechat.client.exception.ErrorCode;
 import com.realtimechat.client.exception.MemberException;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
@@ -44,15 +44,15 @@ public class MemberService {
      */
     public LoginResponseDto login(LoginRequestDto requestDto) {
         Member member = memberRepository.findByEmailAndSocial(requestDto.getEmail(), null)
-                        .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)); // 가입X
+                        .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND)); // 가입X
 
         if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) { // 비밀번호 틀림
-            throw new MemberException(MemberErrorCode.MEMBER_NOT_FOUND);
+            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND);
         }
 
         LoginResponseDto loginResponseDto;
         if (!member.isEmailConfirmation()) { // 이메일 인증이 안 된 회원
-            throw new MemberException(MemberErrorCode.UNAUTHORIZED_MEMBER);
+            throw new MemberException(ErrorCode.UNAUTHORIZED_MEMBER);
         } else {
             String accessToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole(), null);
             String refreshToken = jwtTokenProvider.createRefreshToken(member);
@@ -88,7 +88,7 @@ public class MemberService {
     @Transactional
     public LoginResponseDto socialSave(SocialRegisterRequestDto socialRegisterRequestDto) {
         Member member = memberRepository.findByEmailAndSocial(socialRegisterRequestDto.getEmail(), socialRegisterRequestDto.getSocial())
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND));
 
         String accessToken = jwtTokenProvider.createToken(member.getNickname(), member.getRole(), member.getSocial());
         String refreshToken = jwtTokenProvider.createRefreshToken(member);
@@ -114,7 +114,7 @@ public class MemberService {
         }
 
         if (!member.isEmpty()) {
-            throw new MemberException(MemberErrorCode.DUPLICATED_MEMBER);
+            throw new MemberException(ErrorCode.DUPLICATED_MEMBER);
         }
         return message;
     }
@@ -146,5 +146,5 @@ public class MemberService {
         return response;
         
     }
-    
+
 }
