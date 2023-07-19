@@ -11,12 +11,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface PostRepository extends JpaRepository<Post, Integer> {
+public interface PostRepository extends JpaRepository<Post, Integer>, PostRepositoryCustom {
 
     List<Post> findByMember(Member member);
 
     @Query("SELECT p FROM Post p WHERE p.member in :memberList ORDER BY CREATED_AT DESC")
     Page<Post> findByMemberOrderByCreatedAtDesc(@Param("memberList") List<Member> memberList, Pageable pageable);
 
-    Page<Post> findByMemberOrderByCreatedAtDesc(Member member, Pageable pageable);
 }
