@@ -13,10 +13,7 @@ import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.PostFile;
 import com.realtimechat.client.dto.request.PostRequestDto;
-import com.realtimechat.client.dto.response.CommentResponseDto;
-import com.realtimechat.client.dto.response.FollowResponseDto;
-import com.realtimechat.client.dto.response.PostDetailResponseDto;
-import com.realtimechat.client.dto.response.PostResponseDto;
+import com.realtimechat.client.dto.response.*;
 import com.realtimechat.client.repository.CommentRepository;
 import com.realtimechat.client.repository.FavoriteRepository;
 import com.realtimechat.client.repository.FollowRepository;
@@ -54,67 +51,14 @@ public class PostService {
     private final PostFileService postFileService;
     private final S3Upload s3Upload;
 
-    // list
-    public Map<String, Object> list(Member member, String nickname, Pageable pageable) {
-        List<FollowResponseDto> follow = followRepository.findByMemberOrderByCreatedAtDesc(member);
-        List<Map<String,Object>> listmap = new ArrayList<Map<String, Object>>();
-        List<Member> memberList = new ArrayList<>();
-        Map<String, Object> result = new HashMap<String, Object>();
-        Page<Post> posts;
-
-        // role이 star일 경우 자기 자신 게시글 보여주고 글 작성 권한이 있음
-        if (member.getRole().toString().equals("ROLE_STAR") || member.getRole().toString().equals("ROLE_STAR_TEST")) {
-            result.put("role", "star");
-            nickname = member.getNickname();
-        }
-
-        if (nickname == null || nickname == "") {
-            /*************** 팔로잉 목록 ***************/
-            // 팔로잉한 member 찾은 후 nickname, profile만 보여줌 
-            for (FollowResponseDto following : follow) {
-                Map<String, Object> followingList = new HashMap<String, Object>();
-
-                followingList.put("nickname", following.getFollowing().getNickname());
-                followingList.put("profilePath", following.getFollowing().getProfilePath());
-                listmap.add(followingList);
-                memberList.add(following.getFollowing());
-            }
-            /*************** 팔로잉한 게시글 목록 ***************/
-            posts = postRepository.findByMemberOrderByCreatedAtDesc(memberList, pageable);
-        } else {
-            /*************** 특정 회원 게시글 목록 ***************/
-            Member following = memberRepository.findByNickname(nickname).orElse(null);
-            posts = postRepository.findByMemberOrderByCreatedAtDesc(following, pageable);
-        }
-        
-        result.put("following", listmap);
-        
-        List<PostResponseDto> postList = new ArrayList<>();
-
-        for (Post post : posts) {
-            PostResponseDto postResponseDto = new PostResponseDto(post);
-            postResponseDto.setFavoriteCount(favoriteRepository.countByPost(post)); // 좋아요 수 
-            postResponseDto.setCommentCount(commentRepository.countByPost(post)); // 댓글 수
-            // 좋아요 여부
-            Favorite favorite = favoriteRepository.findByMemberAndPost(member, post);
-            if (favorite == null) {
-                postResponseDto.setFavorite(false);
-            } else {
-                postResponseDto.setFavorite(true);
-            }
-            postList.add(postResponseDto);
-        }
-
-        result.put("postList", postList);
-
-        // page
-        Map<String, Integer> pageList = new HashMap<>();
-        pageList.put("page", posts.getNumber());
-        pageList.put("totalPages", posts.getTotalPages());
-        pageList.put("nextPage", pageable.next().getPageNumber());
-        result.put("pageList", pageList);
-
-        return result;
+    /**
+     * @param member
+     * @param nickname
+     * @param pageable
+     * @return Page<PostListResponseDto>
+     */
+    public Page<PostListResponseDto> list(Member member, String nickname, Pageable pageable) {
+        return postRepository.findByPostAndFollowingAndFavoriteCountAndCommentCount(member, nickname, pageable);
     }
 
     // get
