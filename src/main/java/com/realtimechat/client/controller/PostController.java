@@ -1,12 +1,12 @@
 package com.realtimechat.client.controller;
 
-import java.util.Map;
-
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.PostDetailResponseDto;
+import com.realtimechat.client.dto.response.PostListResponseDto;
 import com.realtimechat.client.service.PostService;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -34,9 +34,9 @@ public class PostController {
 
     // 목록
     @GetMapping()
-    public ResponseEntity<Map<String, Object>> list(@AuthenticationPrincipal SecurityUser principal, 
+    public ResponseEntity<Page<PostListResponseDto>> list(@AuthenticationPrincipal SecurityUser principal,
     @RequestParam(value = "name", required=false) String nickname, @PageableDefault Pageable pageable) {
-        Map<String, Object> response = postService.list(principal.getMember(), nickname, pageable);
+        Page<PostListResponseDto> response = postService.list(principal.getMember(), nickname, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
