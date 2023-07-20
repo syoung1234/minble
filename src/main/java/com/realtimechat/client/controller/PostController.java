@@ -2,8 +2,7 @@ package com.realtimechat.client.controller;
 
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.dto.request.PostRequestDto;
-import com.realtimechat.client.dto.response.PostDetailResponseDto;
-import com.realtimechat.client.dto.response.PostListResponseDto;
+import com.realtimechat.client.dto.response.PostResponseDto;
 import com.realtimechat.client.service.PostService;
 
 import org.springframework.data.domain.Page;
@@ -34,9 +33,9 @@ public class PostController {
 
     // 목록
     @GetMapping()
-    public ResponseEntity<Page<PostListResponseDto>> list(@AuthenticationPrincipal SecurityUser principal,
-    @RequestParam(value = "name", required=false) String nickname, @PageableDefault Pageable pageable) {
-        Page<PostListResponseDto> response = postService.list(principal.getMember(), nickname, pageable);
+    public ResponseEntity<Page<PostResponseDto>> list(@AuthenticationPrincipal SecurityUser principal,
+                                                      @RequestParam(value = "name", required=false) String nickname, @PageableDefault Pageable pageable) {
+        Page<PostResponseDto> response = postService.list(principal.getMember(), nickname, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -60,9 +59,9 @@ public class PostController {
 
     // 조회
     @GetMapping("/{id}")
-    public ResponseEntity<PostDetailResponseDto> get(@AuthenticationPrincipal SecurityUser principal, @PathVariable Integer id,
+    public ResponseEntity<PostResponseDto> get(@AuthenticationPrincipal SecurityUser principal, @PathVariable Integer id,
                                     @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
-        PostDetailResponseDto response = postService.find(principal.getMember(), id, pageable);
+        PostResponseDto response = postService.find(principal.getMember(), id, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

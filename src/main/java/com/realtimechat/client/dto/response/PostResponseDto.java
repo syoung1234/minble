@@ -1,5 +1,6 @@
 package com.realtimechat.client.dto.response;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,62 +10,29 @@ import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.PostFile;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
+@NoArgsConstructor
 @ToString
 public class PostResponseDto {
-    private Integer id;
-    private String content;
     private String nickname;
     private String profilePath;
+    private int postId;
+    private String content;
     private String createdAt;
-    private List<PostAndFile> postFileList;
-    private Long favoriteCount;
-    private Long commentCount;
-    private Boolean favorite;
+    private long commentCount;
+    private long favoriteCount;
 
-    public PostResponseDto(Post entity) {
-        this.id = entity.getId();
-        this.nickname = entity.getMember().getNickname();
-        this.profilePath = entity.getMember().getProfilePath();
-        this.content = entity.getContent();
-        this.createdAt = entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
-        this.postFileList = PostAndFile.postFileList(entity.getPostFileList());
-    }
-
-    public void setFavoriteCount(Long favoriteCount) {
+    public PostResponseDto(String nickname, String profilePath, int postId, String content, LocalDateTime createdAt, long commentCount, long favoriteCount) {
+        this.nickname = nickname;
+        this.profilePath = profilePath;
+        this.postId = postId;
+        this.content = content;
+        this.createdAt = createdAt.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+        this.commentCount = commentCount;
         this.favoriteCount = favoriteCount;
     }
 
-    public void setCommentCount(Long commentCount) {
-        this.commentCount = commentCount;
-    }
-
-    public void setFavorite(Boolean favorite) {
-        this.favorite = favorite;
-    }
-
-    @Getter
-    static class PostAndFile {
-        private String filename;
-        private String filePath;
-
-        static List<PostAndFile> postFileList(List<PostFile> files) {
-            List<PostAndFile> list = new ArrayList<>();
-            files.forEach(file -> {
-                list.add(new PostAndFile(file));
-            });
-
-            // List<String> new_list = files.stream().map(o->o.getFilename()).collect(Collectors.toList());
-            
-            return list;
-        }
-
-        public PostAndFile(PostFile postFile) {
-            this.filename = postFile.getFilename();
-            this.filePath = postFile.getFilePath();
-        }
-    }
-   
 }
