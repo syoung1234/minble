@@ -43,10 +43,6 @@ import lombok.RequiredArgsConstructor;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final FollowRepository followRepository;
-    private final MemberRepository memberRepository;
-    private final CommentRepository commentRepository;
-    private final FavoriteRepository favoriteRepository;
     private final PostFileRepository postFileRepository;
     private final PostFileService postFileService;
     private final S3Upload s3Upload;
@@ -57,40 +53,15 @@ public class PostService {
      * @param pageable
      * @return Page<PostListResponseDto>
      */
-    public Page<PostListResponseDto> list(Member member, String nickname, Pageable pageable) {
-        return postRepository.findByPostAndFollowingAndFavoriteCountAndCommentCount(member, nickname, pageable);
+    public Page<PostResponseDto> list(Member member, String nickname, Pageable pageable) {
+        return postRepository.findAllByPostAndFollowingAndCountCommentAndCountFavorite(member, nickname, pageable);
     }
 
     // get
-    public PostDetailResponseDto find(Member member, Integer id, Pageable pageable) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+    public PostResponseDto find(Member member, Integer id, Pageable pageable) {
+        // Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
-        Page<Comment> comments = commentRepository.findByPostAndDepth(post, 0, pageable);
-
-        PostDetailResponseDto postDetailResponseDto = new PostDetailResponseDto(post);
-        // 댓글 목록
-        List<CommentResponseDto> commentList = comments.stream().map(CommentResponseDto::new).collect(Collectors.toList());
-        
-        // 페이지 정보
-        Map<String, Integer> pageList = new HashMap<>();
-        pageList.put("page", comments.getNumber());
-        pageList.put("totalPages", comments.getTotalPages());
-        pageList.put("nextPage", pageable.next().getPageNumber());
-
-        postDetailResponseDto.setCommentList(commentList); // 댓글 목록 
-        postDetailResponseDto.setFavoriteCount(favoriteRepository.countByPost(post)); // 좋아요 수
-        postDetailResponseDto.setCommentCount(commentRepository.countByPost(post)); // 댓글 수 
-        postDetailResponseDto.setPageList(pageList);
-
-         // 좋아요 여부
-         Favorite favorite = favoriteRepository.findByMemberAndPost(member, post);
-         if (favorite == null) {
-            postDetailResponseDto.setFavorite(false);
-         } else {
-            postDetailResponseDto.setFavorite(true);
-         }
-
-        return postDetailResponseDto;
+        return postRepository.findByPostAndCountCommentAndCountFavorite(id);
     }
 
     // create
