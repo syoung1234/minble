@@ -1,23 +1,15 @@
 package com.realtimechat.client.service;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.realtimechat.client.domain.Comment;
-import com.realtimechat.client.domain.Favorite;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.PostFile;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.*;
-import com.realtimechat.client.repository.CommentRepository;
-import com.realtimechat.client.repository.FavoriteRepository;
-import com.realtimechat.client.repository.FollowRepository;
-import com.realtimechat.client.repository.MemberRepository;
+import com.realtimechat.client.exception.ErrorCode;
+import com.realtimechat.client.exception.PostException;
 import com.realtimechat.client.repository.PostFileRepository;
 import com.realtimechat.client.repository.PostRepository;
 
@@ -48,20 +40,31 @@ public class PostService {
     private final S3Upload s3Upload;
 
     /**
-     * @param member
-     * @param nickname
-     * @param pageable
+     * nickname == null 팔로잉한 멤버의 전체 게시글 조회, != null 한 멤버의 게시글 조회
+     * @param member 로그인한 멤버
+     * @param nickname star 닉네임
+     * @param pageable 페이지
      * @return Page<PostListResponseDto>
      */
     public Page<PostResponseDto> list(Member member, String nickname, Pageable pageable) {
-        return postRepository.findAllByPostAndFollowingAndCountCommentAndCountFavorite(member, nickname, pageable);
+        Page<PostResponseDto> postResponseDto = postRepository.findAllByPostAndFollowingAndCountCommentAndCountFavorite(member, nickname, pageable);
+        if (postResponseDto.isEmpty()) {
+            throw new PostException(ErrorCode.POST_NOT_FOUND);
+        }
+        return postResponseDto;
     }
 
-    // get
-    public PostResponseDto find(Member member, Integer id, Pageable pageable) {
-        // Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
-
-        return postRepository.findByPostAndCountCommentAndCountFavorite(id);
+    /**
+     * 게시글 상세 조회
+     * @param id 게시글 Id
+     * @return PostResponseDto
+     */
+    public PostResponseDto find(Integer id) {
+        PostResponseDto postResponseDto = postRepository.findByPostAndCountCommentAndCountFavorite(id);
+        if (postResponseDto == null) {
+            throw new PostException(ErrorCode.POST_NOT_FOUND);
+        }
+        return postResponseDto;
     }
 
     // create
