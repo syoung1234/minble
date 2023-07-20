@@ -7,7 +7,6 @@ import com.realtimechat.client.service.PostService;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +30,28 @@ public class PostController {
 
     private final PostService postService;
 
-    // 목록
+    /**
+     * nickname == null 팔로잉한 멤버의 전체 게시글 조회, != null 한 멤버의 게시글 조회
+     * @param principal 로그인한 멤버
+     * @param nickname star 닉네임
+     * @param pageable 페이지
+     * @return Page<PostResponseDto>
+     */
     @GetMapping()
     public ResponseEntity<Page<PostResponseDto>> list(@AuthenticationPrincipal SecurityUser principal,
                                                       @RequestParam(value = "name", required=false) String nickname, @PageableDefault Pageable pageable) {
         Page<PostResponseDto> response = postService.list(principal.getMember(), nickname, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * 게시글 상세 조회
+     * @param id : postId
+     * @return PostResponseDto
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<PostResponseDto> get(@PathVariable Integer id) {
+        PostResponseDto response = postService.find(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -56,15 +72,6 @@ public class PostController {
         String response = postService.update(id, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
-    // 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDto> get(@AuthenticationPrincipal SecurityUser principal, @PathVariable Integer id,
-                                    @PageableDefault(sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
-        PostResponseDto response = postService.find(principal.getMember(), id, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
 
     // 삭제
     @DeleteMapping("/{id}/delete")
