@@ -1,8 +1,10 @@
 package com.realtimechat.client.service;
 
 import com.realtimechat.client.domain.*;
+import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.PostResponseDto;
 import com.realtimechat.client.exception.ErrorCode;
+import com.realtimechat.client.exception.MemberException;
 import com.realtimechat.client.exception.PostException;
 import com.realtimechat.client.repository.*;
 import org.assertj.core.api.Assertions;
@@ -26,7 +28,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
@@ -96,6 +100,56 @@ class PostServiceTest {
         assertThat(postException.getErrorCode()).isEqualTo(ErrorCode.POST_NOT_FOUND);
     }
 
+    @DisplayName("게시글 생성 실패-멤버 없음")
+    @Test
+    void not_found_member() {
+        // given
+        Member member = null;
+
+        // when
+        MemberException memberException = assertThrows(MemberException.class,
+                () -> postService.save(new PostRequestDto(), member));
+
+        // then
+        assertThat(memberException.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+    }
+
+    @DisplayName("글쓰기 권한 없음")
+    @Test
+    void unauthorized_role() {
+        // given
+        Member member = new Member();
+        member.setRole(Role.ROLE_MEMBER);
+
+        // when
+        MemberException memberException = assertThrows(MemberException.class,
+                () -> postService.save(new PostRequestDto(), member));
+
+        // then
+        assertThat(memberException.getErrorCode()).isEqualTo(ErrorCode.FORBIDDEN_MEMBER);
+    }
+
+    @DisplayName("게시글 생성 성공")
+    @Test
+    void save() {
+        // given
+        PostRequestDto requestDto = new PostRequestDto();
+        Member member = new Member();
+        Post post = post(member);
+        requestDto.setMember(member);
+        post.setId(1);
+        member.setRole(Role.ROLE_STAR);
+
+        doReturn(post).when(postRepository).save(any(Post.class));
+
+        // when
+        int postId = postService.save(requestDto, member);
+
+        // then
+        assertThat(postId).isEqualTo(post.getId());
+    }
+
+
     private Member member(int i) {
         return Member.builder()
                 .email("test" + i + "@test.com")
@@ -105,6 +159,13 @@ class PostServiceTest {
                 .role(Role.ROLE_MEMBER)
                 .social(null)
                 .emailConfirmation(true)
+                .build();
+    }
+
+    private Post post(Member member) {
+        return Post.builder()
+                .member(member)
+                .content("테스트")
                 .build();
     }
 

@@ -26,6 +26,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -113,6 +114,28 @@ class PostControllerTest {
         // when
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url)
                         .with(user(principal)));
+
+        // then
+        result.andExpect(status().isOk());
+    }
+
+    @DisplayName("게시글 생성")
+    @Test
+    @WithMockUser
+    void save() throws Exception {
+        // given
+        String url = "/api/post/create";
+        Member member = new Member();
+        member.setId(UUID.randomUUID());
+        member.setEmail("test10@test.com");
+        member.setRole(Role.ROLE_MEMBER);
+        SecurityUser principal = new SecurityUser(member);
+
+        // when
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post(url)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .with(csrf())
+                .with(user(principal)));
 
         // then
         result.andExpect(status().isOk());
