@@ -55,12 +55,16 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // 생성 
+    /**
+     * 게시글 작성
+     * @param requestDto (String content, Member member, List<MultipartFile> files, List<String> deleteList)
+     * @param principal 작성자
+     * @return post id
+     */
     @PostMapping(value = "/create")
-    public ResponseEntity<String> create(@ModelAttribute PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
-        
-        requestDto.setMember(principal.getMember());
-        String response = postService.save(requestDto);
+    public ResponseEntity<Integer> create(@ModelAttribute PostRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
+
+        int response = postService.save(requestDto, principal.getMember());
 
         return ResponseEntity.ok(response);
     }
