@@ -6,9 +6,11 @@ import java.util.List;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.PostFile;
+import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.*;
 import com.realtimechat.client.exception.ErrorCode;
+import com.realtimechat.client.exception.MemberException;
 import com.realtimechat.client.exception.PostException;
 import com.realtimechat.client.repository.PostFileRepository;
 import com.realtimechat.client.repository.PostRepository;
@@ -67,9 +69,18 @@ public class PostService {
         return postResponseDto;
     }
 
-    // create
+    /**
+     * 게시글 작성
+     * @param requestDto (String content, Member member, List<MultipartFile> files, List<String> deleteList)
+     * @param member 작성자
+     * @return void
+     */
     @Transactional
-    public String save(PostRequestDto requestDto) {
+    public int save(PostRequestDto requestDto, Member member) {
+        if (member == null) throw new MemberException(ErrorCode.MEMBER_NOT_FOUND);
+        if (!member.getRole().equals(Role.ROLE_STAR)) throw new MemberException(ErrorCode.FORBIDDEN_MEMBER);
+
+        requestDto.setMember(member);
         Post post = postRepository.save(requestDto.toEntity());
         List<MultipartFile> files = requestDto.getFiles();
 
@@ -77,7 +88,7 @@ public class PostService {
             postFileService.uploadSave(files, post);
         }
 
-        return "success";
+        return post.getId();
     }
     
     // update
