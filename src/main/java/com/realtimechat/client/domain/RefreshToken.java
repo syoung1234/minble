@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
+// import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -15,21 +15,18 @@ import org.hibernate.annotations.OnDeleteAction;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
 @Getter
 @NoArgsConstructor
-@Entity
-public class RefreshToken extends BaseTimeEntity {
+@RedisHash(value = "refresh_token")
+public class RefreshToken {
     @Id
-    @Column(name = "refresh_token_id")
     private String id;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "member_id")
     private Member member;
-
-    @Column(name = "expiration_date")
+    // @TimeToLive
     private LocalDateTime expirationDate;
 
     @Builder
