@@ -14,7 +14,10 @@ public enum ErrorCode {
     FORBIDDEN_MEMBER(HttpStatus.FORBIDDEN, "Forbidden Member"),
 
     // Post
-    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "Post Not Found");
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "Post Not Found"),
+
+    // Refresh Token
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Refresh Token Not Found");
 
     private final HttpStatus httpStatus;
     private final String message;
