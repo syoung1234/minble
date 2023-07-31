@@ -1,5 +1,6 @@
 package com.realtimechat.client.config.security;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
@@ -62,8 +63,9 @@ public class JwtTokenProvider {
     public String createRefreshToken(Member member) {
         String refreshTokenId = UUID.randomUUID().toString();
         LocalDateTime expirationDate = LocalDateTime.now().plusMonths(1);
+        long expirationTime = Timestamp.valueOf(expirationDate).getTime();
 
-        RefreshToken refreshToken = new RefreshToken(refreshTokenId, member, expirationDate);
+        RefreshToken refreshToken = new RefreshToken(refreshTokenId, member, expirationTime);
         refreshTokenRepository.save(refreshToken);
 
         return refreshTokenId;
