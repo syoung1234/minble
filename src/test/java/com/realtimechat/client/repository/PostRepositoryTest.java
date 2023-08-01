@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class PostRepositoryTest {
+class PostRepositoryTest extends TestBase {
 
     @Autowired
     private PostRepository postRepository;
@@ -27,17 +27,14 @@ class PostRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Value("${default.profile.path}")
     private String defaultProfilePath;
 
     @Test
-    // @Transactional
+    @Transactional
     void 게시글_등록() {
         // given
-        Member member = memberRepository.save(starMember(1));
+        Member member = memberRepository.save(createStarMember(10));
 
         Post post = Post.builder()
                 .member(member)
@@ -57,7 +54,7 @@ class PostRepositoryTest {
     @Transactional
     void list() {
         // given
-        Member member = memberRepository.save(starMember(10));
+        Member member = memberRepository.save(createStarMember(10));
 
         Post post1 = Post.builder()
                 .member(member)
@@ -76,19 +73,6 @@ class PostRepositoryTest {
 
         // then
         assertThat(postList.size()).isEqualTo(2);
-    }
-
-
-    private Member starMember(int i) {
-        return Member.builder()
-                .email("star" + i + "@test.com")
-                .password(passwordEncoder.encode("1234"))
-                .nickname("star" + i)
-                .profilePath(defaultProfilePath)
-                .role(Role.ROLE_STAR)
-                .social(null)
-                .emailConfirmation(true)
-                .build();
     }
 
 }
