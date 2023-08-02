@@ -57,7 +57,6 @@ public class SecurityConfig {
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
             .oauth2Login()
             .successHandler(successHandler)
-            .loginPage("/api/refresh-token")
             .userInfoEndpoint()
             .userService(customOAuth2UserService);
             // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음
