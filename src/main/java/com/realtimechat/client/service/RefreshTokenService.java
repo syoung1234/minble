@@ -24,11 +24,16 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * Refresh Token 있음 -> Access Token 발급
+     * Refresh Token 없음 -> exception
+     * @param refreshToken
+     * @return access token
+     */
     public String getToken(String refreshToken) {
         String result;
         Optional<RefreshToken> token = refreshTokenRepository.findById(refreshToken);
 
-        // exception 추가하기
         if (token.isPresent()) {
             Member member = memberRepository.findById(token.get().getMemberId())
                     .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND));
