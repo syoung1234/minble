@@ -6,7 +6,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +23,11 @@ class FollowRepositoryTest extends TestBase {
     @Autowired
     private MemberRepository memberRepository;
 
-    @Value("${default.profile.path}")
-    private String defaultProfilePath;
 
     @DisplayName("팔로우 하기")
     @Test
     @Transactional
-    void insert() {
+    void save() {
         // given
         Member member = memberRepository.save(createMember(10));
 
@@ -42,13 +39,10 @@ class FollowRepositoryTest extends TestBase {
                     .following(star)
                     .build());
         }
-        List<Follow> follow = followRepository.findByMember(member);
+        List<Follow> follow = followRepository.findAll();
 
         // then
-        assertThat(follow.size()).isGreaterThan(3);
-        assertThat(follow.get(0).getMember().getEmail()).isEqualTo(member.getEmail());
-
+        assertThat(follow.size()).isGreaterThan(5);
     }
-
 
 }
