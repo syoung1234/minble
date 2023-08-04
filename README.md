@@ -1,58 +1,137 @@
-# minble
-1인 프로젝트 <br>
-SNS 형식의 팬 카페입니다. 로그인은 JWT 구현하였습니다. 게시판에 글을 쓰고 댓글과 답글 달기 뿐만 아니라 실시간 채팅이 가능합니다. 실시간 채팅은 1:N 관계로 Role 타입에 따라 보여지는 메시지가 다릅니다. Role 타입은 Star와 User로 구분이 되며 Star 타입은 N명에게 메시지를 보내고 볼 수 있으며 User 타입은 Star 1명에게 메시지를 보내고 볼 수 있습니다. Message 기능은 Store 에서 결제를 통해 이용할 수 있으며 테스트 계정은 결제 없이 바로 사용할 수 있습니다.<br> 
+## 프로젝트 소개
+- 1인 프로젝트입니다. 
+- Spring Boot, JPA(QueryDSL), MySQL, Redis 로 만든 SNS 형식의 팬 카페입니다.
+- 로그인은 JWT 구현하였습니다.
+- Refresh Token을 Redis에 저장합니다.
+- 소셜로그인을 구현하였습니다. (네이버, 카카오, 구글)
+- WebSocket으로 실시간 채팅을 구현하였습니다.
+- 파일을 AWS S3에 저장합니다.
+- AWS EC2, Route53, Load Balancer, Docker를 통해 배포하였습니다.
 
-또한 AWS EC2, Route53, Load Balancer 를 통해 배포하였습니다. 
+### 배포 주소
+https://sy-minble.com
 
-Web Site: https://sy-minble.com
-<br><br>
+### Front-end GitHub
+https://github.com/syoung1234/minble-vuejs
 
-## Message 기능 (실시간 채팅) 미리보기
+### 개발 기간
+2022.11 - 2023.03 <br>
+2023.07 - 현재 (리팩토링 진행중)
+<br>
+
+### 리팩토링 현황
+1. 일부 파라미터 Map 구조 -> DTO 구조로 변경
+2. [QueryDSL 추가](https://velog.io/@sysy123/Spring-Boot-%EA%B0%9C%EC%9D%B8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85-N1%EC%9D%84-%ED%95%B4%EA%B2%B0%ED%95%B4%EB%B3%B4%EC%9E%90-%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81)
+   - 동적 쿼리 JPQL로 하였으나 리팩토링 과정에서 N+1 문제를 해결하기 위해 쿼리를 변경함
+3. [RefreshToken 저장 방법 변경](https://velog.io/@sysy123/%EA%B0%9C%EC%9D%B8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-Refresh-Token-%EC%9D%84-Redis-%EC%97%90-%EC%A0%80%EC%9E%A5%ED%95%B4%EB%B3%B4%EC%9E%90)
+   - 프로젝트에 Redis 추가
+   - MySQL 저장에서 Redis 저장으로 변경
+
+## 미리보기
 <img src="https://github.com/syoung1234/minble/assets/71418436/e2f94bcd-399e-4bf4-9932-5bfbd70245d9" style="width: 300px; height: 600px">
-
-## 게시글 좋아요, 댓글 쓰기 미리보기
 <img src="https://github.com/syoung1234/minble/assets/71418436/ba07f826-b4c6-4295-9f45-afc768c625ca" style="width: 300px; height: 600px">
+<br>
+메시지 기능과 게시글 쓰기, 댓글 쓰기 
+
 
 ## 주요 기능
 ### 로그인 기능 JWT
-
-[JwtAuthenticationFilter.java](src/main/java/com/realtimechat/client/config/security/JwtAuthenticationFilter.java)
-<br>
-[JwtTokenProvider.java](src/main/java/com/realtimechat/client/config/security/JwtTokenProvider.java)
-<br>
-[SecurityConfig.java](src/main/java/com/realtimechat/client/config/security/SecurityConfig.java)
-<br>
-[SecurityUser.java](src/main/java/com/realtimechat/client/config/security/SecurityUser.java)
-<br>
-[SecurityUserDetailService.java](src/main/java/com/realtimechat/client/config/security/SecurityUserDetailService.java)
-<br>
-
+#### [JwtTokenProvider.java](src/main/java/com/realtimechat/client/config/security/JwtTokenProvider.java)
+Access Token, Refresh Token 생성
 ``` java
-// Access Token 유효시간 30분
-private long tokenValidTime = 3 * 60 * 10000L;
+    // 토큰 유효시간 30분
+    private long tokenValidTime = 3 * 60 * 10000L;
+    
+    // 객체 초기화, secretKey를 Base64로 인코딩
+    protected void init() {
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    }
 
-// Refresh Token 생성, 유효기간 1개월
-public String createRefreshToken(Member member) {
-    String refreshTokenId = UUID.randomUUID().toString();
-    LocalDateTime expirationDate = LocalDateTime.now().plusMonths(1);
+    // JWT 토큰 생성
+    public String createToken(String userPK, Role roles, String social) {
+        Claims claims = Jwts.claims().setSubject(userPK); // JWT payload에 저장되는 정보 단위
+        claims.put("roles", roles); // 정보 저장 (key-value)
+        claims.put("social", social);
+        Date now = new Date();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + tokenValidTime)) // set Expire Time
+                .signWith(SignatureAlgorithm.HS256, secretKey) // 사용할 암호화 알고리즘과 signature에 들어갈 secret 값 세팅
+                .compact();
+    } 
 
-    RefreshToken refreshToken = new RefreshToken(refreshTokenId, member, expirationDate);
-    refreshTokenRepository.save(refreshToken);
+    // Refresh Token 생성
+    public String createRefreshToken(Member member) {
+        String refreshTokenId = UUID.randomUUID().toString();
+        LocalDateTime expirationDate = LocalDateTime.now().plusMonths(1);
+        long expirationTime = Timestamp.valueOf(expirationDate).getTime();
 
-    return refreshTokenId;
-}
+        RefreshToken refreshToken = new RefreshToken(refreshTokenId, member, expirationTime);
+        refreshTokenRepository.save(refreshToken);
 
-// cookie 저장, httpOnly, secure 사용
-ResponseCookie cookie = ResponseCookie.from("refreshToken", response.getRefreshToken())
-            .maxAge(30 * 24 * 60 * 60) // 30일
-            .httpOnly(true)
-            .secure(true)
-            .path("/")
-            .build();
+        return refreshTokenId;
+    }
 
 ```
-Refresh Token 만들고 httpOnly, secure를 사용하여 cookie에 저장하였습니다. Refresh Token은 1개월 저장, Access Token은 30분 저장하였습니다. Access Token이 만료되었을 때는 Refresh Token을 요청하여 새로 Access Token을 받아서 로그인이 풀리지 않도록 하였습니다.
 
+#### 로그인
+[MemberController.java](src/main/java/com/realtimechat/client/controller/MemberController.java)
+```java
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/api")
+public class MemberController {
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
+        LoginResponseDto response = memberService.login(loginRequestDto);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", response.getRefreshToken())
+                .maxAge(30 * 24 * 60 * 60) // 30일
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
+    }
+}
+```
+
+#### Refresh Token을 Redis에 저장
+build.gradle
+```
+dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+}
+```
+[RefreshToken.java](src/main/java/com/realtimechat/client/domain/RefreshToken.java)
+```java
+@Getter
+@NoArgsConstructor
+@RedisHash(value = "refresh_token")
+public class RefreshToken {
+    @Id
+    private String id;
+    private UUID memberId;
+    private String email;
+    private String roleType;
+    private String social;
+    @TimeToLive
+    private long expirationTime;
+
+    @Builder
+    public RefreshToken(String id, Member member, long expirationTime) {
+        this.id = id;
+        this.memberId = member.getId();
+        this.email = member.getEmail();
+        this.roleType = member.getRole().toString();
+        this.social = member.getSocial();
+        this.expirationTime = expirationTime;
+    }
+}
+```
+Refresh Token 만들고 httpOnly, secure를 사용하여 cookie에 저장하였습니다. Refresh Token은 30일 저장, Access Token은 30분 저장하였습니다. Access Token이 만료되었을 때는 Refresh Token을 요청하여 새로 Access Token을 받아서 로그인이 풀리지 않도록 하였습니다.
 <br>
 
 ### 실시간 채팅 WebSocket
