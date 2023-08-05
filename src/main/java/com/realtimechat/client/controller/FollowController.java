@@ -1,9 +1,7 @@
 package com.realtimechat.client.controller;
 
 import com.realtimechat.client.config.security.SecurityUser;
-import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.dto.request.FollowRequestDto;
-import com.realtimechat.client.repository.MemberRepository;
 import com.realtimechat.client.service.FollowService;
 
 import org.springframework.http.ResponseEntity;
@@ -23,23 +21,32 @@ import lombok.RequiredArgsConstructor;
 public class FollowController {
 
     private final FollowService followService;
-    private final MemberRepository memberRepository;
 
+    /**
+     * 팔로우
+     * @param requestDto (nickname)
+     * @param principal (member)
+     * @return HttpStatus OK
+     */
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody FollowRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
-        Member following = memberRepository.findByNickname(requestDto.getNickname()).orElse(null); // star
-        
-        requestDto.setFollowing(following);
-        requestDto.setMember(principal.getMember()); // 본인 
-        String result = followService.create(requestDto);
+    public ResponseEntity<String> save(@RequestBody FollowRequestDto requestDto, @AuthenticationPrincipal SecurityUser principal) {
+        followService.save(requestDto, principal.getMember());
 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok("success");
 
     }
 
+    /**
+     * 팔로우 취소
+     * @param nickname 스타 nickname
+     * @param principal member
+     * @return HttpStatus OK
+     */
     @DeleteMapping("{nickname}/delete")
-    public String delete(@PathVariable String nickname, @AuthenticationPrincipal SecurityUser principal) {
-        return followService.delete(nickname, principal.getMember());
+    public ResponseEntity<String> delete(@PathVariable String nickname, @AuthenticationPrincipal SecurityUser principal) {
+        followService.delete(nickname, principal.getMember());
+
+        return ResponseEntity.ok("success");
     }
     
 }
