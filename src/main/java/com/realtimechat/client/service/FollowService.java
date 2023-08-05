@@ -4,6 +4,9 @@ import com.realtimechat.client.domain.Follow;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.FollowRequestDto;
+import com.realtimechat.client.exception.ErrorCode;
+import com.realtimechat.client.exception.FollowException;
+import com.realtimechat.client.exception.MemberException;
 import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
 
@@ -19,33 +22,35 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * 팔로우 등록, 테스트 계정은 테스트끼리만 팔로우 가능
+     * @param requestDto (스타의 nickname)
+     * @param member 로그인한 유저
+     */
     @Transactional
-    public String create(FollowRequestDto requestDto) {
+    public Follow save(FollowRequestDto requestDto, Member member) {
+        Member following = memberRepository.findByNickname(member.getNickname()).orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND));
         // TEST 끼리만 가능
-        if (requestDto.getMember().getRole().equals(Role.ROLE_SUBSCRIBER_TEST)) {
-            if (!requestDto.getFollowing().getRole().equals(Role.ROLE_STAR_TEST)) {
-                return null;
+        if (member.getRole().equals(Role.ROLE_SUBSCRIBER_TEST)) {
+            if (!following.getRole().equals(Role.ROLE_STAR_TEST)) {
+                throw new FollowException(ErrorCode.FOLLOW_BAD_REQUEST);
             }
         }
-        
-        followRepository.save(requestDto.toEntity());
-        return "success";
+
+        return followRepository.save(requestDto.toEntity());
     }
-    
+
+    /**
+     * 팔로우 삭제
+     * @param nickname 스타의 nickname
+     * @param member 로그인한 유저
+     */
     @Transactional
-    public String delete(String nickname, Member member) {
-        String message = "fail";
-        Member followingMember = memberRepository.findByNickname(nickname).orElse(null);
-        // Follow follow = followRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
-        Follow follow = followRepository.findByFollowingAndMember(followingMember, member);
+    public void delete(String nickname, Member member) {
+        Member followingMember = memberRepository.findByNickname(nickname).orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND));
+        Follow follow = followRepository.findByFollowingAndMember(followingMember, member).orElseThrow(() -> new FollowException(ErrorCode.FOLLOW_NOT_FOUND));
 
-        System.out.println(follow);
+        followRepository.delete(follow);
 
-        if (follow.getMember().getId().equals(member.getId())) { // 작성자만 삭제 가능
-            followRepository.delete(follow);
-            message = "success";
-        }
-
-        return message;
     }
 }
