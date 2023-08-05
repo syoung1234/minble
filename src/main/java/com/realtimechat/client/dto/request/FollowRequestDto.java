@@ -21,18 +21,6 @@ public class FollowRequestDto {
         this.nickname = nickname;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
-    }
-
-    public void setFollowing(Member following) {
-        this.following = following;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     public Follow toEntity() {
         return Follow.builder()
                 .member(member)
