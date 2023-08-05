@@ -17,7 +17,11 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "Post Not Found"),
 
     // Refresh Token
-    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Refresh Token Not Found");
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Refresh Token Not Found"),
+
+    // Follow
+    FOLLOW_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "Follow Data Not Found");
 
     private final HttpStatus httpStatus;
     private final String message;
