@@ -35,11 +35,7 @@ class PostRepositoryTest extends TestBase {
     void 게시글_등록() {
         // given
         Member member = memberRepository.save(createStarMember(10));
-
-        Post post = Post.builder()
-                .member(member)
-                .content("test")
-                .build();
+        Post post = createPost(member);
 
         // when
         Post result = postRepository.save(post);
@@ -55,16 +51,8 @@ class PostRepositoryTest extends TestBase {
     void list() {
         // given
         Member member = memberRepository.save(createStarMember(10));
-
-        Post post1 = Post.builder()
-                .member(member)
-                .content("test1")
-                .build();
-
-        Post post2 = Post.builder()
-                .member(member)
-                .content("test2")
-                .build();
+        Post post1 = createPost(member);
+        Post post2 = createPost(member);
 
         // when
         postRepository.save(post1);
