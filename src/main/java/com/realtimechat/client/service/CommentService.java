@@ -27,6 +27,17 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
+    /**
+     * 댓글 조회
+     * @param postId 게시글 Id
+     * @param pageable 페이지
+     * @return Page<CommentResponse>
+     */
+    public Page<CommentResponseDto> find(Integer postId, Pageable pageable) {
+        Page<Comment> comments = commentRepository.findByPostId(postId, pageable);
+        return comments.map(CommentResponseDto::new);
+    }
+
     // 댓글 추가
     @Transactional
     public String save(CommentRequestDto commentRequestDto) {

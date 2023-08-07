@@ -17,13 +17,13 @@ public class CommentResponseDto {
     private String createdAt;
     private int replyCount;
 
-    public CommentResponseDto(Comment entity) {
-        this.id = entity.getId();
-        this.nickname = entity.getMember().getNickname();
-        this.profilePath = entity.getMember().getProfilePath();
-        this.content = entity.getContent();
-        this.createdAt = entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
-        this.replyCount = entity.getChildren().size();
+    public CommentResponseDto(Comment comment) {
+        this.id = comment.getId();
+        this.nickname = comment.getMember().getNickname();
+        this.profilePath = comment.getMember().getProfilePath();
+        this.content = comment.getContent();
+        this.createdAt = comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+        this.replyCount = comment.getChildren().size();
     }
 
 }

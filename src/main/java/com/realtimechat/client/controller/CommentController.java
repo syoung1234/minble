@@ -4,19 +4,15 @@ import java.util.Map;
 
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.dto.request.CommentRequestDto;
+import com.realtimechat.client.dto.response.CommentResponseDto;
 import com.realtimechat.client.service.CommentService;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +22,18 @@ import lombok.RequiredArgsConstructor;
 public class CommentController {
 
     private final CommentService commentService;
+
+    /**
+     * 댓글 조회
+     * @param postId 게시글 Id
+     * @param pageable 페이지
+     * @return ResponseEntity<Page<CommentResponseDto>>
+     */
+    public ResponseEntity<Page<CommentResponseDto>> find(@RequestParam Integer postId, @PageableDefault Pageable pageable) {
+        Page<CommentResponseDto> response = commentService.find(postId, pageable);
+        return ResponseEntity.ok(response);
+    }
+
 
     // 댓글 추가
     @PostMapping
