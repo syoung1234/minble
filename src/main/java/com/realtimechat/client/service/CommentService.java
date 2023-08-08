@@ -10,6 +10,9 @@ import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.dto.request.CommentRequestDto;
 import com.realtimechat.client.dto.response.CommentResponseDto;
+import com.realtimechat.client.exception.CommentException;
+import com.realtimechat.client.exception.ErrorCode;
+import com.realtimechat.client.exception.PostException;
 import com.realtimechat.client.repository.CommentRepository;
 import com.realtimechat.client.repository.PostRepository;
 
@@ -38,14 +41,21 @@ public class CommentService {
         return comments.map(CommentResponseDto::new);
     }
 
-    // 댓글 추가
+    /**
+     * 댓글 및 답글 저장
+     * @param commentRequestDto (Member member, Post post, String content, Integer postId, Integer parentId, Integer depth)
+     * @param member 댓글/답글 작성자
+     * @return
+     */
     @Transactional
-    public String save(CommentRequestDto commentRequestDto) {
-        Post post = postRepository.findById(commentRequestDto.getPostId()).orElseThrow(() -> new IllegalArgumentException("error"));
+    public String save(CommentRequestDto commentRequestDto, Member member) {
+        commentRequestDto.setMember(member);
+        Post post = postRepository.findById(commentRequestDto.getPostId()).orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
         commentRequestDto.setPost(post);
 
         if (commentRequestDto.getParentId() != null) { // 답글일 경우
-            Comment comment = commentRepository.findById(commentRequestDto.getParentId()).orElse(null);
+            Comment comment = commentRepository.findById(commentRequestDto.getParentId()).orElseThrow(()
+                    -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
             commentRequestDto.setParent(comment);
         }
 

@@ -21,7 +21,10 @@ public enum ErrorCode {
 
     // Follow
     FOLLOW_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
-    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "Follow Data Not Found");
+    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "Follow Data Not Found"),
+
+    // Comment
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Comment Not Found");
 
     private final HttpStatus httpStatus;
     private final String message;
