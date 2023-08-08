@@ -1,5 +1,6 @@
 package com.realtimechat.client.dto.response;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.realtimechat.client.domain.Comment;
@@ -22,7 +23,12 @@ public class CommentResponseDto {
         this.nickname = comment.getMember().getNickname();
         this.profilePath = comment.getMember().getProfilePath();
         this.content = comment.getContent();
-        this.createdAt = comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+
+        if (comment.getCreatedAt() == null) {
+            this.createdAt = LocalDateTime.now().toString();
+        } else {
+            this.createdAt = comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+        }
         this.replyCount = comment.getChildren().size();
     }
 
