@@ -1,5 +1,6 @@
 package com.realtimechat.client.repository;
 
+import com.realtimechat.client.domain.Comment;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.Role;
@@ -52,6 +53,14 @@ public abstract class TestBase {
         return Post.builder()
                 .member(member)
                 .content("test")
+                .build();
+    }
+
+    protected Comment createComment(Member member, Post post) {
+        return Comment.builder()
+                .member(member)
+                .post(post)
+                .content("댓글 테스트")
                 .build();
     }
 }
