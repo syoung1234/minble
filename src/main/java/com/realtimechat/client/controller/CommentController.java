@@ -29,17 +29,22 @@ public class CommentController {
      * @param pageable 페이지
      * @return ResponseEntity<Page<CommentResponseDto>>
      */
+    @GetMapping
     public ResponseEntity<Page<CommentResponseDto>> find(@RequestParam Integer postId, @PageableDefault Pageable pageable) {
         Page<CommentResponseDto> response = commentService.find(postId, pageable);
         return ResponseEntity.ok(response);
     }
 
 
-    // 댓글 추가
+    /**
+     * 댓글 저장
+     * @param principal 댓글 작성자
+     * @param commentRequestDto (Member member, Post post, String content, Integer postId, Integer parentId, Integer depth)
+     * @return success
+     */
     @PostMapping
     public ResponseEntity<String> save(@AuthenticationPrincipal SecurityUser principal, @RequestBody CommentRequestDto commentRequestDto) {
-        commentRequestDto.setMember(principal.getMember());
-        String response = commentService.save(commentRequestDto);
+        String response = commentService.save(commentRequestDto, principal.getMember());
         return ResponseEntity.ok(response);
     }
 
