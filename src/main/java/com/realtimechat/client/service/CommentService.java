@@ -38,6 +38,11 @@ public class CommentService {
      */
     public Page<CommentResponseDto> find(Integer postId, Pageable pageable) {
         Page<Comment> comments = commentRepository.findByPostId(postId, pageable);
+
+        if (comments.isEmpty()) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_FOUND);
+        }
+
         return comments.map(CommentResponseDto::new);
     }
 
@@ -50,6 +55,10 @@ public class CommentService {
      */
     public Page<CommentResponseDto> getChildren(Integer parentId, Pageable pageable) {
         Page<Comment> childrenList = commentRepository.findByParentId(parentId, pageable);
+
+        if (childrenList.isEmpty()) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_FOUND);
+        }
 
         return childrenList.map(CommentResponseDto::new);
     }
