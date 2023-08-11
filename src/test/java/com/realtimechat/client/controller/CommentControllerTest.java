@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -84,5 +85,31 @@ class CommentControllerTest {
 
         // then
         result.andExpect(status().isOk()).andDo(print());
+    }
+
+    @DisplayName("댓글 저장")
+    @Test
+    void save() throws Exception {
+        // given
+        String url ="/api/comment";
+        CommentRequestDto commentRequestDto = new CommentRequestDto("test", 1, null, 0);
+        Member member = new Member();
+        member.setId(UUID.randomUUID());
+        member.setEmail("test10@test.com");
+        member.setNickname("test10");
+        member.setRole(Role.ROLE_MEMBER);
+
+        SecurityUser principal = new SecurityUser(member);
+        doReturn("success").when(commentService).save(commentRequestDto, member);
+
+        // when
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post(url)
+                .content(objectMapper.writeValueAsString(commentRequestDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .with(user(principal)));
+
+        // then
+        result.andExpect(status().isOk());
     }
 }
