@@ -83,8 +83,7 @@ class CommentServiceTest {
     @Test
     void reply_fail() {
         // given
-        CommentRequestDto commentRequestDto = new CommentRequestDto();
-        commentRequestDto.setParentId(1);
+        CommentRequestDto commentRequestDto = new CommentRequestDto("test", 1, 1, 2);
         Post post = new Post();
         Member member = new Member();
         doReturn(Optional.of(post)).when(postRepository).findById(any());
@@ -101,7 +100,7 @@ class CommentServiceTest {
     @Test
     void save() {
         // given
-        CommentRequestDto commentRequestDto = new CommentRequestDto();
+        CommentRequestDto commentRequestDto = new CommentRequestDto("test", 1, 1 , 1);
         Member member = new Member();
         Post post = new Post();
         doReturn(Optional.of(post)).when(postRepository).findById(any());
