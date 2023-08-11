@@ -48,6 +48,7 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "parent_id")
     private Comment parent;
 
+    // 0부터 시작
     @Column(columnDefinition="tinyint")
     private Integer depth;
     
