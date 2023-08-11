@@ -37,6 +37,19 @@ public class CommentController {
 
 
     /**
+     * 답글 더보기 (조회)
+     * @param parentId 게시글 ID
+     * @param pageable 페이지 정보
+     * @return ResponseEntity<Page<CommentResponseDto>>
+     */
+    @GetMapping("/{parentId}/children")
+    public ResponseEntity<Page<CommentResponseDto>> getChildren(@PathVariable Integer parentId, @PageableDefault Pageable pageable) {
+        Page<CommentResponseDto> response = commentService.getChildren(parentId, pageable);
+        return ResponseEntity.ok(response);
+    }
+
+
+    /**
      * 댓글 저장
      * @param principal 댓글 작성자
      * @param commentRequestDto (Member member, Post post, String content, Integer postId, Integer parentId, Integer depth)
@@ -54,11 +67,6 @@ public class CommentController {
         String response = commentService.delete(principal.getMember(), id);
         return ResponseEntity.ok(response);
     }
-    
-    // 답글 더보기
-    @GetMapping("/{parentId}/children")
-    public ResponseEntity<Map<String, Object>> getChildren(@PathVariable Integer parentId, @PageableDefault Pageable pageable) {
-        Map<String, Object> response = commentService.getChildren(parentId, pageable);
-        return ResponseEntity.ok(response);
-    }
+
+
 }

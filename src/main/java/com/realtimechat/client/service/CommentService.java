@@ -41,6 +41,20 @@ public class CommentService {
         return comments.map(CommentResponseDto::new);
     }
 
+
+    /**
+     * 답글 더보기 (조회)
+     * @param parentId 게시글 ID
+     * @param pageable 페이지 정보
+     * @return Page<CommentResponseDto>
+     */
+    public Page<CommentResponseDto> getChildren(Integer parentId, Pageable pageable) {
+        Page<Comment> childrenList = commentRepository.findByParentId(parentId, pageable);
+
+        return childrenList.map(CommentResponseDto::new);
+    }
+
+
     /**
      * 댓글 및 답글 저장
      * @param commentRequestDto (Member member, Post post, String content, Integer postId, Integer parentId, Integer depth)
@@ -77,23 +91,4 @@ public class CommentService {
         return message;
     }
 
-    // 답글 더보기
-    public Map<String, Object> getChildren(Integer parentId, Pageable pageable) {
-        Page<Comment> childrenList = commentRepository.findByParentId(parentId, pageable);
-
-        List<CommentResponseDto> commentList = childrenList.stream().map(CommentResponseDto::new).collect(Collectors.toList());
-
-        Map<String, Integer> pageList = new HashMap<>();
-        pageList.put("page", childrenList.getNumber());
-        pageList.put("totalPages", childrenList.getTotalPages());
-        pageList.put("nextPage", pageable.next().getPageNumber());
-        pageList.put("size", pageable.getPageSize());
-
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("replyList", commentList);
-        result.put("pageList", pageList);
-
-        return result;
-    }
 }
