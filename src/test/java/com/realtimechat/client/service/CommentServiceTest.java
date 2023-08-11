@@ -22,9 +22,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,10 +38,31 @@ class CommentServiceTest {
     @Mock
     private PostRepository postRepository;
 
+
+    @DisplayName("댓글 조회 - 게시글 없음")
+    @Test
+    void find_x() {
+        // given
+        Pageable pageable = PageRequest.of(0, 10);
+        Integer postId = 1;
+
+        Page<Comment> comments = new PageImpl<>(Collections.emptyList());
+        doReturn(comments).when(commentRepository).findByPostId(postId, pageable);
+
+        // when
+        CommentException commentException = assertThrows(CommentException.class, () -> commentService.find(postId, pageable));
+
+        // then
+        assertThat(commentException.getErrorCode()).isEqualTo(ErrorCode.COMMENT_NOT_FOUND);
+    }
+
+
+    @DisplayName("댓글 조회")
     @Test
     void find() {
         // given
         Pageable pageable = PageRequest.of(0, 10);
+        Integer postId = 1;
         Member member = new Member();
         member.setNickname("test10");
 
@@ -53,14 +72,41 @@ class CommentServiceTest {
 
         List<Comment> list = Arrays.asList(comment, comment);
         Page<Comment> comments = new PageImpl<>(list, pageable, list.size());
-        doReturn(comments).when(commentRepository).findByPostId(1, pageable);
+        doReturn(comments).when(commentRepository).findByPostId(postId, pageable);
 
         // when
-        Page<CommentResponseDto> result = commentService.find(1, pageable);
+        Page<CommentResponseDto> result = commentService.find(postId, pageable);
 
         // then
         assertThat(result).isNotNull();
         assertThat(result).size().isEqualTo(2);
+    }
+
+    @DisplayName("답글 더보기")
+    @Test
+    void getChildren() {
+        // given
+        Pageable pageable = PageRequest.of(0, 10);
+        Integer parentId = 1;
+        Member member = new Member();
+        member.setNickname("test10");
+
+        Comment comment = new Comment();
+        comment.setId(1);
+        comment.setMember(member);
+
+        List<Comment> list = Arrays.asList(comment, comment);
+        Page<Comment> page = new PageImpl<>(list, pageable, list.size());
+
+        doReturn(page).when(commentRepository).findByParentId(parentId, pageable);
+
+        // when
+        Page<CommentResponseDto> result = commentService.getChildren(parentId, pageable);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getTotalPages()).isEqualTo(1);
+
     }
 
     @DisplayName("저장 실패-게시글 없음")
@@ -100,7 +146,7 @@ class CommentServiceTest {
     @Test
     void save() {
         // given
-        CommentRequestDto commentRequestDto = new CommentRequestDto("test", 1, 1 , 1);
+        CommentRequestDto commentRequestDto = new CommentRequestDto("test", 1, null, 1);
         Member member = new Member();
         Post post = new Post();
         doReturn(Optional.of(post)).when(postRepository).findById(any());
