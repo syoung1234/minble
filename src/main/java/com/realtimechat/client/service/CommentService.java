@@ -45,22 +45,19 @@ public class CommentService {
      * 댓글 및 답글 저장
      * @param commentRequestDto (Member member, Post post, String content, Integer postId, Integer parentId, Integer depth)
      * @param member 댓글/답글 작성자
-     * @return
+     * @return success
      */
     @Transactional
     public String save(CommentRequestDto commentRequestDto, Member member) {
-        commentRequestDto.setMember(member);
         Post post = postRepository.findById(commentRequestDto.getPostId()).orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
-        commentRequestDto.setPost(post);
 
+        Comment parent = null;
         if (commentRequestDto.getParentId() != null) { // 답글일 경우
-            Comment comment = commentRepository.findById(commentRequestDto.getParentId()).orElseThrow(()
+            parent = commentRepository.findById(commentRequestDto.getParentId()).orElseThrow(()
                     -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
-            commentRequestDto.setParent(comment);
         }
 
-        // 저장
-        commentRepository.save(commentRequestDto.toEntity());
+        commentRepository.save(commentRequestDto.toEntity(member, post, parent));
 
         return "success";
     }

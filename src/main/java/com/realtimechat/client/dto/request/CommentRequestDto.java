@@ -11,27 +11,21 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
-@Setter
 public class CommentRequestDto {
-    private Member member;
-    private Post post;
     private String content;
     private Integer postId;
-    private Comment parent;
     private Integer parentId;
     private Integer depth;
 
     @Builder
-    public CommentRequestDto(Member member, Post post, String content, Integer postId, Integer parentId, Integer depth) {
-        this.member = member;
-        this.post = post;
+    public CommentRequestDto(String content, Integer postId, Integer parentId, Integer depth) {
         this.content = content;
         this.postId = postId;
         this.parentId = parentId;
         this.depth = depth;
     }
 
-    public Comment toEntity() {
+    public Comment toEntity(Member member, Post post, Comment parent) {
         return Comment.builder()
             .member(member)
             .post(post)
