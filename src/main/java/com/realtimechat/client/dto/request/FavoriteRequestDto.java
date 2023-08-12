@@ -11,19 +11,14 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
-@Setter
 public class FavoriteRequestDto {
-    private Member member;
-    private Post post;
-    private Integer PostId;
+    private Integer postId;
 
-    @Builder
-    public FavoriteRequestDto(Member member, Integer postId) {
-        this.member = member;
-        this.PostId = postId;
+    public FavoriteRequestDto(Integer postId) {
+        this.postId = postId;
     }
 
-    public Favorite toEntity() {
+    public Favorite toEntity(Member member, Post post) {
         return Favorite.builder()
                 .member(member)
                 .post(post)
