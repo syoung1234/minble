@@ -84,20 +84,22 @@ public class CommentService {
 
         return "success";
     }
-    
 
-    // 댓글 삭제
+
+    /**
+     * 댓글/답글 삭제
+     * @param member 작성자
+     * @param id 댓글/답글 ID
+     * @return Exception or success
+     */
     @Transactional
     public String delete(Member member, Integer id) {
-        String message = "fail";
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("error"));
+        Comment comment = commentRepository.findByIdAndMember(id, member).orElseThrow(()
+                -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (member.getId().equals(comment.getMember().getId())) {
-            commentRepository.delete(comment);
-            message = "success";
-        }
+        commentRepository.delete(comment);
 
-        return message;
+        return "success";
     }
 
 }

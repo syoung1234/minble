@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     Long countByPost(Post post); // 해당 게시글 댓글 수
 
@@ -19,5 +21,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     Page<Comment> findByParentId(Integer parentId, Pageable pageable);
 
     Page<Comment> findByPostId(Integer postId, Pageable pageable);
+
+    Optional<Comment> findByIdAndMember(Integer id, Member member);
 
 }
