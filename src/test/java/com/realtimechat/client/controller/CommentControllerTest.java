@@ -112,4 +112,25 @@ class CommentControllerTest {
         // then
         result.andExpect(status().isOk());
     }
+
+    @DisplayName("댓글 삭제")
+    @Test
+    void delete() throws Exception {
+        // given
+        String url = "/api/comment/{id}/delete";
+        String id = "1";
+        Member member = new Member();
+        member.setId(UUID.randomUUID());
+        member.setEmail("test10@test.com");
+        member.setRole(Role.ROLE_MEMBER);
+        SecurityUser principal = new SecurityUser(member);
+
+        // when
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.delete(url, id)
+                .with(csrf())
+                .with(user(principal)));
+
+        // then
+        result.andExpect(status().isOk());
+    }
 }
