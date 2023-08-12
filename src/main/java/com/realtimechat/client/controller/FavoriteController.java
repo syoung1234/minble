@@ -5,6 +5,7 @@ import java.util.Map;
 import com.realtimechat.client.config.security.SecurityUser;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.dto.request.FavoriteRequestDto;
+import com.realtimechat.client.dto.response.FavoriteResponseDto;
 import com.realtimechat.client.repository.PostRepository;
 import com.realtimechat.client.service.FavoriteService;
 
@@ -22,17 +23,16 @@ import lombok.RequiredArgsConstructor;
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
-    private final PostRepository postRepository;
 
-    // 좋아요 추가/취소
+    /**
+     * 좋아요 저장/삭제
+     * @param principal 로그인한 유저
+     * @param favoriteRequestDto postId
+     * @return FavoriteResponseDto (long count, boolean like)
+     */
     @PostMapping
-    public Map<String, String> save(@AuthenticationPrincipal SecurityUser principal, @RequestBody FavoriteRequestDto favoriteRequestDto) {
-        Post post = postRepository.findById(favoriteRequestDto.getPostId()).get();
-
-        favoriteRequestDto.setMember(principal.getMember());
-        favoriteRequestDto.setPost(post);
-        
-        return favoriteService.save(favoriteRequestDto);
+    public FavoriteResponseDto save(@AuthenticationPrincipal SecurityUser principal, @RequestBody FavoriteRequestDto favoriteRequestDto) {
+        return favoriteService.save(favoriteRequestDto, principal.getMember());
     }
     
 }
