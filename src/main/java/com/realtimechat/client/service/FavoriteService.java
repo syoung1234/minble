@@ -2,11 +2,18 @@ package com.realtimechat.client.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.realtimechat.client.domain.Favorite;
+import com.realtimechat.client.domain.Member;
+import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.dto.request.FavoriteRequestDto;
+import com.realtimechat.client.dto.response.FavoriteResponseDto;
+import com.realtimechat.client.exception.ErrorCode;
+import com.realtimechat.client.exception.PostException;
 import com.realtimechat.client.repository.FavoriteRepository;
 
+import com.realtimechat.client.repository.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,30 +24,30 @@ import lombok.RequiredArgsConstructor;
 public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
+    private final PostRepository postRepository;
 
-    // 좋아요 추가/취소
+    /**
+     * 좋아요 저장/삭제
+     * @param favoriteRequestDto (postId)
+     * @return FavoriteResponseDto (long count, boolean like)
+     */
     @Transactional
-    public Map<String, String> save(FavoriteRequestDto favoriteRequestDto) {
-        String message = "insert";
-        Map<String, String> result = new HashMap<>();
+    public FavoriteResponseDto save(FavoriteRequestDto favoriteRequestDto, Member member) {
+        Post post = postRepository.findById(favoriteRequestDto.getPostId()).orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
+        Optional<Favorite> favorite = favoriteRepository.findByMemberAndPost(member, post);
 
-        Favorite favorite = favoriteRepository.findByMemberAndPost(favoriteRequestDto.getMember(), favoriteRequestDto.getPost());
-        
-        if (favorite != null) {
-            favoriteRepository.delete(favorite);
-            message = "delete";
-        } else {
-            favoriteRepository.save(favoriteRequestDto.toEntity());
+        boolean like = favorite.isEmpty();
+
+        if (like) { // 저장
+            favoriteRepository.save(favoriteRequestDto.toEntity(member, post));
+        } else { // 삭제
+            favoriteRepository.delete(favorite.get());
         }
 
-        // 해당 게시글 좋아요 수 
-        Long favoriteCount = favoriteRepository.countByPost(favoriteRequestDto.getPost());
+        Long favoriteCount = favoriteRepository.countByPost(post);
 
-        result.put("message", message);
-        result.put("favoriteCount", favoriteCount.toString());
-
-        return result;
+        return new FavoriteResponseDto(favoriteCount, like);
         
     }
-    
+
 }
