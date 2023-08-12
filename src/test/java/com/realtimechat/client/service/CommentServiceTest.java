@@ -158,4 +158,36 @@ class CommentServiceTest {
         assertThat(result).isEqualTo("success");
     }
 
+
+    @DisplayName("댓글 삭제 실패 - 댓글 없음")
+    @Test
+    void delete_comment_not_found() {
+        // given
+        Member member = new Member();
+        int id = 1;
+        doReturn(Optional.empty()).when(commentRepository).findByIdAndMember(id, member);
+
+        // when
+        CommentException commentException = assertThrows(CommentException.class, () -> commentService.delete(member, id));
+
+        // then
+        assertThat(commentException.getErrorCode()).isEqualTo(ErrorCode.COMMENT_NOT_FOUND);
+    }
+
+    @DisplayName("댓글 삭제")
+    @Test
+    void delete() {
+        // given
+        Member member = new Member();
+        Comment comment = new Comment();
+        int id = 1;
+        doReturn(Optional.of(comment)).when(commentRepository).findByIdAndMember(id, member);
+
+        // when
+        String result = commentService.delete(member, id);
+
+        // then
+        assertThat(result).isEqualTo("success");
+    }
+
 }
