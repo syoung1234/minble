@@ -4,8 +4,10 @@ import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 
 import com.realtimechat.client.domain.PostFile;
+import com.realtimechat.client.dto.response.PostFileResponseDto;
 import com.realtimechat.client.repository.PostFileRepository;
 
+import com.realtimechat.client.service.PostFileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -24,23 +26,14 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/file/post")
 public class PostFileController {
 
-    private final PostFileRepository postFileRepository;
-
-    @Value("${file.path}")
-    private String filePath;
+    private final PostFileService postFileService;
 
     // 파일 다운로드
     @GetMapping("/download/{filename}")
     public ResponseEntity<Resource> download(@PathVariable String filename) throws MalformedURLException {
-        PostFile file = postFileRepository.findByFilename(filename);
-        UrlResource urlResource = new UrlResource("file:" + filePath + file.getFilePath());
+        PostFileResponseDto response = postFileService.download(filename);
 
-        // 업로드 한 파일명이 한글인 경우
-        String encodedFileName = UriUtils.encode(file.getFilename(), StandardCharsets.UTF_8);
-        // 파일 다운로드 상자가 뜨도록 헤더 설정
-        String contentDisposition = "attachment; filename=\"" + encodedFileName + "\"";
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition).body(urlResource);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, response.getContentDisposition()).body(response.getUrlResource());
     }
     
 }

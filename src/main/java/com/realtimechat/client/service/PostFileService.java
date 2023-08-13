@@ -1,6 +1,8 @@
 package com.realtimechat.client.service;
 
 // import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -8,14 +10,19 @@ import javax.transaction.Transactional;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.PostFile;
 import com.realtimechat.client.dto.request.PostFileRequestDto;
+import com.realtimechat.client.dto.response.PostFileResponseDto;
+import com.realtimechat.client.exception.ErrorCode;
+import com.realtimechat.client.exception.PostFileException;
 import com.realtimechat.client.repository.PostFileRepository;
 import com.realtimechat.client.util.CreateFileName;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.util.UriUtils;
 
 @RequiredArgsConstructor
 @Service
@@ -25,6 +32,31 @@ public class PostFileService {
 
     @Value("${app.url}")
     private String appUrl;
+
+    @Value("${file.path}")
+    private String filePath;
+
+    /**
+     * 파일 다운로드
+     * @param filename
+     * @return PostFileResponseDto (urlResource, contestDisposition)
+     * @throws MalformedURLException
+     */
+    public PostFileResponseDto download(String filename) throws MalformedURLException {
+        PostFile file = postFileRepository.findByFilename(filename).orElseThrow(() -> new PostFileException(ErrorCode.POST_FILE_NOT_FOUND));
+        UrlResource urlResource = new UrlResource("file:" + filePath + file.getFilePath());
+
+        // 업로드 한 파일명이 한글인 경우
+        String encodedFileName = UriUtils.encode(file.getFilename(), StandardCharsets.UTF_8);
+        // 파일 다운로드 상자가 뜨도록 헤더 설정
+        String contentDisposition = "attachment; filename=\"" + encodedFileName + "\"";
+
+        PostFileResponseDto postFileResponseDto = new PostFileResponseDto();
+        postFileResponseDto.setUrlResource(urlResource);
+        postFileResponseDto.setContentDisposition(contentDisposition);
+
+        return postFileResponseDto;
+    }
 
     // 이미지 업로드 저장
     @Transactional
@@ -79,7 +111,7 @@ public class PostFileService {
     @Transactional
     public String delete(List<String> deleteList) {
         for (String filename : deleteList) {
-            PostFile postFile = postFileRepository.findByFilename(filename);
+            PostFile postFile = postFileRepository.findByFilename(filename).orElseThrow(() -> new PostFileException(ErrorCode.POST_FILE_NOT_FOUND));
             s3upload.delete(postFile.getFilePath());
             postFileRepository.delete(postFile);
         }
