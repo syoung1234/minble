@@ -1,3 +1,5 @@
+[![Java CI with Gradle](https://github.com/syoung1234/minble/actions/workflows/gradle.yml/badge.svg)](https://github.com/syoung1234/minble/actions/workflows/gradle.yml)
+
 ## 프로젝트 소개
 - 1인 프로젝트입니다. 
 - Spring Boot, JPA(QueryDSL), MySQL, Redis 로 만든 SNS 형식의 팬 카페입니다.
