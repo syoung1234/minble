@@ -6,34 +6,31 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@DataJpaTest
 class FollowRepositoryTest extends TestBase {
 
     @Autowired
     private FollowRepository followRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
-
-
     @DisplayName("팔로우 하기")
     @Test
-    @Transactional
     void save() {
         // given
-        Member member = memberRepository.save(createMember(10));
+        Member member = new Member();
+        member.setId(UUID.randomUUID());
 
         // when
         for (int i = 10; i <= 15; i++) {
-            Member star = memberRepository.save(createStarMember(i));
+            Member star = new Member();
+            star.setId(UUID.randomUUID());
             followRepository.save(Follow.builder()
                     .member(member)
                     .following(star)

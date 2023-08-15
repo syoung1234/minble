@@ -2,40 +2,33 @@ package com.realtimechat.client.repository;
 
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Post;
-import com.realtimechat.client.domain.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@DataJpaTest
 class PostRepositoryTest extends TestBase {
 
     @Autowired
     private PostRepository postRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Value("${default.profile.path}")
-    private String defaultProfilePath;
-
     @Test
-    @Transactional
     void 게시글_등록() {
         // given
-        Member member = memberRepository.save(createStarMember(10));
-        Post post = createPost(member);
+        Member member = new Member();
+        member.setId(UUID.randomUUID());
+
+        Post post = new Post();
+        post.setContent("test");
+        post.setMember(member);
 
         // when
         Post result = postRepository.save(post);
@@ -47,20 +40,24 @@ class PostRepositoryTest extends TestBase {
 
     @DisplayName("본인 게시글 count")
     @Test
-    @Transactional
     void list() {
         // given
-        Member member = memberRepository.save(createStarMember(10));
-        Post post1 = createPost(member);
-        Post post2 = createPost(member);
+        Member member = new Member();
+        member.setId(UUID.randomUUID());
+
+        for (int i = 0; i < 3; i++) {
+            Post post = new Post();
+            post.setContent("test");
+            post.setMember(member);
+
+            postRepository.save(post);
+        }
 
         // when
-        postRepository.save(post1);
-        postRepository.save(post2);
         List<Post> postList = postRepository.findByMember(member);
 
         // then
-        assertThat(postList.size()).isEqualTo(2);
+        assertThat(postList.size()).isEqualTo(3);
     }
 
 }

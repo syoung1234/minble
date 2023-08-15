@@ -6,26 +6,27 @@ import com.realtimechat.client.domain.Post;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import javax.transaction.Transactional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@DataJpaTest
 class FavoriteRepositoryTest extends TestBase {
 
     @Autowired
     private FavoriteRepository favoriteRepository;
 
     @Test
-    @Transactional
     void save() {
         // given
-        Member member = createMember(10);
-        Post post = createPost(member);
-        createPost(member);
+        Member member = new Member();
+        member.setId(UUID.randomUUID());
+        Post post = new Post();
+        post.setMember(member);
+
         Favorite favorite = Favorite.builder()
                 .member(member)
                 .post(post)
