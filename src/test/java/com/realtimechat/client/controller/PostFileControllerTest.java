@@ -23,8 +23,6 @@ class PostFileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     @WithMockUser
@@ -34,8 +32,7 @@ class PostFileControllerTest {
         String filename = "file.png";
 
         // when
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url, filename)
-                .contentType(MediaType.MULTIPART_FORM_DATA));
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url + filename));
 
         // then
         result.andExpect(status().isOk());
