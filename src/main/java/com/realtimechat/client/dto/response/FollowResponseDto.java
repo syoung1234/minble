@@ -6,19 +6,17 @@ import com.realtimechat.client.domain.Member;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 
 @NoArgsConstructor
-@ToString
 @Getter
 public class FollowResponseDto {
-    private Member member;
-    private Member following;
+    private String nickname;
+    private String profilePath;
 
     public FollowResponseDto(Follow entity) {
-        this.member = entity.getMember();
-        this.following = entity.getFollowing();
+        this.nickname = entity.getFollowing().getNickname();
+        this.profilePath = entity.getFollowing().getProfilePath();
     }
-    
+
 }
