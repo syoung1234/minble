@@ -1,19 +1,19 @@
 package com.realtimechat.client.controller;
 
 import com.realtimechat.client.config.security.SecurityUser;
+import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.dto.request.FollowRequestDto;
+import com.realtimechat.client.dto.response.FollowResponseDto;
+import com.realtimechat.client.dto.response.MemberResponseDto;
 import com.realtimechat.client.service.FollowService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,6 +21,18 @@ import lombok.RequiredArgsConstructor;
 public class FollowController {
 
     private final FollowService followService;
+
+    /**
+     * 팔로우 리스트 조회
+     * @param principal 로그인한 유저
+     * @return
+     */
+    @GetMapping("/list")
+    public ResponseEntity<List<FollowResponseDto>>followList(@AuthenticationPrincipal SecurityUser principal) {
+        List<FollowResponseDto> response = followService.followList(principal.getMember());
+        return ResponseEntity.ok(response);
+    }
+
 
     /**
      * 팔로우

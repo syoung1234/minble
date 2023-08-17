@@ -4,6 +4,8 @@ import com.realtimechat.client.domain.Follow;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.FollowRequestDto;
+import com.realtimechat.client.dto.response.FollowResponseDto;
+import com.realtimechat.client.dto.response.MemberResponseDto;
 import com.realtimechat.client.exception.ErrorCode;
 import com.realtimechat.client.exception.FollowException;
 import com.realtimechat.client.exception.MemberException;
@@ -15,12 +17,37 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class FollowService {
 
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
+
+
+    /**
+     * 팔로우한 팔로잉 리스트
+     * @param member
+     * @return
+     */
+    public List<FollowResponseDto> followList(Member member) {
+        List<Follow> followList = followRepository.findByMemberOrderByCreatedAtDesc(member);
+
+        if (followList.isEmpty()) {
+            throw new FollowException(ErrorCode.FOLLOW_NOT_FOUND);
+        }
+
+        return followList.stream()
+                .map(FollowResponseDto::new)
+                .collect(Collectors.toList());
+
+    }
+
 
     /**
      * 팔로우 등록, 테스트 계정은 테스트끼리만 팔로우 가능

@@ -119,32 +119,4 @@ public class MemberService {
         return message;
     }
 
-    public List<MemberResponseDto> followList(Member member) {
-        List<Member> memberList;
-        if (member == null) {
-            // 로그인 하지 않은 유저
-            memberList = memberRepository.findByRoleOrRoleOrderByCreatedAtDesc(Role.ROLE_STAR, Role.ROLE_STAR_TEST);
-        } else {
-            // 로그인 한 유저
-            List<FollowResponseDto> followList = followRepository.findByMemberOrderByCreatedAtDesc(member);
-            List<UUID> followingList = new ArrayList<>();
-            for (FollowResponseDto follow : followList) {
-                followingList.add(follow.getFollowing().getId());
-            }
-
-            if (followList.size() == 0) {
-                memberList = memberRepository.findByRoleOrRoleOrderByCreatedAtDesc(Role.ROLE_STAR, Role.ROLE_STAR_TEST);
-            } else {
-                memberList = memberRepository.findByRoleOrRoleAndMemberNotIn(Role.ROLE_STAR, Role.ROLE_STAR_TEST, followingList);
-            }
-        }
-
-        List<MemberResponseDto> response = memberList.stream()
-            .map(m-> new MemberResponseDto(m.getNickname(), m.getProfilePath()))
-            .collect(Collectors.toList());
-
-        return response;
-        
-    }
-
 }

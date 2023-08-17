@@ -74,19 +74,4 @@ public class MemberController {
         return ResponseEntity.ok(message);
     }
 
-
-    // 팔로우 리스트 
-    @GetMapping("/follow/list")
-    public ResponseEntity<List<MemberResponseDto>>followList(@AuthenticationPrincipal SecurityUser principal) {
-        Member member = null;
-        
-        if (principal != null) { // 로그인 한 유저 
-            member = principal.getMember();
-        } 
-
-        List<MemberResponseDto> response = memberService.followList(member);
-        return ResponseEntity.ok(response);
-    }
-
-
 }
