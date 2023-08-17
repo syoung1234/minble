@@ -10,7 +10,7 @@ import com.realtimechat.client.dto.response.FollowResponseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FollowRepository extends JpaRepository<Follow, Integer> {
-    List<FollowResponseDto> findByMemberOrderByCreatedAtDesc(Member member);
+    List<Follow> findByMemberOrderByCreatedAtDesc(Member member);
 
     Optional<Follow> findByFollowingAndMember(Member member, Member member2);
 
