@@ -10,12 +10,10 @@ import com.realtimechat.client.dto.request.SocialRegisterRequestDto;
 import com.realtimechat.client.dto.request.member.DuplicateRequestDto;
 import com.realtimechat.client.dto.request.member.LoginRequestDto;
 import com.realtimechat.client.dto.request.member.RegisterRequestDto;
-import com.realtimechat.client.dto.response.FollowResponseDto;
 import com.realtimechat.client.dto.response.LoginResponseDto;
 import com.realtimechat.client.dto.response.MemberResponseDto;
 import com.realtimechat.client.exception.ErrorCode;
 import com.realtimechat.client.exception.MemberException;
-import com.realtimechat.client.repository.FollowRepository;
 import com.realtimechat.client.repository.MemberRepository;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final FollowRepository followRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
@@ -119,4 +116,17 @@ public class MemberService {
         return message;
     }
 
+    /**
+     * role type = 스타 리스트
+     * @return List<MemberResponseDto>
+     */
+    public List<MemberResponseDto> starList() {
+        List<Member> list = memberRepository.findByRoleOrRoleOrderByCreatedAtDesc(Role.ROLE_STAR, Role.ROLE_STAR_TEST);
+
+        if (list.isEmpty()) {
+            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        return list.stream().map(MemberResponseDto::new).collect(Collectors.toList());
+    }
 }
