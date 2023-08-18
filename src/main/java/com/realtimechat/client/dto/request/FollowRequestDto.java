@@ -15,13 +15,11 @@ public class FollowRequestDto {
     private String nickname;
 
     @Builder
-    public FollowRequestDto(Member member, Member following, String nickname) {
-        this.member = member;
-        this.following = following;
+    public FollowRequestDto(String nickname) {
         this.nickname = nickname;
     }
 
-    public Follow toEntity() {
+    public Follow toEntity(Member member, Member following) {
         return Follow.builder()
                 .member(member)
                 .following(following)
