@@ -4,6 +4,7 @@ import com.realtimechat.client.domain.Follow;
 import com.realtimechat.client.domain.Member;
 import com.realtimechat.client.domain.Role;
 import com.realtimechat.client.dto.request.FollowRequestDto;
+import com.realtimechat.client.dto.response.FollowResponseDto;
 import com.realtimechat.client.exception.ErrorCode;
 import com.realtimechat.client.exception.FollowException;
 import com.realtimechat.client.repository.FollowRepository;
@@ -16,6 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -33,6 +37,49 @@ class FollowServiceTest {
     private FollowRepository followRepository;
     @Mock
     private MemberRepository memberRepository;
+
+
+    @DisplayName("팔로우 리스트 없음")
+    @Test
+    void followList_empty() {
+        // given
+        Member member = new Member();
+        when(followRepository.findByMemberOrderByCreatedAtDesc(member)).thenReturn(Collections.emptyList());
+
+        // when
+        FollowException followException = assertThrows(FollowException.class, () -> followService.followList(member));
+
+        // then
+        assertThat(followException.getErrorCode()).isEqualTo(ErrorCode.FOLLOW_NOT_FOUND);
+    }
+
+
+    @DisplayName("멤버가 팔로우한 스타 리스트")
+    @Test
+    void followList() {
+        // given
+        Member member = new Member();
+        member.setNickname("ttt");
+
+        Member star = new Member();
+        star.setNickname("star");
+
+        Follow follow = new Follow();
+        follow.setMember(member);
+        follow.setFollowing(star);
+
+        List<Follow> list = Arrays.asList(
+                follow,
+                follow
+        );
+        when(followRepository.findByMemberOrderByCreatedAtDesc(member)).thenReturn(list);
+
+        // when
+        List<FollowResponseDto> result = followService.followList(member);
+
+        // then
+        assertThat(result.size()).isEqualTo(2);
+    }
 
     @DisplayName("팔로우 저장 실패")
     @Test
@@ -63,7 +110,7 @@ class FollowServiceTest {
         String nickname = "star";
         following.setNickname(nickname);
 
-        FollowRequestDto followRequestDto = new FollowRequestDto(member, following, nickname);
+        FollowRequestDto followRequestDto = new FollowRequestDto(nickname);
         Follow follow = Follow.builder()
                 .member(member)
                 .following(following)
