@@ -17,9 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -56,7 +55,8 @@ public class FollowService {
      */
     @Transactional
     public Follow save(FollowRequestDto requestDto, Member member) {
-        Member following = memberRepository.findByNickname(member.getNickname()).orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND));
+        Member following = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND));
+
         // TEST 끼리만 가능
         if (member.getRole().equals(Role.ROLE_SUBSCRIBER_TEST)) {
             if (!following.getRole().equals(Role.ROLE_STAR_TEST)) {
@@ -64,7 +64,12 @@ public class FollowService {
             }
         }
 
-        return followRepository.save(requestDto.toEntity());
+        Optional<Follow> follow = followRepository.findByFollowingAndMember(following, member);
+        if (follow.isPresent()) {
+            throw new FollowException(ErrorCode.DUPLICATED_FOLLOW);
+        }
+
+        return followRepository.save(requestDto.toEntity(member, following));
     }
 
     /**
