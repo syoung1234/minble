@@ -8,11 +8,11 @@ import org.springframework.core.io.UrlResource;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PostFileResponseDto {
+public class PostFileDownloadResponseDto {
     private UrlResource urlResource;
     private String contentDisposition;
 
-    public PostFileResponseDto(UrlResource urlResource, String contentDisposition) {
+    public PostFileDownloadResponseDto(UrlResource urlResource, String contentDisposition) {
         this.urlResource = urlResource;
         this.contentDisposition = contentDisposition;
     }

@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 import com.realtimechat.client.domain.Post;
 import com.realtimechat.client.domain.PostFile;
 import com.realtimechat.client.dto.request.PostFileRequestDto;
-import com.realtimechat.client.dto.response.PostFileResponseDto;
+import com.realtimechat.client.dto.response.PostFileDownloadResponseDto;
 import com.realtimechat.client.exception.ErrorCode;
 import com.realtimechat.client.exception.PostFileException;
 import com.realtimechat.client.repository.PostFileRepository;
@@ -42,7 +42,7 @@ public class PostFileService {
      * @return PostFileResponseDto (urlResource, contestDisposition)
      * @throws MalformedURLException
      */
-    public PostFileResponseDto download(String filename) throws MalformedURLException {
+    public PostFileDownloadResponseDto download(String filename) throws MalformedURLException {
         PostFile file = postFileRepository.findByFilename(filename).orElseThrow(() -> new PostFileException(ErrorCode.POST_FILE_NOT_FOUND));
         UrlResource urlResource = new UrlResource("file:" + filePath + file.getFilePath());
 
@@ -51,11 +51,11 @@ public class PostFileService {
         // 파일 다운로드 상자가 뜨도록 헤더 설정
         String contentDisposition = "attachment; filename=\"" + encodedFileName + "\"";
 
-        PostFileResponseDto postFileResponseDto = new PostFileResponseDto();
-        postFileResponseDto.setUrlResource(urlResource);
-        postFileResponseDto.setContentDisposition(contentDisposition);
+        PostFileDownloadResponseDto postFileDownloadResponseDto = new PostFileDownloadResponseDto();
+        postFileDownloadResponseDto.setUrlResource(urlResource);
+        postFileDownloadResponseDto.setContentDisposition(contentDisposition);
 
-        return postFileResponseDto;
+        return postFileDownloadResponseDto;
     }
 
     // 이미지 업로드 저장

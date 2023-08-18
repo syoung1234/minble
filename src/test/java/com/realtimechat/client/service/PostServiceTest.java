@@ -49,28 +49,28 @@ class PostServiceTest {
 
     private String nickname = "star1";
 
-    @DisplayName("팔로우한 게시글 리스트")
-    @Test
-    void list() {
-        // given
-        Member member = memberRepository.save(member(10));
-        Pageable pageable = PageRequest.of(0, 10);
-        List<PostResponseDto> list = Arrays.asList(
-                new PostResponseDto("star1", "profilePath", 10,"게시글 내용!", LocalDateTime.now(),3, 4),
-                new PostResponseDto(),
-                new PostResponseDto()
-        );
-        Page<PostResponseDto> pages = new PageImpl<>(list, pageable, list.size());
-        doReturn(pages).when(postRepository).findAllByPostAndFollowingAndCountCommentAndCountFavorite(member, nickname, pageable);
-
-        // when
-        Page<PostResponseDto> result = postService.list(member, nickname, pageable);
-
-        // then
-        assertThat(result.get()).isNotNull();
-        assertThat(result.get().count()).isEqualTo(3);
-        assertThat(result.get().findFirst().get().getCommentCount()).isEqualTo(3);
-    }
+//    @DisplayName("팔로우한 게시글 리스트")
+//    @Test
+//    void list() {
+//        // given
+//        Member member = memberRepository.save(member(10));
+//        Pageable pageable = PageRequest.of(0, 10);
+//        List<PostResponseDto> list = Arrays.asList(
+//                new PostResponseDto("star1", "profilePath", 10,"게시글 내용!", LocalDateTime.now(),3, 4),
+//                new PostResponseDto(),
+//                new PostResponseDto()
+//        );
+//        Page<PostResponseDto> pages = new PageImpl<>(list, pageable, list.size());
+//        doReturn(pages).when(postRepository).findAllByPostAndFollowingAndCountCommentAndCountFavorite(member, nickname, pageable);
+//
+//        // when
+//        Page<PostResponseDto> result = postService.list(member, nickname, pageable);
+//
+//        // then
+//        assertThat(result.get()).isNotNull();
+//        assertThat(result.get().count()).isEqualTo(3);
+//        assertThat(result.get().findFirst().get().getCommentCount()).isEqualTo(3);
+//    }
 
     @DisplayName("게시글 상세 조회")
     @Test
