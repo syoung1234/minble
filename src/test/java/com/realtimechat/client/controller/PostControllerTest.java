@@ -102,14 +102,14 @@ class PostControllerTest {
         String url = "/api/post/1";
 
         PostResponseDto postResponseDto = new PostResponseDto("star1", "profilePath", 10,"게시글 내용!", LocalDateTime.now(),3, 4);
-        doReturn(postResponseDto).when(postService).find(1);
 
         Member member = new Member();
         member.setId(UUID.randomUUID());
         member.setEmail("test10@test.com");
         member.setRole(Role.ROLE_MEMBER);
-
         SecurityUser principal = new SecurityUser(member);
+
+        doReturn(postResponseDto).when(postService).find(1, member);
 
         // when
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url)
