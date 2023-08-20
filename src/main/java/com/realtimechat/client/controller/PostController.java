@@ -50,8 +50,9 @@ public class PostController {
      * @return PostResponseDto
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDto> get(@PathVariable Integer id) {
-        PostResponseDto response = postService.find(id);
+    public ResponseEntity<PostResponseDto> get(@AuthenticationPrincipal SecurityUser principal,
+                                               @PathVariable Integer id) {
+        PostResponseDto response = postService.find(id, principal.getMember());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
