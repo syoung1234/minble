@@ -31,8 +31,8 @@ public class FavoriteController {
      * @return FavoriteResponseDto (long count, boolean like)
      */
     @PostMapping
-    public FavoriteResponseDto save(@AuthenticationPrincipal SecurityUser principal, @RequestBody FavoriteRequestDto favoriteRequestDto) {
-        return favoriteService.save(favoriteRequestDto, principal.getMember());
+    public FavoriteResponseDto saveDelete(@AuthenticationPrincipal SecurityUser principal, @RequestBody FavoriteRequestDto favoriteRequestDto) {
+        return favoriteService.saveDelete(favoriteRequestDto, principal.getMember());
     }
     
 }

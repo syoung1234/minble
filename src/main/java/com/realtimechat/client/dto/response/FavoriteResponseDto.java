@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class FavoriteResponseDto {
-    private long count;
+    private long favoriteCount;
     private boolean like;
 
-    public FavoriteResponseDto(long count, boolean like) {
-        this.count = count;
+    public FavoriteResponseDto(long favoriteCount, boolean like) {
+        this.favoriteCount = favoriteCount;
         this.like = like;
     }
 }

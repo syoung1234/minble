@@ -32,7 +32,7 @@ public class FavoriteService {
      * @return FavoriteResponseDto (long count, boolean like)
      */
     @Transactional
-    public FavoriteResponseDto save(FavoriteRequestDto favoriteRequestDto, Member member) {
+    public FavoriteResponseDto saveDelete(FavoriteRequestDto favoriteRequestDto, Member member) {
         Post post = postRepository.findById(favoriteRequestDto.getPostId()).orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
         Optional<Favorite> favorite = favoriteRepository.findByMemberAndPost(member, post);
 
