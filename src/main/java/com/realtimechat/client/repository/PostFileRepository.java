@@ -1,5 +1,6 @@
 package com.realtimechat.client.repository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,4 +13,7 @@ public interface PostFileRepository extends JpaRepository<PostFile, Integer> {
     Optional<PostFile> findByFilename(String filename);
 
     List<PostFile> findByPost(Post post);
+
+    List<PostFile> findAllByPostId(Integer postId);
+
 }

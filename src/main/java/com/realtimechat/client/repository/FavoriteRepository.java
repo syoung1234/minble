@@ -11,5 +11,9 @@ import java.util.Optional;
 public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     Optional<Favorite> findByMemberAndPost(Member member, Post post);
 
+
     Long countByPost(Post post); // 해당 게시글 좋아요 수
+
+
+    Optional<Favorite> findByMemberAndPostId(Member member, int postId);
 }
