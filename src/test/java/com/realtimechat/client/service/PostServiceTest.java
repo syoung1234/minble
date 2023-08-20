@@ -2,6 +2,7 @@ package com.realtimechat.client.service;
 
 import com.realtimechat.client.domain.*;
 import com.realtimechat.client.dto.request.PostRequestDto;
+import com.realtimechat.client.dto.response.PostFileResponseDto;
 import com.realtimechat.client.dto.response.PostResponseDto;
 import com.realtimechat.client.exception.ErrorCode;
 import com.realtimechat.client.exception.MemberException;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +31,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +44,10 @@ class PostServiceTest {
     private PostRepository postRepository;
     @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private PostFileRepository postFileRepository;
+    @Mock
+    private FavoriteRepository favoriteRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
 
@@ -76,11 +83,16 @@ class PostServiceTest {
     @Test
     void find() {
         // given
+        Member member = new Member();
+        List<PostFile> postFileList = new ArrayList<>();
+        Favorite favorite = new Favorite();
         PostResponseDto postResponseDto = new PostResponseDto("star1", "profilePath", 10,"게시글 내용!", LocalDateTime.now(),20, 4);
         doReturn(postResponseDto).when(postRepository).findByPostAndCountCommentAndCountFavorite(10);
+        when(postFileRepository.findAllByPostId(any())).thenReturn(postFileList);
+        when(favoriteRepository.findByMemberAndPostId(any(Member.class), anyInt())).thenReturn(Optional.of(favorite));
 
         // when
-        PostResponseDto result = postService.find(10);
+        PostResponseDto result = postService.find(10, member);
 
         // then
         assertThat(result).isNotNull();
@@ -91,10 +103,11 @@ class PostServiceTest {
     @Test
     void not_found_post() {
         // given
+        Member member = new Member();
         doReturn(null).when(postRepository).findByPostAndCountCommentAndCountFavorite(10);
 
         // when
-        PostException postException = assertThrows(PostException.class, () -> postService.find(10));
+        PostException postException = assertThrows(PostException.class, () -> postService.find(10, member));
 
         // then
         assertThat(postException.getErrorCode()).isEqualTo(ErrorCode.POST_NOT_FOUND);
