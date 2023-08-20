@@ -44,7 +44,7 @@ class FavoriteServiceTest {
         when(postRepository.findById(any())).thenReturn(Optional.empty());
 
         // when
-        PostException postException = assertThrows(PostException.class, () -> favoriteService.save(favoriteRequestDto, member));
+        PostException postException = assertThrows(PostException.class, () -> favoriteService.saveDelete(favoriteRequestDto, member));
 
         // then
         assertThat(postException.getErrorCode()).isEqualTo(ErrorCode.POST_NOT_FOUND);
@@ -62,7 +62,7 @@ class FavoriteServiceTest {
         when(favoriteRepository.findByMemberAndPost(any(Member.class), any(Post.class))).thenReturn(Optional.empty());
 
         // when
-        FavoriteResponseDto result = favoriteService.save(favoriteRequestDto, member);
+        FavoriteResponseDto result = favoriteService.saveDelete(favoriteRequestDto, member);
 
         // then
         assertThat(result).isNotNull();
@@ -81,7 +81,7 @@ class FavoriteServiceTest {
         when(favoriteRepository.findByMemberAndPost(any(Member.class), any(Post.class))).thenReturn(Optional.of(favorite));
 
         // when
-        FavoriteResponseDto result = favoriteService.save(favoriteRequestDto, member);
+        FavoriteResponseDto result = favoriteService.saveDelete(favoriteRequestDto, member);
 
         // then
         assertFalse(result.isLike());

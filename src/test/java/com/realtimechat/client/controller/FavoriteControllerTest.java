@@ -52,7 +52,7 @@ class FavoriteControllerTest {
         SecurityUser principal = new SecurityUser(member);
 
         FavoriteResponseDto favoriteResponseDto = new FavoriteResponseDto();
-        doReturn(favoriteResponseDto).when(favoriteService).save(favoriteRequestDto, member);
+        doReturn(favoriteResponseDto).when(favoriteService).saveDelete(favoriteRequestDto, member);
 
         // when
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post(url).
