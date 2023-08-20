@@ -1,17 +1,16 @@
 package com.realtimechat.client.service;
 
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import com.realtimechat.client.domain.Member;
-import com.realtimechat.client.domain.Post;
-import com.realtimechat.client.domain.PostFile;
-import com.realtimechat.client.domain.Role;
+import com.realtimechat.client.domain.*;
 import com.realtimechat.client.dto.request.PostRequestDto;
 import com.realtimechat.client.dto.response.*;
 import com.realtimechat.client.exception.ErrorCode;
 import com.realtimechat.client.exception.MemberException;
 import com.realtimechat.client.exception.PostException;
+import com.realtimechat.client.repository.FavoriteRepository;
 import com.realtimechat.client.repository.PostFileRepository;
 import com.realtimechat.client.repository.PostRepository;
 
@@ -22,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Name : PostService.java
@@ -38,6 +39,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostFileRepository postFileRepository;
+    private final FavoriteRepository favoriteRepository;
     private final PostFileService postFileService;
     private final S3Upload s3Upload;
 
@@ -53,6 +55,11 @@ public class PostService {
         if (postResponseDto.isEmpty()) {
             throw new PostException(ErrorCode.POST_NOT_FOUND);
         }
+
+        postResponseDto.getContent().forEach(postDto -> {
+            addPostResponseDto(postDto, member);
+        });
+
         return postResponseDto;
     }
 
@@ -61,11 +68,13 @@ public class PostService {
      * @param id 게시글 Id
      * @return PostResponseDto
      */
-    public PostResponseDto find(Integer id) {
+    public PostResponseDto find(Integer id, Member member) {
         PostResponseDto postResponseDto = postRepository.findByPostAndCountCommentAndCountFavorite(id);
         if (postResponseDto == null) {
             throw new PostException(ErrorCode.POST_NOT_FOUND);
         }
+        addPostResponseDto(postResponseDto, member);
+
         return postResponseDto;
     }
 
@@ -139,6 +148,16 @@ public class PostService {
         return message;
         
     }
-    
+
+    private void addPostResponseDto(PostResponseDto postResponseDto, Member member) {
+        List<PostFileResponseDto> filePath = postFileRepository.findAllByPostId(postResponseDto.getPostId())
+                .stream()
+                .map(p -> new PostFileResponseDto(p.getFilename(), p.getFilePath()))
+                .collect(Collectors.toList());
+        postResponseDto.setPostFileList(filePath);
+
+        Optional<Favorite> favorite = favoriteRepository.findByMemberAndPostId(member, postResponseDto.getPostId());
+        postResponseDto.setFavorite(favorite.isPresent());
+    }
 
 }
