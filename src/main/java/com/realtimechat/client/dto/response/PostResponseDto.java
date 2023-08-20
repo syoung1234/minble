@@ -24,8 +24,19 @@ public class PostResponseDto {
     private String createdAt;
     private long commentCount;
     private long favoriteCount;
+    private List<PostFileResponseDto> postFileList;
+    private boolean favorite;
 
-    public PostResponseDto(String nickname, String profilePath, int postId, String content, LocalDateTime createdAt, long commentCount, long favoriteCount) {
+    public void setPostFileList(List<PostFileResponseDto> postFileList) {
+        this.postFileList = postFileList;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    public PostResponseDto(String nickname, String profilePath, int postId, String content,
+                           LocalDateTime createdAt, long commentCount, long favoriteCount) {
         this.nickname = nickname;
         this.profilePath = profilePath;
         this.postId = postId;
