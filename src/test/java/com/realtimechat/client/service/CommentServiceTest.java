@@ -47,7 +47,7 @@ class CommentServiceTest {
         Integer postId = 1;
 
         Page<Comment> comments = new PageImpl<>(Collections.emptyList());
-        doReturn(comments).when(commentRepository).findByPostId(postId, pageable);
+        doReturn(comments).when(commentRepository).findByPostIdAndDepth(postId, 0, pageable);
 
         // when
         CommentException commentException = assertThrows(CommentException.class, () -> commentService.find(postId, pageable));
@@ -72,7 +72,7 @@ class CommentServiceTest {
 
         List<Comment> list = Arrays.asList(comment, comment);
         Page<Comment> comments = new PageImpl<>(list, pageable, list.size());
-        doReturn(comments).when(commentRepository).findByPostId(postId, pageable);
+        doReturn(comments).when(commentRepository).findByPostIdAndDepth(postId, 0, pageable);
 
         // when
         Page<CommentResponseDto> result = commentService.find(postId, pageable);
