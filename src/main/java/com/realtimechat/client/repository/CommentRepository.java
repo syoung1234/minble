@@ -20,7 +20,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     Page<Comment> findByParentId(Integer parentId, Pageable pageable);
 
-    Page<Comment> findByPostId(Integer postId, Pageable pageable);
+    Page<Comment> findByPostIdAndDepth(Integer postId, Integer depth, Pageable pageable);
 
     Optional<Comment> findByIdAndMember(Integer id, Member member);
 

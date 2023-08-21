@@ -37,7 +37,7 @@ public class CommentService {
      * @return Page<CommentResponse>
      */
     public Page<CommentResponseDto> find(Integer postId, Pageable pageable) {
-        Page<Comment> comments = commentRepository.findByPostId(postId, pageable);
+        Page<Comment> comments = commentRepository.findByPostIdAndDepth(postId, 0, pageable);
 
         if (comments.isEmpty()) {
             throw new CommentException(ErrorCode.COMMENT_NOT_FOUND);
