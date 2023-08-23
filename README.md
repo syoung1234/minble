@@ -45,7 +45,7 @@ https://github.com/syoung1234/minble-vuejs
 
 ## 주요 기능
 ### 로그인 기능 JWT
-#### [JwtTokenProvider.java](src/main/java/com/realtimechat/client/config/security/JwtTokenProvider.java)
+#### [JwtTokenProvider.java](src/main/java/com/minble/client/config/security/JwtTokenProvider.java)
 Access Token, Refresh Token 생성
 ``` java
     // 토큰 유효시간 30분
@@ -85,7 +85,7 @@ Access Token, Refresh Token 생성
 ```
 
 #### 로그인
-[MemberController.java](src/main/java/com/realtimechat/client/controller/MemberController.java)
+[MemberController.java](src/main/java/com/minble/client/controller/MemberController.java)
 ```java
 @RequiredArgsConstructor
 @RestController
@@ -114,7 +114,7 @@ dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 ```
-[RefreshToken.java](src/main/java/com/realtimechat/client/domain/RefreshToken.java)
+[RefreshToken.java](src/main/java/com/minble/client/domain/RefreshToken.java)
 ```java
 @Getter
 @NoArgsConstructor
@@ -145,24 +145,24 @@ Refresh Token 만들고 httpOnly, secure를 사용하여 cookie에 저장하였�
 
 ### 실시간 채팅 WebSocket
 
-[WebSocketConfig.java](src/main/java/com/realtimechat/client/config/WebSocketConfig.java)
+[WebSocketConfig.java](src/main/java/com/minble/client/config/WebSocketConfig.java)
 <br>
-[MessageController.java](src/main/java/com/realtimechat/client/controller/MessageController.java)
+[MessageController.java](src/main/java/com/minble/client/controller/MessageController.java)
 <br>
 
 
 ### AWS S3 파일 저장
 
-[S3Config.java](src/main/java/com/realtimechat/client/config/S3Config.java)
+[S3Config.java](src/main/java/com/minble/client/config/S3Config.java)
 <br>
 
 ### Social Login
 
-[CustomOAuth2UserService.java](src/main/java/com/realtimechat/client/config/oauth/CustomOAuth2UserService.java)
+[CustomOAuth2UserService.java](src/main/java/com/minble/client/config/oauth/CustomOAuth2UserService.java)
 <br>
-[OAuth2Attributes.java](src/main/java/com/realtimechat/client/config/oauth/OAuth2Attributes.java)
+[OAuth2Attributes.java](src/main/java/com/minble/client/config/oauth/OAuth2Attributes.java)
 <br>
-[OAuth2SuccessHandler.java](src/main/java/com/realtimechat/client/config/oauth/OAuth2SuccessHandler.java)
+[OAuth2SuccessHandler.java](src/main/java/com/minble/client/config/oauth/OAuth2SuccessHandler.java)
 <br>
 
 

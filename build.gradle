@@ -4,8 +4,8 @@ plugins {
 	id 'java'
 }
 
-group = 'com.real-time-chat.client'
-version = '0.0.1-SNAPSHOT'
+group = 'minble'
+version = ''
 sourceCompatibility = '17'
 
 configurations {
