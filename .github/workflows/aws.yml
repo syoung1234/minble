@@ -52,12 +52,12 @@ jobs:
         username: ${{ env.EC2_SSH_USER }}
         key: ${{ env.PRIVATE_KEY }}
         script: |
-          CONTAINER_ID=$(docker ps -q --filter "publish=80-8080")
-          
+          CONTAINER_ID=$(sudo docker ps -q --filter "publish=80-8080")
+
           if [ ! -z "$CONTAINER_ID" ]; then
-            docker stop $CONTAINER_ID
-            docker rm $CONTAINER_ID
+            sudo docker stop $CONTAINER_ID
+            sudo docker rm $CONTAINER_ID
           fi
-          
-          docker pull ${{ env.DOCKER_IMAGE_NAME }}:latest
-          docker run --name minble-container -d -p 80:8080 -e TZ=Asia/Seoul ${{ env.DOCKER_IMAGE_NAME }}
+
+          sudo docker pull syoung1234/minble:latest
+          sudo docker run --name minble-container -d -p 80:8080 -e TZ=Asia/Seoul syoung1234/minble
