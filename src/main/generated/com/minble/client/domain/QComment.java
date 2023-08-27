@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QComment extends EntityPathBase<Comment> {
 
-    private static final long serialVersionUID = -1911632198L;
+    private static final long serialVersionUID = -1378730368L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 

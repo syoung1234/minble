@@ -45,7 +45,7 @@ files/
 
 # Front
 minble-vuejs
-# /src/main/resources/static/dist
+/src/main/resources/static/dist
 
 # DS_Store
 .DS_Store

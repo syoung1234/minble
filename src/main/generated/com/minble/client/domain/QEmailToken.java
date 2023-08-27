@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QEmailToken extends EntityPathBase<EmailToken> {
 
-    private static final long serialVersionUID = -2054103678L;
+    private static final long serialVersionUID = -574812164L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
