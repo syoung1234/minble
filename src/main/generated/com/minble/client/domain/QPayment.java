@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QPayment extends EntityPathBase<Payment> {
 
-    private static final long serialVersionUID = 646255201L;
+    private static final long serialVersionUID = 1179157031L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 

@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QMessageFile extends EntityPathBase<MessageFile> {
 
-    private static final long serialVersionUID = -2031466242L;
+    private static final long serialVersionUID = 876897732L;
 
     public static final QMessageFile messageFile = new QMessageFile("messageFile");
 
