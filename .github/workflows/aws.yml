@@ -63,12 +63,19 @@ jobs:
         username: ${{ env.EC2_SSH_USER }}
         key: ${{ env.PRIVATE_KEY }}
         script: |
+          echo "Checking for running containers..."
           CONTAINER_ID=$(sudo docker ps -q --filter "publish=80-8080")
+          echo "Container ID: $CONTAINER_ID"
 
           if [ ! -z "$CONTAINER_ID" ]; then
             sudo docker stop $CONTAINER_ID
+            echo "Stopping existing container..."
             sudo docker rm $CONTAINER_ID
+            echo "docker rm..."
           fi
 
+          echo "Pulling latest image..."
           sudo docker pull syoung1234/minble:latest
+          echo "Starting new container..."
           sudo docker run --name minble-container -d -p 80:8080 -e TZ=Asia/Seoul syoung1234/minble
+          echo "success"
