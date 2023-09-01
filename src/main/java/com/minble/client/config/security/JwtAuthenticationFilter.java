@@ -6,19 +6,24 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.minble.client.service.RefreshTokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Component
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -39,8 +44,29 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             // SecurityContext에 Authentication 객체를 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        } 
+        } else if (token != null && !jwtTokenProvider.validateToken(token)) {
+            // JWT 토큰이 만료된 경우
+            String refreshToken = getRefreshTokenFromCookie(httpServletRequest);
+
+            if (refreshToken != null && jwtTokenProvider.validateRefreshToken(refreshToken)) {
+                // 유효한 리프레시 토큰이 있는 경우
+                token = refreshTokenService.getToken(refreshToken); // 새로운 액세스 토큰 발급
+                Authentication authentication = jwtTokenProvider.getAuthentication(token); // 새로운 토큰으로 인증
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        }
         chain.doFilter(request, httpServletResponse);
     }
-    
+
+    private String getRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }

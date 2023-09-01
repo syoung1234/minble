@@ -14,6 +14,7 @@ import com.minble.client.domain.Role;
 import com.minble.client.repository.RefreshTokenRepository;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,6 +40,7 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisTemplate<?,?> redisTemplate;
 
     // 객체 초기화, secretKey를 Base64로 인코딩
     protected void init() {
@@ -97,6 +99,20 @@ public class JwtTokenProvider {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // refresh token 유효성 확인
+    public boolean validateRefreshToken(String refreshToken) {
+        try {
+            String storedTokenValue = (String) redisTemplate.opsForValue().get(refreshToken);
+
+            if (storedTokenValue == null || !storedTokenValue.equals(refreshToken)) {
+                return false;
+            }
+            return true;
         } catch (Exception e) {
             return false;
         }
