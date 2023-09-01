@@ -1,12 +1,14 @@
 package com.minble.client.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.minble.client.config.security.JwtTokenProvider;
 import com.minble.client.config.security.SecurityUser;
 import com.minble.client.domain.Follow;
 import com.minble.client.domain.Member;
 import com.minble.client.domain.Role;
 import com.minble.client.dto.request.FollowRequestDto;
 import com.minble.client.service.FollowService;
+import com.minble.client.service.RefreshTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,10 @@ class FollowControllerTest {
 
     @MockBean
     private FollowService followService;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockBean
+    private RefreshTokenService refreshTokenService;
 
     @Autowired
     private MockMvc mockMvc;

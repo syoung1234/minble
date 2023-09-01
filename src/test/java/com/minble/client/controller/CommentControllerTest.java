@@ -1,6 +1,7 @@
 package com.minble.client.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.minble.client.config.security.JwtTokenProvider;
 import com.minble.client.config.security.SecurityUser;
 import com.minble.client.domain.Comment;
 import com.minble.client.domain.Member;
@@ -8,8 +9,10 @@ import com.minble.client.domain.Role;
 import com.minble.client.dto.request.CommentRequestDto;
 import com.minble.client.dto.response.CommentResponseDto;
 import com.minble.client.service.CommentService;
+import com.minble.client.service.RefreshTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,6 +40,10 @@ class CommentControllerTest {
 
     @MockBean
     private CommentService commentService;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockBean
+    private RefreshTokenService refreshTokenService;
 
     @Autowired
     private MockMvc mockMvc;

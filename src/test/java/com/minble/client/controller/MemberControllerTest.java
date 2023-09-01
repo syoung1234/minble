@@ -1,6 +1,7 @@
 package com.minble.client.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.minble.client.config.security.JwtTokenProvider;
 import com.minble.client.domain.Member;
 import com.minble.client.domain.Role;
 import com.minble.client.dto.request.member.DuplicateRequestDto;
@@ -11,6 +12,7 @@ import com.minble.client.exception.ErrorCode;
 import com.minble.client.exception.MemberException;
 import com.minble.client.service.EmailTokenService;
 import com.minble.client.service.MemberService;
+import com.minble.client.service.RefreshTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,10 @@ class MemberControllerTest {
 
     @MockBean
     private MemberService memberService;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockBean
+    private RefreshTokenService refreshTokenService;
 
     @MockBean
     private EmailTokenService emailTokenService;

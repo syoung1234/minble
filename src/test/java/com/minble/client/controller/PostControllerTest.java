@@ -1,11 +1,13 @@
 package com.minble.client.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.minble.client.config.security.JwtTokenProvider;
 import com.minble.client.config.security.SecurityUser;
 import com.minble.client.domain.Member;
 import com.minble.client.domain.Role;
 import com.minble.client.dto.response.PostResponseDto;
 import com.minble.client.service.PostService;
+import com.minble.client.service.RefreshTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,10 @@ class PostControllerTest {
 
     @MockBean
     private PostService postService;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockBean
+    private RefreshTokenService refreshTokenService;
 
     @Autowired
     private MockMvc mockMvc;

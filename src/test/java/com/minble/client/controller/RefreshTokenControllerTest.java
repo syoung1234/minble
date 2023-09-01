@@ -1,6 +1,7 @@
 package com.minble.client.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.minble.client.config.security.JwtTokenProvider;
 import com.minble.client.service.RefreshTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ class RefreshTokenControllerTest {
 
     @MockBean
     private RefreshTokenService refreshTokenService;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private MockMvc mockMvc;
