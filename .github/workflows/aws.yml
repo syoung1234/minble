@@ -28,7 +28,7 @@ jobs:
 
     - name: Copy files from S3
       run: |
-        aws s3 sync s3://${{ secrets.S3_BUCKET_NAME }}/dist/ ./src/main/resources/static/
+        aws s3 sync s3://${{ secrets.S3_BUCKET_NAME }}/dist/ ./src/main/resources/static/dist/
       env:
         AWS_DEFAULT_REGION: ap-northeast-2
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
