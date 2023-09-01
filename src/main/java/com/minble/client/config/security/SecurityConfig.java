@@ -27,6 +27,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler successHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     // 비밀번호 암호화
     @Bean
@@ -52,9 +53,11 @@ public class SecurityConfig {
             .antMatchers("/api/admin/**").hasRole("ADMIN")
             .antMatchers("/api/post/**").authenticated()
             .antMatchers("/api/mypage/**").authenticated()
+            .antMatchers("/api/message/**").authenticated()
+            .antMatchers("/api/follow/**").authenticated()
             .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
             .and()
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .oauth2Login()
             .successHandler(successHandler)
             .userInfoEndpoint()
