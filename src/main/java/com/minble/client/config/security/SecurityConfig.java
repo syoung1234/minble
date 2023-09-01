@@ -5,6 +5,7 @@ package com.minble.client.config.security;
 import com.minble.client.config.oauth.CustomOAuth2UserService;
 import com.minble.client.config.oauth.OAuth2SuccessHandler;
 
+import com.minble.client.service.RefreshTokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +28,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler successHandler;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RefreshTokenService refreshTokenService;
 
     // 비밀번호 암호화
     @Bean
@@ -57,7 +58,7 @@ public class SecurityConfig {
             .antMatchers("/api/follow/**").authenticated()
             .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
             .and()
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, refreshTokenService), UsernamePasswordAuthenticationFilter.class)
             .oauth2Login()
             .successHandler(successHandler)
             .userInfoEndpoint()
