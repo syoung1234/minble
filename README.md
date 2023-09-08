@@ -11,10 +11,7 @@
 - AWS EC2, Route53, Load Balancer, Docker를 통해 배포하였습니다.
 
 ### 배포 과정
-- GitHub Actions CI/CD 구축 진행중입니다.
-
-![gitactions-docker drawio](https://github.com/syoung1234/minble/assets/71418436/aade5c73-08f1-482b-9b39-b0b0daad0057)
-
+![github-actions-front-back drawio](https://github.com/syoung1234/minble/assets/71418436/4bcfd8dd-5c9c-4b82-8b6a-eeab861c9bd8)
 
 
 ### 배포 주소
