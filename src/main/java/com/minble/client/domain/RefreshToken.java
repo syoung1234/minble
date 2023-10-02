@@ -11,17 +11,25 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+
 @Getter
 @NoArgsConstructor
-@RedisHash(value = "refresh_token")
-public class RefreshToken {
-    @Id
+// @RedisHash(value = "refresh_token")
+@Entity
+public class RefreshToken extends BaseTimeEntity {
+    // @Id
+    @javax.persistence.Id
+    @Column(name = "refresh_token_id")
     private String id;
     private UUID memberId;
     private String email;
     private String roleType;
     private String social;
-    @TimeToLive
+    //@TimeToLive
     private long expirationTime;
 
     @Builder
