@@ -43,4 +43,16 @@ public class RefreshTokenService {
         
         return result;
     }
+
+    /**
+     * 로그아웃 처리
+     * refresh token 즉시 만료 처리
+     */
+    public void expire(String refreshToken) {
+        try {
+            refreshTokenRepository.deleteById(refreshToken);
+        } catch (Exception e) {
+            throw new RefreshTokenException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        }
+    }
 }
