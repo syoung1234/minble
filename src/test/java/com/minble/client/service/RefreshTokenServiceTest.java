@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RefreshTokenServiceTest {
@@ -66,6 +66,33 @@ class RefreshTokenServiceTest {
         // then
         assertThat(result).isEqualTo(accessToken);
 
+    }
+
+    @DisplayName("logout 실패")
+    @Test
+    void logout_fail() {
+        // given
+        String refreshToken = UUID.randomUUID().toString();
+        doThrow(RefreshTokenException.class).when(refreshTokenRepository).deleteById(refreshToken);
+
+        // when
+        RefreshTokenException refreshTokenException = assertThrows(RefreshTokenException.class, () -> refreshTokenService.expire(refreshToken));
+
+        // then
+        assertThat(refreshTokenException.getErrorCode()).isEqualTo(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+    }
+
+    @DisplayName("logout 성공(refreshToken 삭제)")
+    @Test
+    void logout() {
+        // given
+        String refreshToken = UUID.randomUUID().toString();
+
+        // when
+        refreshTokenService.expire(refreshToken);
+
+        // then
+        verify(refreshTokenRepository, times(1)).deleteById(refreshToken);
     }
 
 }

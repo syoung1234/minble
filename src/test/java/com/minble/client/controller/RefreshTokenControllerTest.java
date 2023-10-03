@@ -3,6 +3,7 @@ package com.minble.client.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minble.client.config.security.JwtTokenProvider;
 import com.minble.client.service.RefreshTokenService;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.servlet.http.Cookie;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RefreshTokenController.class)
@@ -53,4 +57,20 @@ class RefreshTokenControllerTest {
         result.andExpect(status().isOk());
     }
 
+    @DisplayName("refresh token 즉시 만료")
+    @Test
+    @WithMockUser
+    void expire() throws Exception {
+        // given
+        String url = "/api/refresh-token/logout";
+
+        // when
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("refreshToken", UUID.randomUUID().toString()))
+                .with(csrf()));
+        // then
+        result.andExpect(status().isOk());
+        result.andExpect(cookie().maxAge("refreshToken", 0));
+    }
 }
