@@ -1,4 +1,4 @@
-[![Java CI with Gradle](https://github.com/syoung1234/minble/actions/workflows/gradle.yml/badge.svg)](https://github.com/syoung1234/minble/actions/workflows/gradle.yml)
+[![Deploy to AWS EC2 using Docker](https://github.com/syoung1234/minble/actions/workflows/aws.yml/badge.svg)](https://github.com/syoung1234/minble/actions/workflows/aws.yml)
 
 ## 프로젝트 소개
 - 1인 프로젝트입니다. 
