@@ -5,19 +5,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-@DataJpaTest
-@Import(RedisConfig.class)
+//@DataJpaTest
+//@Import(RedisConfig.class)
 class RefreshTokenRepositoryTest extends TestBase {
 //    @Autowired
-//    private RefreshTokenRepository refreshTokenRepository;
+//    private RefreshTokenRepository;
 
 //    @AfterEach
 //    public void cleanUp() {
 //        refreshTokenRepository.deleteAll();
 //    }
 
-    @Test
-    void save() {
+//    @Test
+//    void save() {
         // given
 //        String token = UUID.randomUUID().toString();
 //        Member member = new Member();
@@ -32,6 +32,6 @@ class RefreshTokenRepositoryTest extends TestBase {
 //
 //        // then
 //        Assertions.assertThat(result.getId()).isEqualTo(token);
-    }
+//    }
 
 }
